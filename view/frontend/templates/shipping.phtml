@@ -1,17 +1,19 @@
 <?php
+
 /**
- * Monta Hyvä Checkout Shipping Options (AlpineJS)
- *
- * Ports the legacy Knockout templates to Hyvä (AlpineJS), preserving
- * the original HTML structure and Tailwind classes.
+ * @var Escaper $escaper
+ * @var Template $block
+ * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp - All Hyva components have this
  */
+
+// add a "nonce" attribute to the above script tag (TODO does nothing)
+//$hyvaCsp->registerInlineScript();
 ?>
 
 <div
         id="block-shipping-options"
         class="max-w-lg mx-auto"
-        x-data="montaCheckout()"
-        x-init="init()"
+        x-data="montaCheckout"
         x-show="isSelected"
         x-cloak
 >
@@ -31,7 +33,7 @@
 
     <div clas="tabs">
         <!-- Delivery Options -->
-        <div class="tabcontent hidden" :class="'tab-' + deliveryOptionsIdentifier" x-show="DeliveryOptions.length">
+        <div class="tabcontent hidden" :class="deliveryOptionsIdentifier" x-show="DeliveryOptions.length">
             <div class="flex max-w-md mx-auto justify-center gap-5 mb-5">
                 <template x-for="option in DeliveryOptions" :key="option.date">
                     <!-- $this becomes each element, $parent becomes the current component -->
@@ -90,7 +92,7 @@
         </div>
 
         <!-- Pickup Options -->
-        <div class="tabcontent hidden space-y-3" :class="'tab-' + pickupOptionsIdentifier">
+        <div class="tabcontent hidden space-y-3" :class="pickupOptionsIdentifier">
             <!-- Attach map to this element-->
             <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md hidden">
                 <div :id="mapIdentifier" class="w-full h-[250px] bg-gray-100"></div>
@@ -128,10 +130,6 @@
 
             <!-- Button to switch map or list -->
             <div class="text-center text-blue-500">
-                <!-- When in List mode-->
-                <div x-show="!showingMap" @click="toggleMap">
-                    <span>&#128205; </span><span>Map</span>
-                </div>
 
                 <!-- When in Maps mode -->
                 <div x-show="showingMap" class="flex items-center justify-between mb-4">
@@ -141,6 +139,11 @@
                         <span>&equiv; </span><span @click="toggleMap">List</span>
                     </div>
                     <p @click="nextPickup">&rarr;</p>
+                </div>
+
+                <!-- When in List mode-->
+                <div x-else @click="toggleMap">
+                    <span>&#128205; </span><span>Map</span>
                 </div>
             </div>
         </div>

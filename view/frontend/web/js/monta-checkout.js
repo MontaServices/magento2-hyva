@@ -1,9 +1,9 @@
 'use strict';
 
 (function () {
-    // Expose Alpine component factory globally for use in x-data
-    window.montaCheckout = function () {
-        return {
+    // Register Alpine component for CSP-friendly build
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('montaCheckout', () => ({
             // State
             DeliveryOptions: [],
             deliveryOptionsIdentifier: 'DeliveryOptions',
@@ -189,6 +189,6 @@
                     console.warn('[Monta Hyvä] Failed to update quote extension attributes', e);
                 }
             },
-        };
-    };
+        }));
+    });
 })();
