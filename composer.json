@@ -12,7 +12,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "Montap\\Hyva\\": ""
+      "Monta\\Hyva\\": ""
     }
   }
 }
