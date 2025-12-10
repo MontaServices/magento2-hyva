@@ -4,7 +4,7 @@
     <module name="Monta_Hyva" setup_version="0.0.1">
         <sequence>
             <module name="Monta_Checkout"/>
-            <module name="Hyva_Checkout"/>
+            <module name="Hyva_ReactCheckout"/>
         </sequence>
     </module>
 </config>
