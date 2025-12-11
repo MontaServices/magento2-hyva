@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Inject our small Magewire component after the shipping methods list -->
+        <referenceBlock name="checkout.shipping.methods.after">
+            <arguments>
+                <!-- Allow inline Magewire/Alpine scripts/styles on this block -->
+                <argument name="csp_whitelist" xsi:type="boolean">true</argument>
+            </arguments>
+
+            <block name="monta.checkout.shipping.method.shippingoptions"
+                   as="monta_hyva_checkout_shipping_method_options"
+                   template="Monta_Hyva::checkout/shipping/method/options.phtml">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Monta\Hyva\Magewire\Checkout\Shipping\Method\ShippingOptions
+                    </argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

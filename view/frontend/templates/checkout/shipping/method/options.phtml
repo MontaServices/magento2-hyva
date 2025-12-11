@@ -1,0 +1,25 @@
+<?php
+/**
+ * Simple Hyvä + Magewire skeleton component template
+ * Renders a tiny input on the Shipping Methods block.
+ *
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Monta\Hyva\Magewire\Checkout\Shipping\Method\ShippingOptions $magewire
+ */
+?>
+
+<div class="mt-3 p-3 border rounded bg-white">
+    <label for="monta-hyva-shipping-options" class="block text-sm font-medium text-gray-700">
+        Shipping options (skeleton)
+    </label>
+    <input
+            id="monta-hyva-shipping-options"
+            type="text"
+            class="form-input mt-1 block w-full"
+            placeholder="Type something…"
+            wire:model.lazy="shippingOptions"
+    />
+    <p class="text-xs text-gray-500 mt-1">
+        Current value: <?= $block->escapeHtml((string)($magewire->shippingOptions ?? '')) ?>
+    </p>
+</div>
