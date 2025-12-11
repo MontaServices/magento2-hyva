@@ -1,8 +1,0 @@
-{
-  "components": {
-    "Monta_Hyva_Options": {
-      "component": "Monta_Hyva/React/Options",
-      "position": "shipping_method.after"
-    }
-  }
-}

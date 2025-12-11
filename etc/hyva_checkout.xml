@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
-<checkout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:hyva:checkout:etc/hyva_checkout.xsd">
+<checkout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:hyva:checkout:etc/hyva_checkout.xsd">
     <step name="shipping">
-        <component name="Monta_Hyva/Options" />
+        <component name="Monta_Hyva/Options"/>
     </step>
 </checkout>
