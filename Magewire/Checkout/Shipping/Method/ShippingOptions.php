@@ -64,6 +64,8 @@ class ShippingOptions extends Component
             $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
             $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
         }
+        // TODO until clicking Timeframe is implemented, click the first option Timeframe
+        $this->selectedDateOptions= reset($this->deliveryOptions)->options;
     }
 
 
