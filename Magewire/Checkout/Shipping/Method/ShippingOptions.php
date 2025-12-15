@@ -4,27 +4,74 @@ declare(strict_types=1);
 
 namespace Monta\Hyva\Magewire\Checkout\Shipping\Method;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
+use Monta\Checkout\Helper\Shipping;
 use Monta\Checkout\Model\Carrier\Monta;
+use Monta\CheckoutApiWrapper\Objects\Address;
+use Monta\CheckoutApiWrapper\Objects\PickupPoint;
+use Monta\CheckoutApiWrapper\Objects\ShippingOption;
+use Monta\CheckoutApiWrapper\Objects\TimeFrame;
 
 class ShippingOptions extends Component
 {
-    public function __construct(
-        protected readonly Session $checkoutSession
-    )
-    {
-    }
+    public const string DELIVERY_OPTIONS_IDENTIFIER = "DeliveryOptions";
+
+    public const string PICKUP_OPTIONS_IDENTIFIER = "PickupOptions";
+
+    /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
+    public array $deliveryOptions = [];
+
+    /** @var ShippingOption[] $selectedDateOptions - Shipping options from the selected Timeframe*/
+    public array $selectedDateOptions = [];
+
+    /** @var PickupPoint[] */
+    public array $pickupOptions = [];
+
+    /** @var ?PickupPoint */
+    public ?PickupPoint $storeLocation = null;
+
+    /** @var ShippingOption|mixed|null $standardShipper */
+    public ?ShippingOption $standardShipper = null;
+
+    /** @var Address|null $address */
+    public ?Address $address = null;
+
+    /** @var bool $showingMap */
+    public bool $showingMap = false;
 
     /**
-     * Public state bound to the input field.
+     * @param Session $checkoutSession
+     * @param Shipping $shippingHelper
+     * @throws GuzzleException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public string $shippingOptions = '';
+    public function __construct(
+        protected readonly Session $checkoutSession,
+        protected readonly Shipping $shippingHelper,
+    ) {
+        // Retrieve shipping options from same helper
+        // TODO clean up duplicate code with MethodConverter
+        $options = $this->shippingHelper->getOptions($this->getQuote());
+        if ($options) {
+            $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
+            $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
+            $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
+            $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
+        }
+    }
+
 
     /**
      * Whether the block should be visible
      */
+
+    /** @var bool - Whether the block should be visible */
     public bool $show = false;
 
     /**
@@ -34,11 +81,21 @@ class ShippingOptions extends Component
         'shipping_method_selected' => 'onShippingMethodSelected',
     ];
 
+    /**
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function mount(): void
     {
         $this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod());
     }
 
+    /**
+     * @return Quote
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     protected function getQuote(): Quote
     {
         return $this->checkoutSession->getQuote();
@@ -54,11 +111,43 @@ class ShippingOptions extends Component
     }
 
     /**
-     * Carrier code and/or method code
+     * @param string|null $method
+     * @return bool
      */
     protected function isMonta(string $method = null): bool
     {
         // Must return something, but Magewire is listening to the property
         return $this->show = ($method == Monta::METHOD_CODE || $method == Monta::METHOD_CODE . "_" . Monta::METHOD_CODE);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function getTabButtons(): array
+    {
+        return [
+            [
+                // id is also the name of the property this corresponds to
+                "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
+                "label" => __("Delivery"),
+                'active' => false,
+                // TODO callback: utility.clickMode(this.id, event);
+            ],
+
+            [
+                "id" => self::PICKUP_OPTIONS_IDENTIFIER,
+                "label" => __("Pickup"),
+                'active' => false,
+                // TODO callback: utility.clickMode(this.id, event);
+            ],
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function listButtonText(): string
+    {
+        return __('%s of %s pickup points')->getText();
     }
 }
