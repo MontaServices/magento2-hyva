@@ -12,12 +12,11 @@
                 <argument name="csp_whitelist" xsi:type="boolean">true</argument>
             </arguments>
 
-            <block name="monta.checkout.shipping.method.shippingoptions"
-                   as="monta_hyva_checkout_shipping_method_options"
-                   template="Monta_Hyva::checkout/shipping/method/options.phtml">
+            <block name="monta.hyva.shipping.method.options"
+                   template="Monta_Hyva::checkout/shipping/options.phtml">
                 <arguments>
                     <argument name="magewire" xsi:type="object">
-                        Monta\Hyva\Magewire\Checkout\Shipping\Method\ShippingOptions
+                        Monta\Hyva\Magewire\Checkout\Shipping\Options
                     </argument>
                 </arguments>
             </block>
