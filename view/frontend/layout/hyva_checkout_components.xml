@@ -8,7 +8,7 @@
         <!-- Inject our small Magewire component after the shipping methods list -->
         <referenceBlock name="checkout.shipping.methods.after">
             <arguments>
-                <!-- Allow inline Magewire/Alpine scripts/styles on this block -->
+                <!-- Allow inline Magewire/Alpine scripts/styles on this block TODO necessary? -->
                 <argument name="csp_whitelist" xsi:type="boolean">true</argument>
             </arguments>
 
@@ -19,6 +19,22 @@
                         Monta\Hyva\Magewire\Checkout\Shipping\Options
                     </argument>
                 </arguments>
+                <block name="monta.hyva.shipping.method.component.delivery"
+                       template="Monta_Hyva::checkout/shipping/components/delivery.phtml">
+                    <arguments>
+                        <argument name="magewire" xsi:type="object">
+                            Monta\Hyva\Magewire\Checkout\Shipping\Delivery
+                        </argument>
+                    </arguments>
+                </block>
+                <block name="monta.hyva.shipping.method.component.pickup"
+                       template="Monta_Hyva::checkout/shipping/components/pickup.phtml">
+                    <arguments>
+                        <argument name="magewire" xsi:type="object">
+                            Monta\Hyva\Magewire\Checkout\Shipping\Pickup
+                        </argument>
+                    </arguments>
+                </block>
             </block>
         </referenceBlock>
     </body>

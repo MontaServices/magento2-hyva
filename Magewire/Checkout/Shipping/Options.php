@@ -26,7 +26,7 @@ class Options extends Component
     /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
     public array $deliveryOptions = [];
 
-    /** @var ShippingOption[] $selectedDateOptions - Shipping options from the selected Timeframe*/
+    /** @var ShippingOption[] $selectedDateOptions - Shipping options from the selected Timeframe */
     public array $selectedDateOptions = [];
 
     /** @var PickupPoint[] */
@@ -65,7 +65,9 @@ class Options extends Component
             $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
         }
         // TODO until clicking Timeframe is implemented, click the first option Timeframe
-        $this->selectedDateOptions= reset($this->deliveryOptions)->options;
+        if ($this->deliveryOptions) {
+            $this->selectedDateOptions = reset($this->deliveryOptions)->options;
+        }
     }
 
 

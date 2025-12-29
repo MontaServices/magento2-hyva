@@ -26,12 +26,13 @@
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->deliveryOptions)): ?>
-                <!-- TODO start tab as 'hidden' -->
+                <!-- TODO start all tabs as 'hidden' -->
                 <div class="tabcontent tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
+                    <!-- Day buttons TODO afterRender: clickFirst-->
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5">
                         <?php
                         foreach ($magewire->deliveryOptions as $option): ?>
-                            <!--TODO afterRender: clickDayTile -->
+                            <!--TODO onClick: clickDayTile -->
                             <div class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus">
                                 <p class="font-semibold py-2"><?= $option->day ?></p>
                                 <p class="text-sm text-gray-500"><?= $option->dateFormatted ?></p>
@@ -39,17 +40,16 @@
                         <?php
                         endforeach; ?>
                     </div>
+                    <!-- Selected day options -->
                     <div>
                         <!-- TODO afterRender: clickFirst -->
-                        <?php
-                        foreach ($magewire->selectedDateOptions as $deliveryOption): ?>
-                            <!--TODO onClick:clickDeliveryOption-->
-                            <div class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto">
-                                <!-- TODO childBlock template="name: 'Monta_Checkout/checkout/shipping/components/delivery', data: deliveryOption"-->
-                                <span><?= $deliveryOption->displayName ?> TODO childblock</span>
-                            </div>
-                        <?php
-                        endforeach; ?>
+                        <!--TODO onClick:clickDeliveryOption-->
+                        <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')
+                            ->setData(
+                                \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::OPTIONS_COLLECTION,
+                                $magewire->selectedDateOptions
+                            )
+                            ->toHtml() ?>
                     </div>
                 </div>
             <?php
@@ -57,22 +57,20 @@
             <!-- Pickup Options -->
             <?php
             if (sizeof($magewire->pickupOptions)): ?>
-                <div class="tabcontent hidden space-y-3 tab-<?= $magewire::PICKUP_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent space-y-3 tab-<?= $magewire::PICKUP_OPTIONS_IDENTIFIER ?>">
                     <!-- Attach map to this element-->
                     <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md hidden">
                         <div id="montaPickupsMap" class="w-full h-[250px] bg-gray-100"></div>
                     </div>
                     <!-- List of PickupOptions -->
                     <div id="pickupPointsList" class="space-y-3">
-                        <?php
-                        foreach ($magewire->pickupOptions as $pickup): ?>
-                            <!-- TODO onClick: parent.clickDeliveryOption-->
-                            <div class="rounded-tile monta-gray-tile w-full">
-                                <!-- TODO childBLock template="name: 'Monta_Checkout/checkout/shipping/components/pickup', data: pickup"-->
-                                <span><?= $pickup->displayName ?> TODO childblock</span>
-                            </div>
-                        <?php
-                        endforeach; ?>
+                        <?=
+                        $block->getChildBlock('monta.hyva.shipping.method.component.pickup')
+                            ->setData(
+                                \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::OPTIONS_COLLECTION,
+                                $magewire->pickupOptions
+                            )
+                            ->toHtml() ?>
                     </div>
                     <!-- Button to switch map or list -->
                     <div class="text-center text-blue-500">

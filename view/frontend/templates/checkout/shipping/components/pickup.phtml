@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup $magewire
+ * @var \Monta\CheckoutApiWrapper\Objects\PickupPoint[] $pickupOptions
+ */
+$pickupOptions = $block->getData($magewire::OPTIONS_COLLECTION)
+?>
+
+<?php
+// TODO clickDeliveryOption
+foreach ($pickupOptions as $pickup): ?>
+    <div class="rounded-tile monta-gray-tile w-full">
+        <div class="pickup-option flex-col">
+            <div class="pickup-header flex justify-between space-x-2">
+                <div class="flex">
+                    <img src="<?= $pickup->imageUrl ?>" class="pickup-logo w-16 h-16 pr-2">
+                    <div class="pickup-container">
+                        <strong><?= $pickup->getCompany() ?></strong>
+                        <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
+                        <p class="text-sm text-gray-600"><?= $pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber ?></p>
+                    </div>
+                </div>
+                <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
+            </div>
+            <?php
+            if ($pickup->openingTimes): ?>
+                <div class="business-hours text-sm text-gray-500 mt-2 hidden">
+                    <?php
+                    foreach ($pickup->getOpeningTimes() as $slot): ?>
+                        <!-- TODO show opening times only on selected point -->
+                        <!-- TODO tab character is not rendered-->
+                        <p class="text-sm"
+                        ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
+                    <?php
+                    endforeach; ?>
+                </div>
+            <?php
+            endif; ?>
+        </div>
+    </div>
+<?php
+endforeach; ?>
