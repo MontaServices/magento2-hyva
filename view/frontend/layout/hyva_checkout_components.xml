@@ -7,11 +7,6 @@
     <body>
         <!-- Inject our small Magewire component after the shipping methods list -->
         <referenceBlock name="checkout.shipping.methods.after">
-            <arguments>
-                <!-- Allow inline Magewire/Alpine scripts/styles on this block TODO necessary? -->
-                <argument name="csp_whitelist" xsi:type="boolean">true</argument>
-            </arguments>
-
             <block name="monta.hyva.shipping.method.options"
                    template="Monta_Hyva::checkout/shipping/options.phtml">
                 <arguments>

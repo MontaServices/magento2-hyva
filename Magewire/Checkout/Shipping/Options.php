@@ -35,8 +35,8 @@ class Options extends Component
     /** @var ?PickupPoint */
     public ?PickupPoint $storeLocation = null;
 
-    /** @var ShippingOption|mixed|null $standardShipper */
-    public ?ShippingOption $standardShipper = null;
+    /** @var ShippingOption|array|null $standardShipper */
+    public ShippingOption|array|null $standardShipper = null;
 
     /** @var Address|null $address */
     public ?Address $address = null;
