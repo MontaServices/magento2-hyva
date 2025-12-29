@@ -1,5 +1,6 @@
 <?php
 /**
+ * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Options $magewire
  */
@@ -41,16 +42,15 @@
                         endforeach; ?>
                     </div>
                     <!-- Selected day options -->
-                    <div>
-                        <!-- TODO afterRender: clickFirst -->
-                        <!--TODO onClick:clickDeliveryOption-->
-                        <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')
-                            ->setData(
-                                \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::OPTIONS_COLLECTION,
-                                $magewire->selectedDateOptions
-                            )
-                            ->toHtml() ?>
-                    </div>
+                    <!-- TODO afterRender: clickFirst -->
+                    <!--TODO onClick:clickDeliveryOption-->
+                    <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')
+                        ->setData(
+                            \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::OPTIONS_COLLECTION,
+                            $magewire->selectedDateOptions
+                        )
+                        ->toHtml() ?>
+
                 </div>
             <?php
             endif; ?>
@@ -63,15 +63,14 @@
                         <div id="montaPickupsMap" class="w-full h-[250px] bg-gray-100"></div>
                     </div>
                     <!-- List of PickupOptions -->
-                    <div id="pickupPointsList" class="space-y-3">
-                        <?=
-                        $block->getChildBlock('monta.hyva.shipping.method.component.pickup')
-                            ->setData(
-                                \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::OPTIONS_COLLECTION,
-                                $magewire->pickupOptions
-                            )
-                            ->toHtml() ?>
-                    </div>
+                    <?=
+                    $block->getChildBlock('monta.hyva.shipping.method.component.pickup')
+                        ->setData(
+                            \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::OPTIONS_COLLECTION,
+                            $magewire->pickupOptions
+                        )
+                        ->toHtml() ?>
+
                     <!-- Button to switch map or list -->
                     <div class="text-center text-blue-500">
                         <!-- When in List mode-->
