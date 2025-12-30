@@ -154,4 +154,17 @@ class Options extends Component
     {
         return __('%s of %s pickup points')->getText();
     }
+
+    /**
+     * @param string $option - JSON string of selected day
+     * @return void
+     */
+    public function clickDayTile(string $option)
+    {
+        // Reconstruct Timeframe from JSON
+        $timeframe = TimeFrame::construct(json_decode($option,true));
+
+        $this->selectedDateOptions = $timeframe->options;
+        // TODO focus selection
+    }
 }

@@ -4,6 +4,7 @@
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Options $magewire
  */
+
 ?>
 
 <div id="block-shipping-options" class="max-w-lg mx-auto">
@@ -32,8 +33,8 @@
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5">
                         <?php
                         foreach ($magewire->deliveryOptions as $option): ?>
-                            <!--TODO onClick: clickDayTile -->
-                            <div class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus">
+                            <div wire:click="clickDayTile('<?= $escaper->escapeHtmlAttr(json_encode($option)) ?>')"
+                                 class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus">
                                 <p class="font-semibold py-2"><?= $option->day ?></p>
                                 <p class="text-sm text-gray-500"><?= $option->dateFormatted ?></p>
                             </div>
