@@ -41,6 +41,16 @@ class Options extends Component
     /** @var bool $showingMap */
     public bool $showingMap = false;
 
+    /** @var bool - Whether the block should be visible */
+    public bool $show = false;
+
+    /**
+     * @var string[]
+     */
+    protected $listeners = [
+        'shipping_method_selected' => 'onShippingMethodSelected',
+    ];
+
     /**
      * @param Session $checkoutSession
      * @param Shipping $shippingHelper
@@ -58,26 +68,12 @@ class Options extends Component
         $options = $this->shippingHelper->getOptions($this->getQuote());
         if ($options) {
             $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
-            $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
+
+            $this->setPickups($options[PickupPoint::PICKUP_OPTIONS_KEY] ?? []);
             $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
             $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
         }
     }
-
-
-    /**
-     * Whether the block should be visible
-     */
-
-    /** @var bool - Whether the block should be visible */
-    public bool $show = false;
-
-    /**
-     * @var string[]
-     */
-    protected $listeners = [
-        'shipping_method_selected' => 'onShippingMethodSelected',
-    ];
 
     /**
      * @return void
@@ -119,6 +115,21 @@ class Options extends Component
     }
 
     /**
+     * @param array $options
+     * @return void
+     */
+    protected function setPickups(array $options): void
+    {
+        $this->pickupOptions = $options;
+        // Set PickupOptions on child block
+        $this->emitTo(
+            name: 'monta.hyva.shipping.method.component.pickup',
+            event: 'updateOptions',
+            params: $this->pickupOptions,
+        );
+    }
+
+    /**
      * @return array[]
      */
     public function getTabButtons(): array
@@ -151,9 +162,9 @@ class Options extends Component
         $timeframe = TimeFrame::construct(json_decode($option, true));
 
         $this->emitTo(
-            'monta.hyva.shipping.method.component.delivery',
-            'updateOptions',
-            $timeframe->options,
+            name: 'monta.hyva.shipping.method.component.delivery',
+            event: 'updateOptions',
+            params: $timeframe->options,
         );
         // TODO focus selection visually
     }

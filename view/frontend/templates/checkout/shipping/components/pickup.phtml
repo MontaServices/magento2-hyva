@@ -4,14 +4,12 @@
  * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup $magewire
- * @var \Monta\CheckoutApiWrapper\Objects\PickupPoint[] $pickupOptions
  */
-$pickupOptions = $block->getData($magewire::OPTIONS_COLLECTION)
 ?>
 <div id="pickupPointsList" class="space-y-3">
     <?php
     // TODO clickDeliveryOption
-    foreach ($pickupOptions as $pickup): ?>
+    foreach ($magewire->pickupOptions as $pickup): ?>
         <div class="rounded-tile monta-gray-tile w-full">
             <div class="pickup-option flex-col">
                 <div class="pickup-header flex justify-between space-x-2">

@@ -11,11 +11,6 @@ use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 
 class Delivery extends Component
 {
-    /** @var string
-     * @deprecated
-     * */
-    public const string OPTIONS_COLLECTION = 'option-collection';
-
     protected $listeners = ['updateOptions'];
 
     /** @var ShippingOption[] $selectedDateOptions - Copy of the parent component's property, bound to this component */
