@@ -26,10 +26,10 @@ $pickupOptions = $block->getData($magewire::OPTIONS_COLLECTION)
                     <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
                 </div>
                 <?php
-                if ($pickup->openingTimes): ?>
+                if ($openingTimes = $pickup->getOpeningTimes()): ?>
                     <div class="business-hours text-sm text-gray-500 mt-2 hidden">
                         <?php
-                        foreach ($pickup->getOpeningTimes() as $slot): ?>
+                        foreach ($openingTimes as $slot): ?>
                             <!-- TODO show opening times only on selected point -->
                             <!-- TODO tab character is not rendered-->
                             <p class="text-sm"

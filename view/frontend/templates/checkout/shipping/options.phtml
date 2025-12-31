@@ -47,7 +47,7 @@
                     <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')
                         ->setData(
                             \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::OPTIONS_COLLECTION,
-                            $magewire->selectedDateOptions
+                            $magewire->selectedDateOptions,
                         )
                         ->toHtml() ?>
 
@@ -67,7 +67,7 @@
                     $block->getChildBlock('monta.hyva.shipping.method.component.pickup')
                         ->setData(
                             \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::OPTIONS_COLLECTION,
-                            $magewire->pickupOptions
+                            $magewire->pickupOptions,
                         )
                         ->toHtml() ?>
 

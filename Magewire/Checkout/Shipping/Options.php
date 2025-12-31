@@ -54,7 +54,8 @@ class Options extends Component
     public function __construct(
         protected readonly Session $checkoutSession,
         protected readonly Shipping $shippingHelper,
-    ) {
+    )
+    {
         // Retrieve shipping options from same helper
         // TODO clean up duplicate code with MethodConverter
         $options = $this->shippingHelper->getOptions($this->getQuote());
@@ -162,7 +163,7 @@ class Options extends Component
     public function clickDayTile(string $option)
     {
         // Reconstruct Timeframe from JSON
-        $timeframe = TimeFrame::construct(json_decode($option,true));
+        $timeframe = TimeFrame::construct(json_decode($option, true));
 
         $this->selectedDateOptions = $timeframe->options;
         // TODO focus selection
