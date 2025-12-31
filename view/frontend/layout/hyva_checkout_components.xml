@@ -32,6 +32,8 @@
                     </arguments>
                 </block>
             </block>
+            <block name="monta.hyva.shipping.scripts"
+                   template="Monta_Hyva::page/js/scripts.phtml"/>
         </referenceBlock>
     </body>
 </page>

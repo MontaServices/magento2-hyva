@@ -19,7 +19,7 @@
                 <!-- TODO for some reason Tailwind doesn't work on button element -->
                 <!--TODO if="tabButton.active"-->
                 <button type="button" id="<?= $button['id'] ?>"
-                        class="button btn action w-1/2 py-2 text-white mx-auto"><?= $button['label'] ?>
+                        class="button btn options-tab-button action w-1/2 py-2 text-white mx-auto"><?= $button['label'] ?>
                 </button>
             <?php
             endforeach; ?>
@@ -28,8 +28,7 @@
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->deliveryOptions)): ?>
-                <!-- TODO start all tabs as 'hidden' -->
-                <div class="tabcontent tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent hidden tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons TODO afterRender: clickFirst-->
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5">
                         <?php
@@ -51,7 +50,7 @@
             <!-- Pickup Options -->
             <?php
             if (sizeof($magewire->pickupOptions)): ?>
-                <div class="tabcontent space-y-3 tab-<?= $magewire::PICKUP_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent hidden space-y-3 tab-<?= $magewire::PICKUP_OPTIONS_IDENTIFIER ?>">
                     <!-- Attach map to this element-->
                     <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md hidden">
                         <div id="montaPickupsMap" class="w-full h-[250px] bg-gray-100"></div>
