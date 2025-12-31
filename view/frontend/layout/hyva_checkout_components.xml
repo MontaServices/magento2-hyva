@@ -3,6 +3,7 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <css src="Monta_Checkout::css/tailwind.css"/>
+        <script src="Monta_Checkout::js/model/shared-utils.js"/>
     </head>
     <body>
         <!-- Inject our small Magewire component after the shipping methods list -->
