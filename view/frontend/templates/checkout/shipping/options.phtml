@@ -77,10 +77,10 @@
                             <div class="flex items-center justify-between mb-4">
                                 <p>&larr;</p><!-- TODO onclick prevPickup-->
                                 <div>
-                                    <p class="text-gray-500"><?= $magewire->listButtonText() ?></p>
+                                    <p class="text-gray-500"><?= $escaper->escapeHtml(__('%s of %s pickup points')) ?></p>
                                     <span>&equiv; </span>
                                     <!-- TODO onclick toggleMap -->
-                                    <span><?= __('List'); ?></span>
+                                    <span><?= $escaper->escapeHtml(__('List')); ?></span>
                                 </div>
                                 <p>&rarr;</p><!-- TODO onclick nextPickup-->
                             </div>
@@ -88,7 +88,7 @@
                         else: ?>
                             <!-- TODO onclick toggleMap-->
                             <div>
-                                <span>&#128205; </span><span><?= __('Map'); ?></span>
+                                <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
                             </div>
                         <?php
                         endif; ?>

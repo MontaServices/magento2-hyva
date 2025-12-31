@@ -142,14 +142,6 @@ class Options extends Component
     }
 
     /**
-     * @return string
-     */
-    public function listButtonText(): string
-    {
-        return __('%s of %s pickup points')->getText();
-    }
-
-    /**
      * @param string $option - JSON string of selected day
      * @return void
      */
