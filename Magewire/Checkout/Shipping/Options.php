@@ -26,9 +26,6 @@ class Options extends Component
     /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
     public array $deliveryOptions = [];
 
-    /** @var ShippingOption[] $selectedDateOptions - Shipping options from the selected Timeframe */
-    public array $selectedDateOptions = [];
-
     /** @var PickupPoint[] */
     public array $pickupOptions = [];
 
@@ -64,10 +61,6 @@ class Options extends Component
             $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
             $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
             $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
-        }
-        // TODO until clicking Timeframe is implemented, click the first option Timeframe
-        if ($this->deliveryOptions) {
-            $this->selectedDateOptions = reset($this->deliveryOptions)->options;
         }
     }
 
@@ -165,11 +158,10 @@ class Options extends Component
         // Reconstruct Timeframe from JSON
         $timeframe = TimeFrame::construct(json_decode($option, true));
 
-        $this->selectedDateOptions = $timeframe->options;
         $this->emitTo(
             'monta.hyva.shipping.method.component.delivery',
             'updateOptions',
-            $this->selectedDateOptions
+            $timeframe->options,
         );
         // TODO focus selection visually
     }
