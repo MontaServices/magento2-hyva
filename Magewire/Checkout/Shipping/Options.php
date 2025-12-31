@@ -166,6 +166,11 @@ class Options extends Component
         $timeframe = TimeFrame::construct(json_decode($option, true));
 
         $this->selectedDateOptions = $timeframe->options;
-        // TODO focus selection
+        $this->emitTo(
+            'monta.hyva.shipping.method.component.delivery',
+            'updateOptions',
+            $this->selectedDateOptions
+        );
+        // TODO focus selection visually
     }
 }

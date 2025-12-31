@@ -4,18 +4,16 @@
  * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Delivery $magewire
- * @var \Monta\CheckoutApiWrapper\Objects\ShippingOption[] $deliveryOptions - passed by parent template
  */
-$deliveryOptions = $block->getData($magewire::OPTIONS_COLLECTION);
 ?>
 <div>
     <?php
-    foreach ($deliveryOptions as $deliveryOption): ?>
+    foreach ($magewire->selectedDateOptions as $deliveryOption): ?>
         <div class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto">
             <div class="flex-col">
                 <div class="flex justify-between space-x-2">
                     <div class="flex">
-                        <img data-bind="attr: {src: deliveryOption.imageUrl}" src="<?= $deliveryOption->imageUrl ?>"
+                        <img src="<?= $deliveryOption->imageUrl ?>"
                              class="w-16 h-16 pr-2"/>
                         <div>
                             <p class="font-semibold"><?= $deliveryOption->shipper ?></p>

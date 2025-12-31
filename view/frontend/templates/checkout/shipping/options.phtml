@@ -45,11 +45,8 @@
                     <!-- TODO afterRender: clickFirst -->
                     <!--TODO onClick:clickDeliveryOption-->
                     <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')
-                        ->setData(
-                            \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::OPTIONS_COLLECTION,
-                            $magewire->selectedDateOptions,
-                        )
-                        ->toHtml() ?>
+                        ->toHtml();
+                    ?>
 
                 </div>
             <?php
