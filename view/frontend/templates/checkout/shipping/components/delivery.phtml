@@ -9,7 +9,7 @@
 <div>
     <?php
     // TODO afterRender: clickFirst
-    foreach ($magewire->selectedDateOptions as $deliveryOption): ?>
+    foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
         <div
                 wire:click="clickDeliveryOption('<?= $escaper->escapeHtmlAttr(json_encode($deliveryOption)) ?>')"
                 class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto">

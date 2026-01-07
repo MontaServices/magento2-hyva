@@ -14,7 +14,7 @@ class Delivery extends Component
 {
     protected $listeners = ['updateOptions'];
 
-    /** @var ShippingOption[] $selectedDateOptions - Copy of the parent component's property, bound to this component */
+    /** @var array[] $selectedDateOptions - JSON array Copy of the parent component's property, bound to this component */
     public array $selectedDateOptions = [];
 
     /**
@@ -42,12 +42,21 @@ class Delivery extends Component
      * @param array[] $options - ShippingOptions from selected Timeframe (as array)
      * @return void
      */
-    public function updateOptions(array $options)
+    public function updateOptions(array $options): void
     {
-        // updated array is received as array, convert back to real objects
-        $this->selectedDateOptions = array_map(
+        // updated array is received as array
+        $this->selectedDateOptions = $options;
+    }
+
+    /** Convert array to real objects
+     * TODO tried using magewire magic with `getSelectedDateOptionsProperty` but to no avail
+     * @return ShippingOption[]
+     */
+    public function getSelectedDateOptions(): array
+    {
+        return array_map(
             callback: [ShippingOption::class, 'construct'],
-            array: $options,
+            array: $this->selectedDateOptions,
         );
     }
 }

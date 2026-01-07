@@ -9,7 +9,7 @@
 <div id="pickupPointsList" class="space-y-3">
     <?php
     // TODO clickDeliveryOption
-    foreach ($magewire->pickupOptions as $pickup): ?>
+    foreach ($magewire->getPickupOptions() as $pickup): ?>
         <div class="rounded-tile monta-gray-tile w-full">
             <div class="pickup-option flex-col">
                 <div class="pickup-header flex justify-between space-x-2">
