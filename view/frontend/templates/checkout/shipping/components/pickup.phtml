@@ -10,7 +10,8 @@
     <?php
     // TODO clickDeliveryOption
     foreach ($magewire->getPickupOptions() as $pickup): ?>
-        <div class="rounded-tile monta-gray-tile w-full">
+        <div wire:click="clickDeliveryOption('<?= $escaper->escapeHtml(json_encode($pickup)) ?>')"
+             class="rounded-tile monta-gray-tile w-full">
             <div class="pickup-option flex-col">
                 <div class="pickup-header flex justify-between space-x-2">
                     <div class="flex">
