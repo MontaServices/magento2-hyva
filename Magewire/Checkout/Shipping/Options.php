@@ -44,6 +44,9 @@ class Options extends Component
     /** @var bool - Whether the block should be visible */
     public bool $show = false;
 
+    /** @var string|null - State property for remembering selected date */
+    public ?string $selectedTimeFrameDate = null;
+
     /**
      * @var string[]
      */
@@ -74,7 +77,7 @@ class Options extends Component
     {
         if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
             // Retrieve shipping options from same helper
-            // TODO clean up duplicate code with MethodConverter
+            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date
             $options = $this->shippingHelper->getOptions($this->getQuote());
             if ($options) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
@@ -178,6 +181,9 @@ class Options extends Component
     {
         // Reconstruct Timeframe from JSON
         $timeframe = TimeFrame::construct(json_decode($option, true));
+
+        // Set this as selected timeframe
+        $this->selectedTimeFrameDate = $timeframe->getDate();
 
         $this->emitTo(
             name: 'monta.hyva.shipping.method.component.delivery',
