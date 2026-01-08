@@ -27,12 +27,12 @@
         <div class="tabs">
             <!-- Delivery Options -->
             <?php
-            if (sizeof($magewire->deliveryOptions)): ?>
+            if (sizeof($magewire->getDeliveryOptions())): ?>
                 <div class="tabcontent hidden tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons TODO afterRender: clickFirst-->
-                    <div class="flex max-w-md mx-auto justify-center gap-5 mb-5">
+                    <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first">
                         <?php
-                        foreach ($magewire->deliveryOptions as $option): ?>
+                        foreach ($magewire->getDeliveryOptions() as $option): ?>
                             <div wire:click="clickDayTile('<?= $escaper->escapeHtmlAttr(json_encode($option)) ?>')"
                                  class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus">
                                 <p class="font-semibold py-2"><?= $option->day ?></p>

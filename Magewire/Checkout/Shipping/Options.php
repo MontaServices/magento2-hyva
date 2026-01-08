@@ -63,16 +63,6 @@ class Options extends Component
         protected readonly Shipping $shippingHelper,
     )
     {
-        // Retrieve shipping options from same helper
-        // TODO clean up duplicate code with MethodConverter
-        $options = $this->shippingHelper->getOptions($this->getQuote());
-        if ($options) {
-            $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
-
-            $this->setPickups($options[PickupPoint::PICKUP_OPTIONS_KEY] ?? []);
-            $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
-            $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
-        }
     }
 
     /**
@@ -82,7 +72,17 @@ class Options extends Component
      */
     public function mount(): void
     {
-        $this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod());
+        if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
+            // Retrieve shipping options from same helper
+            // TODO clean up duplicate code with MethodConverter
+            $options = $this->shippingHelper->getOptions($this->getQuote());
+            if ($options) {
+                $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
+                $this->setPickups($options[PickupPoint::PICKUP_OPTIONS_KEY] ?? []);
+                $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
+                $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
+            }
+        }
     }
 
     /**
@@ -98,10 +98,11 @@ class Options extends Component
     /** Listener for selecting Shipping method
      *
      * @param array|null $method
+     * @return bool
      */
-    public function onShippingMethodSelected(array $method = null): void
+    public function onShippingMethodSelected(array $method = null): bool
     {
-        $this->show = $this->isMonta($method['method']);
+        return $this->isMonta($method['method']);
     }
 
     /**
@@ -140,16 +141,33 @@ class Options extends Component
                 "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
                 "label" => __("Delivery"),
                 'active' => false,
-                // TODO callback: utility.clickMode(this.id, event);
             ],
 
             [
                 "id" => self::PICKUP_OPTIONS_IDENTIFIER,
                 "label" => __("Pickup"),
                 'active' => false,
-                // TODO callback: utility.clickMode(this.id, event);
             ],
         ];
+    }
+
+    /** Get Timeframes (name for consistency)
+     *
+     * @return TimeFrame[]
+     */
+    public function getDeliveryOptions(): array
+    {
+        // If somehow this array are just arrays
+        if (is_array(array_first($this->deliveryOptions))) {
+            // Convert array into objects
+            return array_map(
+                callback: [TimeFrame::class, 'construct'],
+                array: $this->deliveryOptions,
+            );
+        } else {
+            // Otherwise it's already a correct array
+            return $this->deliveryOptions;
+        }
     }
 
     /**
