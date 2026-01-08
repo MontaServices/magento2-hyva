@@ -17,6 +17,9 @@ class Delivery extends Component
     /** @var array[] $selectedDateOptions - JSON array Copy of the parent component's property, bound to this component */
     public array $selectedDateOptions = [];
 
+    /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
+    public ?string $selectedOptionCode = null;
+
     /**
      * @param Quote $quoteHelper
      */
@@ -35,7 +38,11 @@ class Delivery extends Component
      */
     public function clickDeliveryOption(string $deliveryOption)
     {
-        $this->quoteHelper->setOption($deliveryOption);
+        // Set to quote, return converted object
+        if ($option = $this->quoteHelper->setOption(optionJson: $deliveryOption, return: true)) {
+            // TODO also set this on Mount when previously chosen
+            $this->selectedOptionCode = $option->getCode();
+        }
     }
 
     /**
@@ -49,7 +56,7 @@ class Delivery extends Component
     }
 
     /** Convert array to real objects
-     * TODO tried using magewire magic with `getSelectedDateOptionsProperty` but to no avail
+     *
      * @return ShippingOption[]
      */
     public function getSelectedDateOptions(): array

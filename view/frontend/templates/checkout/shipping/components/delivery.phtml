@@ -12,7 +12,9 @@
     foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
         <div
                 wire:click="clickDeliveryOption('<?= $escaper->escapeHtmlAttr(json_encode($deliveryOption)) ?>')"
-                class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto">
+                class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto
+                <?= // conditionally add focus class to the selected option (similar to `focusSelection()`)
+                $magewire->selectedOptionCode == $deliveryOption->getCode() ? 'monta-blue-focus' : ''; ?>">
             <div class="flex-col">
                 <div class="flex justify-between space-x-2">
                     <div class="flex">
