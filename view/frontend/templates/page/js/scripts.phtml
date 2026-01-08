@@ -16,6 +16,11 @@
                     window.sharedUtils.clickMode(btn.id, event);
                 });
             });
+
+            // Bind clickFirst to those elements
+            document.querySelectorAll('.click-first').forEach(element => {
+                window.sharedUtils.clickFirst(element);
+            });
         });
     </script><?php
 $hyvaCsp->registerInlineScript() ?>

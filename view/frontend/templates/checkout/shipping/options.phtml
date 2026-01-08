@@ -12,8 +12,7 @@
     <?php
     if ($magewire->show): ?>
         <!-- Buttons-->
-        <!--TODO afterRender:clickFirst-->
-        <div class="flex mx-auto mb-5">
+        <div class="flex mx-auto mb-5 click-first">
             <?php
             foreach ($magewire->getTabButtons() as $button): ?>
                 <!-- TODO for some reason Tailwind doesn't work on button element -->
@@ -29,7 +28,7 @@
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
                 <div class="tabcontent tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
-                    <!-- Day buttons TODO afterRender: clickFirst-->
+                    <!-- Day buttons -->
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
