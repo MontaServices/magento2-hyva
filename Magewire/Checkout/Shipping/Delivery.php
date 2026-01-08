@@ -7,8 +7,8 @@
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
 use Magewirephp\Magewire\Component;
+use Monta\Checkout\Helper\Quote;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
-use Monta\Hyva\Helper\Quote;
 
 class Delivery extends Component
 {
