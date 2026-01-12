@@ -61,6 +61,7 @@ class Delivery extends Component
      */
     public function getSelectedDateOptions(): array
     {
+        // Magewire serializes objects into arrays, convert back
         return array_map(
             callback: [ShippingOption::class, 'construct'],
             array: $this->selectedDateOptions,

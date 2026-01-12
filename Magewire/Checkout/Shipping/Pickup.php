@@ -27,9 +27,14 @@ class Pickup extends Delivery
      */
     public function getPickupOptions(): array
     {
-        return array_map(
-            callback: [PickupPoint::class, 'construct'],
-            array: $this->pickupOptions,
-        );
+        // Magewire serializes objects into array on rerender
+        if (is_array(array_first($this->pickupOptions))) {
+            return array_map(
+                callback: [PickupPoint::class, 'construct'],
+                array: $this->pickupOptions,
+            );
+        } else {
+            return $this->pickupOptions;
+        }
     }
 }
