@@ -1,0 +1,26 @@
+<?php
+/** Inline code not allowed, add event handlers to classes
+ *
+ * @author Jacco.Amersfoort <jacco.amersfoort@monta.nl>
+ * @created 12/31/2025 15:57
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ */
+?>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Select all tab Buttons
+            document.querySelectorAll('.options-tab-button').forEach(btn => {
+                btn.addEventListener('click', (event) => {
+                    window.sharedUtils.clickMode(btn.id, event);
+                });
+            });
+
+            // Bind clickFirst to those elements
+            document.querySelectorAll('.click-first').forEach(element => {
+                window.sharedUtils.clickFirst(element);
+            });
+        });
+    </script><?php
+$hyvaCsp->registerInlineScript() ?>

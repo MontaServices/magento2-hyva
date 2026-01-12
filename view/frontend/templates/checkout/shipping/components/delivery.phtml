@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Monta\Hyva\Magewire\Checkout\Shipping\Delivery $magewire
+ */
+?>
+<div>
+    <?php
+    // TODO afterRender: clickFirst
+    foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
+        <div
+                wire:click="clickDeliveryOption('<?= $escaper->escapeHtmlAttr(json_encode($deliveryOption)) ?>')"
+                class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto
+                <?= // conditionally add focus class to the selected option (similar to `focusSelection()`)
+                $magewire->selectedOptionCode == $deliveryOption->getCode() ? 'monta-blue-focus' : ''; ?>">
+            <div class="flex-col">
+                <div class="flex justify-between space-x-2">
+                    <div class="flex">
+                        <img src="<?= $deliveryOption->imageUrl ?>"
+                             class="w-16 h-16 pr-2"/>
+                        <div>
+                            <p class="font-semibold"><?= $deliveryOption->shipper ?></p>
+                            <p class="text-sm text-gray-600"><?= $deliveryOption->displayNameShort ?></p>
+                        </div>
+                    </div>
+                    <p class="text-md font-medium"><?= $deliveryOption->priceFormatted ?></p>
+                </div>
+                <!-- ShipperOptions -->
+                <?php
+                if ($deliveryOption->getShipperOptions()): ?>
+                    <div class="shipperoptions">
+                        <p class="font-semibold mb-2"><?= $escaper->escapeHtml(__("Extra shipperoptions:")) ?></p>
+                        <div class="space-y-2">
+                            <!-- TODO border color should match tile border color -->
+                            <?php
+                            foreach ($deliveryOption->getShipperOptions() as $shipperOption): ?>
+                                <label class="flex justify-between rounded-tile p-2 monta-gray-tile hover:monta-blue-focus">
+                                    <div class="items-center space-x-2">
+                                        <!-- TODO click parents[2].clickShipperOption-->
+                                        <input type="checkbox" name="<?= $shipperOption->getCode() ?>"/>
+                                        <span><?= $shipperOption->description ?></span>
+                                    </div>
+                                    <span class="text-md">+ <?= $shipperOption->priceFormatted ?></span>
+                                </label>
+                            <?php
+                            endforeach; ?>
+                        </div>
+                    </div>
+                <?php
+                endif; ?>
+            </div>
+        </div>
+    <?php
+    endforeach; ?>
+</div>

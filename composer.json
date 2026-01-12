@@ -2,7 +2,9 @@
   "name": "monta/hyva",
   "description": "Companion module for Monta Checkout on Hyva projects.",
   "require": {
-    "php": "^8.3"
+    "php": "^8.3",
+    "monta/checkout": "*",
+    "hyva-themes/magento2-hyva-checkout": "*"
   },
   "type": "magento2-module",
   "minimum-stability": "stable",
@@ -11,7 +13,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "Montap\\Hyva\\": ""
+      "Monta\\Hyva\\": ""
     }
   }
 }

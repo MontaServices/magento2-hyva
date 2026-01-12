@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Monta_Checkout::css/tailwind.css"/>
+        <script src="Monta_Checkout::js/model/shared-utils.js"/>
+    </head>
+    <body>
+        <!-- Inject our small Magewire component after the shipping methods list -->
+        <referenceBlock name="checkout.shipping.methods.after">
+            <block name="monta.hyva.shipping.method.options"
+                   template="Monta_Hyva::checkout/shipping/options.phtml">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Monta\Hyva\Magewire\Checkout\Shipping\Options
+                    </argument>
+                </arguments>
+                <block name="monta.hyva.shipping.method.component.delivery"
+                       template="Monta_Hyva::checkout/shipping/components/delivery.phtml">
+                    <arguments>
+                        <argument name="magewire" xsi:type="object">
+                            Monta\Hyva\Magewire\Checkout\Shipping\Delivery
+                        </argument>
+                    </arguments>
+                </block>
+                <block name="monta.hyva.shipping.method.component.pickup"
+                       template="Monta_Hyva::checkout/shipping/components/pickup.phtml">
+                    <arguments>
+                        <argument name="magewire" xsi:type="object">
+                            Monta\Hyva\Magewire\Checkout\Shipping\Pickup
+                        </argument>
+                    </arguments>
+                </block>
+            </block>
+            <block name="monta.hyva.shipping.scripts"
+                   template="Monta_Hyva::page/js/scripts.phtml"/>
+        </referenceBlock>
+    </body>
+</page>
