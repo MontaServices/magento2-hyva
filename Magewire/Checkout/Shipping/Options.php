@@ -105,7 +105,7 @@ class Options extends Component
      */
     public function onShippingMethodSelected(array $method = null): bool
     {
-        return $this->isMonta($method['method']);
+        return $this->isMonta($method[\Magento\Quote\Model\Shipping::METHOD] ?? null);
     }
 
     /**
@@ -160,15 +160,15 @@ class Options extends Component
      */
     public function getDeliveryOptions(): array
     {
-        // If somehow this array are just arrays
+        // Magewire converts property into array of arrays on rerender
         if (is_array(array_first($this->deliveryOptions))) {
-            // Convert array into objects
+            // Run Timeframe constructor on each array then
             return array_map(
                 callback: [TimeFrame::class, 'construct'],
                 array: $this->deliveryOptions,
             );
         } else {
-            // Otherwise it's already a correct array
+            // Otherwise just return the correct array
             return $this->deliveryOptions;
         }
     }
