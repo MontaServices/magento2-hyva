@@ -176,7 +176,7 @@ class Options extends Component
     /** Magic method runs when model changes value in frontend
      * basically 'clickDayTile'
      *
-     * @param string $date - New value is passed
+     * @param string $date - New value passed by request
      * @return string - Updated value
      */
     public function updatingSelectedTimeFrameDate(string $date): string
@@ -193,6 +193,8 @@ class Options extends Component
             event: 'updateOptions',
             params: $timeframe->options,
         );
-        // TODO focus selection visually
+
+        // Magic method MUST return value to continue updating property
+        return $date;
     }
 }
