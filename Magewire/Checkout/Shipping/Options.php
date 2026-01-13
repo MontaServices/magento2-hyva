@@ -173,22 +173,21 @@ class Options extends Component
         }
     }
 
-    /**
-     * @return void
+    /** Magic method runs when model changes value in frontend
+     * basically 'clickDayTile'
+     *
+     * @param string $date - New value is passed
+     * @return string - Updated value
      */
-    public function clickDayTile()
+    public function updatingSelectedTimeFrameDate(string $date): string
     {
-        dd(__METHOD__,
-            get_class_methods($this->getRequest()),
-            $this->selectedTimeFrameDate,
+        // Find Timeframe for this date (can be only one)
+        $timeframe = array_find(
+            array: $this->getDeliveryOptions(),
+            callback: fn($option) => $option->getDate() == $date,
         );
 
-        // Reconstruct Timeframe from JSON
-        $timeframe = TimeFrame::construct(json_decode($option, true));
-
-        // Set this as selected timeframe
-        $this->selectedTimeFrameDate = $timeframe->getDate();
-
+        // Update child component options
         $this->emitTo(
             name: 'monta.hyva.shipping.method.component.delivery',
             event: 'updateOptions',
