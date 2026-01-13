@@ -174,11 +174,15 @@ class Options extends Component
     }
 
     /**
-     * @param string $option - JSON string of selected day
      * @return void
      */
-    public function clickDayTile(string $option)
+    public function clickDayTile()
     {
+        dd(__METHOD__,
+            get_class_methods($this->getRequest()),
+            $this->selectedTimeFrameDate,
+        );
+
         // Reconstruct Timeframe from JSON
         $timeframe = TimeFrame::construct(json_decode($option, true));
 

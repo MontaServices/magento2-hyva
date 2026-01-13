@@ -32,11 +32,13 @@
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <div wire:click="clickDayTile('<?= $escaper->escapeHtmlAttr(json_encode($option)) ?>')"
+                            <div x-data="{ option: $wire.entangle('<?= $escaper->escapeHtmlAttr(json_encode($option)) ?>') }">
+                            <div wire:click="clickDayTile"
                                  class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus
                                     <?= $magewire->selectedTimeFrameDate == $option->date ? 'monta-blue-focus' : '' ?>">
                                 <p class="font-semibold py-2"><?= $option->day ?></p>
                                 <p class="text-sm text-gray-500"><?= $option->dateFormatted ?></p>
+                            </div>
                             </div>
                         <?php
                         endforeach; ?>
