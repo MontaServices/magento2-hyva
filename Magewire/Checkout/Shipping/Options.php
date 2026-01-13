@@ -143,13 +143,13 @@ class Options extends Component
                 // id is also the name of the property this corresponds to
                 "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
                 "label" => __("Delivery"),
-                'active' => false,
+                'active' => (sizeof($this->deliveryOptions) > 0),
             ],
 
             [
                 "id" => self::PICKUP_OPTIONS_IDENTIFIER,
                 "label" => __("Pickup"),
-                'active' => false,
+                'active' => (sizeof($this->pickupOptions) > 0),
             ],
         ];
     }
