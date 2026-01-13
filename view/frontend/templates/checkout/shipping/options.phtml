@@ -36,7 +36,7 @@
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
                             <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus <?=
                             $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
-                                <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio"
+                                <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
                                 <p class="font-semibold py-2"><?= $option->getDay() ?></p>
                                 <p class="text-sm text-gray-500"><?= $option->getDateFormatted() ?></p>
