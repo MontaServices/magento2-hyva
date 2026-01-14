@@ -10,31 +10,19 @@ use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
 {
-    /** @var array[] $pickupOptions - TODO why not use same property name as parent */
-    public array $pickupOptions = [];
-
-    /**
-     * @param array[] $options - Passed by event as JSON array
-     * @return void
-     */
-    public function updateOptions(array $options): void
-    {
-        $this->pickupOptions = $options;
-    }
-
     /**
      * @return PickupPoint[]
      */
     public function getPickupOptions(): array
     {
         // Magewire serializes objects into array on rerender
-        if (is_array(array_first($this->pickupOptions))) {
+        if (is_array(array_first($this->options))) {
             return array_map(
                 callback: [PickupPoint::class, 'construct'],
-                array: $this->pickupOptions,
+                array: $this->options,
             );
         } else {
-            return $this->pickupOptions;
+            return $this->options;
         }
     }
 }

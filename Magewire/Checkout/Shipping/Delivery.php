@@ -15,10 +15,10 @@ class Delivery extends Component
     protected $listeners = ['updateOptions'];
 
     /**
-     * @var array[] $selectedDateOptions - Array of arrays of Shipping Options for the selected Timeframe.
+     * @var array[] $options - Array of arrays of Shipping Options for the selected Timeframe.
      * Copy of parent property but bound to this component.
      */
-    public array $selectedDateOptions = [];
+    public array $options = [];
 
     /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
     public ?string $selectedOptionCode = null;
@@ -33,6 +33,7 @@ class Delivery extends Component
     }
 
     /** Save selected Option JSON string to quote
+     * Works on Pickup as well, since properties are the same
      *
      * @param string $deliveryOptionCode - New value passed by browser
      * @return string - Magic method must return new value
@@ -44,7 +45,7 @@ class Delivery extends Component
         // First find the selected option in array by code
         $option = array_find(
         // call flat array directly instead of converting back and forth
-            array: $this->selectedDateOptions,
+            array: $this->options,
             callback: fn($option) => $option['code'] == $deliveryOptionCode);
 
         // Save to quote
@@ -60,7 +61,7 @@ class Delivery extends Component
     public function updateOptions(array $options): void
     {
         // updated array is received as array
-        $this->selectedDateOptions = $options;
+        $this->options = $options;
     }
 
     /** Convert array to real objects
@@ -72,7 +73,7 @@ class Delivery extends Component
         // Magewire serializes objects into arrays, convert back
         return array_map(
             callback: [ShippingOption::class, 'construct'],
-            array: $this->selectedDateOptions,
+            array: $this->options,
         );
     }
 }
