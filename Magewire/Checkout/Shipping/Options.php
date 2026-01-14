@@ -126,11 +126,7 @@ class Options extends Component
     {
         $this->pickupOptions = $options;
         // Set PickupOptions on child block
-        $this->emitTo(
-            name: 'monta.hyva.shipping.method.component.pickup',
-            event: 'updateOptions',
-            params: $this->pickupOptions,
-        );
+        $this->emitChildComponent('monta.hyva.shipping.method.component.pickup', $this->pickupOptions);
     }
 
     /**
@@ -188,13 +184,24 @@ class Options extends Component
         );
 
         // Update child component options
-        $this->emitTo(
-            name: 'monta.hyva.shipping.method.component.delivery',
-            event: 'updateOptions',
-            params: $timeframe->options,
-        );
+        $this->emitChildComponent('monta.hyva.shipping.method.component.delivery', $timeframe->options);
 
         // Magic method MUST return value to continue updating property
         return $date;
+    }
+
+    /** Update options on child component
+     *
+     * @param string $childName
+     * @param array $data
+     * @return void
+     */
+    protected function emitChildComponent(string $childName, array $data): void
+    {
+        $this->emitTo(
+            name: $childName,
+            event: 'updateOptions',
+            params: $data,
+        );
     }
 }
