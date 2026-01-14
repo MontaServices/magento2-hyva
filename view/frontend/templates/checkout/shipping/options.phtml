@@ -16,11 +16,13 @@
             <?php
             foreach ($magewire->getTabButtons() as $button): ?>
                 <!-- TODO for some reason Tailwind doesn't work on button element -->
-                <!--TODO if="tabButton.active"-->
-                <button type="button" id="<?= $button['id'] ?>"
-                        class="button btn options-tab-button action w-1/2 py-2 text-white mx-auto"><?= $button['label'] ?>
-                </button>
-            <?php
+                <?php
+                if ($button['active']): ?>
+                    <button type="button" id="<?= $button['id'] ?>"
+                            class="button btn options-tab-button action w-1/2 py-2 text-white mx-auto"><?= $button['label'] ?>
+                    </button>
+                <?php
+                endif;
             endforeach; ?>
         </div>
         <div class="tabs">
@@ -32,12 +34,13 @@
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <div wire:click="clickDayTile('<?= $escaper->escapeHtmlAttr(json_encode($option)) ?>')"
-                                 class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus
-                                    <?= $magewire->selectedTimeFrameDate == $option->date ? 'monta-blue-focus' : '' ?>">
-                                <p class="font-semibold py-2"><?= $option->day ?></p>
-                                <p class="text-sm text-gray-500"><?= $option->dateFormatted ?></p>
-                            </div>
+                            <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus <?=
+                            $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
+                                <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio hidden"
+                                       value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
+                                <p class="font-semibold py-2"><?= $option->getDay() ?></p>
+                                <p class="text-sm text-gray-500"><?= $option->getDateFormatted() ?></p>
+                            </label>
                         <?php
                         endforeach; ?>
                     </div>

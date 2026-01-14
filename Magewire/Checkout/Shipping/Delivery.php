@@ -14,7 +14,10 @@ class Delivery extends Component
 {
     protected $listeners = ['updateOptions'];
 
-    /** @var array[] $selectedDateOptions - JSON array Copy of the parent component's property, bound to this component */
+    /**
+     * @var array[] $selectedDateOptions - Array of arrays of Shipping Options for the selected Timeframe.
+     * Copy of parent property but bound to this component.
+     */
     public array $selectedDateOptions = [];
 
     /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
@@ -31,18 +34,23 @@ class Delivery extends Component
 
     /** Save selected Option JSON string to quote
      *
-     * @param string $deliveryOption
-     * @return void
+     * @param string $deliveryOptionCode - New value passed by browser
+     * @return string - Magic method must return new value
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function clickDeliveryOption(string $deliveryOption)
+    public function updatingSelectedOptionCode(string $deliveryOptionCode)
     {
-        // Set to quote, return converted object
-        if ($option = $this->quoteHelper->setOption(optionJson: $deliveryOption, return: true)) {
-            // TODO also set this on Mount when previously chosen
-            $this->selectedOptionCode = $option->getCode();
-        }
+        // First find the selected option in array by code
+        $option = array_find(
+        // call flat array directly instead of converting back and forth
+            array: $this->selectedDateOptions,
+            callback: fn($option) => $option['code'] == $deliveryOptionCode);
+
+        // Save to quote
+        $this->quoteHelper->setOption(json_encode($option));
+
+        return $deliveryOptionCode;
     }
 
     /**

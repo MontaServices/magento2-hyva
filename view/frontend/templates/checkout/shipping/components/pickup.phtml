@@ -8,38 +8,40 @@
 ?>
 <div id="pickupPointsList" class="space-y-3">
     <?php
-    // TODO clickDeliveryOption
     foreach ($magewire->getPickupOptions() as $pickup): ?>
-        <div wire:click="clickDeliveryOption('<?= $escaper->escapeHtml(json_encode($pickup)) ?>')"
-             class="rounded-tile monta-gray-tile w-full">
-            <div class="pickup-option flex-col">
-                <div class="pickup-header flex justify-between space-x-2">
-                    <div class="flex">
-                        <img src="<?= $pickup->imageUrl ?>" class="pickup-logo w-16 h-16 pr-2">
-                        <div class="pickup-container">
-                            <strong><?= $pickup->getCompany() ?></strong>
-                            <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
-                            <p class="text-sm text-gray-600"><?= $pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber ?></p>
+        <label>
+            <div class="rounded-tile monta-gray-tile w-full">
+                <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
+                       value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
+                <div class="pickup-option flex-col">
+                    <div class="pickup-header flex justify-between space-x-2">
+                        <div class="flex">
+                            <img src="<?= $pickup->imageUrl ?>" class="pickup-logo w-16 h-16 pr-2">
+                            <div class="pickup-container">
+                                <strong><?= $pickup->getCompany() ?></strong>
+                                <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
+                                <p class="text-sm text-gray-600"><?= $pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber ?></p>
+                            </div>
                         </div>
+                        <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
                     </div>
-                    <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
+                    <?php
+                    if ($openingTimes = $pickup->getOpeningTimes()): ?>
+                        <div class="business-hours text-sm text-gray-500 mt-2 hidden">
+                            <?php
+                            foreach ($openingTimes as $slot): ?>
+                                <!-- TODO show opening times only on selected point -->
+                                <!-- TODO tab character is not rendered-->
+                                <p class="text-sm"
+                                ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
+                            <?php
+                            endforeach; ?>
+                        </div>
+                    <?php
+                    endif; ?>
                 </div>
-                <?php
-                if ($openingTimes = $pickup->getOpeningTimes()): ?>
-                    <div class="business-hours text-sm text-gray-500 mt-2 hidden">
-                        <?php
-                        foreach ($openingTimes as $slot): ?>
-                            <!-- TODO show opening times only on selected point -->
-                            <!-- TODO tab character is not rendered-->
-                            <p class="text-sm"
-                            ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
-                        <?php
-                        endforeach; ?>
-                    </div>
-                <?php
-                endif; ?>
             </div>
-        </div>
+        </label>
     <?php
     endforeach; ?>
 </div>

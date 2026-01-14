@@ -143,13 +143,13 @@ class Options extends Component
                 // id is also the name of the property this corresponds to
                 "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
                 "label" => __("Delivery"),
-                'active' => false,
+                'active' => (sizeof($this->deliveryOptions) > 0),
             ],
 
             [
                 "id" => self::PICKUP_OPTIONS_IDENTIFIER,
                 "label" => __("Pickup"),
-                'active' => false,
+                'active' => (sizeof($this->pickupOptions) > 0),
             ],
         ];
     }
@@ -173,23 +173,28 @@ class Options extends Component
         }
     }
 
-    /**
-     * @param string $option - JSON string of selected day
-     * @return void
+    /** Magic method runs when model changes value in frontend
+     * basically 'clickDayTile'
+     *
+     * @param string $date - New value passed by request
+     * @return string - Updated value
      */
-    public function clickDayTile(string $option)
+    public function updatingSelectedTimeFrameDate(string $date): string
     {
-        // Reconstruct Timeframe from JSON
-        $timeframe = TimeFrame::construct(json_decode($option, true));
+        // Find Timeframe for this date (can be only one)
+        $timeframe = array_find(
+            array: $this->getDeliveryOptions(),
+            callback: fn($option) => $option->getDate() == $date,
+        );
 
-        // Set this as selected timeframe
-        $this->selectedTimeFrameDate = $timeframe->getDate();
-
+        // Update child component options
         $this->emitTo(
             name: 'monta.hyva.shipping.method.component.delivery',
             event: 'updateOptions',
             params: $timeframe->options,
         );
-        // TODO focus selection visually
+
+        // Magic method MUST return value to continue updating property
+        return $date;
     }
 }
