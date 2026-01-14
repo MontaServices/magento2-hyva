@@ -72,15 +72,13 @@
                                 <div>
                                     <p class="text-gray-500"><?= $escaper->escapeHtml(__('%s of %s pickup points')) ?></p>
                                     <span>&equiv; </span>
-                                    <!-- TODO onclick toggleMap -->
-                                    <span><?= $escaper->escapeHtml(__('List')); ?></span>
+                                    <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
                                 </div>
                                 <p>&rarr;</p><!-- TODO onclick nextPickup-->
                             </div>
                         <?php
                         else: ?>
-                            <!-- TODO onclick toggleMap-->
-                            <div>
+                            <div wire:click="toggleMap">
                                 <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
                             </div>
                         <?php

@@ -192,6 +192,16 @@ class Options extends Component
         return $date;
     }
 
+    /** Toggle Map or List view
+     *
+     * @return void
+     */
+    public function toggleMap(): void
+    {
+        $this->showingMap = !$this->showingMap;
+        // TODO when becomes true, bind Google Map to the element
+    }
+
     /** Update options on child component
      *
      * @param string $childName
