@@ -8,13 +8,12 @@
 ?>
 <div>
     <?php
-    // TODO afterRender: clickFirst
+    // TODO class 'click-first' but not yet loaded then
     foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
         <label>
-            <div
-                    class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto <?=
-                    // conditionally add focus class to the selected option (similar to `focusSelection()`)
-                    $magewire->selectedOptionCode == $deliveryOption->getCode() ? 'monta-blue-focus' : ''; ?>">
+            <div class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto <?=
+            // conditionally add focus class to the selected option (similar to `focusSelection()`)
+            $magewire->selectedOptionCode == $deliveryOption->getCode() ? 'monta-blue-focus' : ''; ?>">
                 <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
                        value="<?= $escaper->escapeHtmlAttr($deliveryOption->getCode()) ?>"/>
                 <div class="flex-col">

@@ -43,7 +43,7 @@ class Delivery extends Component
     {
         // First find the selected option in array by code
         $option = array_find(
-        // call flat array directly instead of converting to object and then back to JSON
+        // call flat array directly instead of converting back and forth
             array: $this->selectedDateOptions,
             callback: fn($option) => $option['code'] == $deliveryOptionCode);
 
