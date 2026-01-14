@@ -50,41 +50,10 @@
                 </div>
             <?php
             endif; ?>
-            <!-- Pickup Options -->
+            <!-- Pickup Options (entire tab is inside childblock, unlike regular module -->
             <?php
             if (sizeof($magewire->pickupOptions)): ?>
-                <div class="tabcontent hidden space-y-3 tab-<?= $magewire::PICKUP_OPTIONS_IDENTIFIER ?>">
-                    <!-- Attach map to this element-->
-                    <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md hidden">
-                        <div id="montaPickupsMap" class="w-full h-[250px] bg-gray-100"></div>
-                    </div>
-                    <!-- List of PickupOptions -->
-                    <?= $block->getChildBlock('monta.hyva.shipping.method.component.pickup')->toHtml() ?>
-
-                    <!-- Button to switch map or list -->
-                    <div class="text-center text-blue-500">
-                        <!-- When in List mode-->
-                        <?php
-                        if ($magewire->showingMap): ?>
-                            <!-- When in Maps mode -->
-                            <div class="flex items-center justify-between mb-4">
-                                <p>&larr;</p><!-- TODO onclick prevPickup-->
-                                <div>
-                                    <p class="text-gray-500"><?= $escaper->escapeHtml(__('%s of %s pickup points')) ?></p>
-                                    <span>&equiv; </span>
-                                    <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
-                                </div>
-                                <p>&rarr;</p><!-- TODO onclick nextPickup-->
-                            </div>
-                        <?php
-                        else: ?>
-                            <div wire:click="toggleMap">
-                                <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
-                            </div>
-                        <?php
-                        endif; ?>
-                    </div>
-                </div>
+                <?= $block->getChildBlock('monta.hyva.shipping.method.component.pickup')->toHtml() ?>
             <?php
             endif; ?>
         </div>

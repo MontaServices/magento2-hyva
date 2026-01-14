@@ -6,42 +6,73 @@
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup $magewire
  */
 ?>
-<div id="pickupPointsList" class="space-y-3">
-    <?php
-    foreach ($magewire->getPickupOptions() as $pickup): ?>
-        <label>
-            <div class="rounded-tile monta-gray-tile w-full">
-                <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
-                       value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
-                <div class="pickup-option flex-col">
-                    <div class="pickup-header flex justify-between space-x-2">
-                        <div class="flex">
-                            <img src="<?= $pickup->imageUrl ?>" class="pickup-logo w-16 h-16 pr-2">
-                            <div class="pickup-container">
-                                <strong><?= $pickup->getCompany() ?></strong>
-                                <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
-                                <p class="text-sm text-gray-600"><?= $pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber ?></p>
+<div class="tabcontent hidden space-y-3 tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Options::PICKUP_OPTIONS_IDENTIFIER ?>">
+    <!-- Attach map to this element-->
+    <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md hidden">
+        <div id="montaPickupsMap" class="w-full h-[250px] bg-gray-100"></div>
+    </div>
+    <!-- List of PickupOptions -->
+    <div id="pickupPointsList" class="space-y-3">
+        <?php
+        foreach ($magewire->getPickupOptions() as $pickup): ?>
+            <label>
+                <div class="rounded-tile monta-gray-tile w-full">
+                    <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
+                           value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
+                    <div class="pickup-option flex-col">
+                        <div class="pickup-header flex justify-between space-x-2">
+                            <div class="flex">
+                                <img src="<?= $pickup->imageUrl ?>" class="pickup-logo w-16 h-16 pr-2">
+                                <div class="pickup-container">
+                                    <strong><?= $pickup->getCompany() ?></strong>
+                                    <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
+                                    <p class="text-sm text-gray-600"><?= $pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber ?></p>
+                                </div>
                             </div>
+                            <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
                         </div>
-                        <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
+                        <?php
+                        if ($openingTimes = $pickup->getOpeningTimes()): ?>
+                            <div class="business-hours text-sm text-gray-500 mt-2 hidden">
+                                <?php
+                                foreach ($openingTimes as $slot): ?>
+                                    <!-- TODO show opening times only on selected point -->
+                                    <!-- TODO tab character is not rendered-->
+                                    <p class="text-sm"
+                                    ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
+                                <?php
+                                endforeach; ?>
+                            </div>
+                        <?php
+                        endif; ?>
                     </div>
-                    <?php
-                    if ($openingTimes = $pickup->getOpeningTimes()): ?>
-                        <div class="business-hours text-sm text-gray-500 mt-2 hidden">
-                            <?php
-                            foreach ($openingTimes as $slot): ?>
-                                <!-- TODO show opening times only on selected point -->
-                                <!-- TODO tab character is not rendered-->
-                                <p class="text-sm"
-                                ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
-                            <?php
-                            endforeach; ?>
-                        </div>
-                    <?php
-                    endif; ?>
                 </div>
+            </label>
+        <?php
+        endforeach; ?>
+    </div>
+
+    <!-- Button to switch map or list -->
+    <div class="text-center text-blue-500">
+        <!-- When in List mode-->
+        <?php
+        if ($magewire->showingMap): ?>
+            <!-- When in Maps mode -->
+            <div class="flex items-center justify-between mb-4">
+                <p>&larr;</p><!-- TODO onclick prevPickup-->
+                <div>
+                    <p class="text-gray-500"><?= $escaper->escapeHtml(__('%s of %s pickup points')) ?></p>
+                    <span>&equiv; </span>
+                    <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
+                </div>
+                <p>&rarr;</p><!-- TODO onclick nextPickup-->
             </div>
-        </label>
-    <?php
-    endforeach; ?>
+        <?php
+        else: ?>
+            <div wire:click="toggleMap">
+                <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
+            </div>
+        <?php
+        endif; ?>
+    </div>
 </div>

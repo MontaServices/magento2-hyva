@@ -38,9 +38,6 @@ class Options extends Component
     /** @var Address|null $address */
     public ?Address $address = null;
 
-    /** @var bool $showingMap */
-    public bool $showingMap = false;
-
     /** @var bool - Whether the block should be visible */
     public bool $show = false;
 
@@ -190,16 +187,6 @@ class Options extends Component
 
         // Magic method MUST return value to continue updating property
         return $date;
-    }
-
-    /** Toggle Map or List view
-     *
-     * @return void
-     */
-    public function toggleMap(): void
-    {
-        $this->showingMap = !$this->showingMap;
-        // TODO when becomes true, bind Google Map to the element
     }
 
     /** Update options on child component

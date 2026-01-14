@@ -10,6 +10,9 @@ use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
 {
+    /** @var bool $showingMap */
+    public bool $showingMap = false;
+
     /**
      * @return PickupPoint[]
      */
@@ -24,5 +27,15 @@ class Pickup extends Delivery
         } else {
             return $this->options;
         }
+    }
+
+    /** Toggle Map or List view
+     *
+     * @return void
+     */
+    public function toggleMap(): void
+    {
+        $this->showingMap = !$this->showingMap;
+        // TODO when becomes true, bind Google Map to the element
     }
 }
