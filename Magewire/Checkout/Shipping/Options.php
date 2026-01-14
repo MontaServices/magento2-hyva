@@ -68,7 +68,8 @@ class Options extends Component
     {
     }
 
-    /**
+    /** Mount runs before any child components exist
+     *
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -77,15 +78,25 @@ class Options extends Component
     {
         if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
             // Retrieve shipping options from same helper
-            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date
+            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date from Quote
             $options = $this->shippingHelper->getOptions($this->getQuote());
             if ($options) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
-                $this->setPickups($options[PickupPoint::PICKUP_OPTIONS_KEY] ?? []);
+                $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
                 $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
                 $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
             }
         }
+    }
+
+    /** Hydrate runs after child Magewire components have been createed
+     *
+     * @return void
+     */
+    public function hydrate(): void
+    {
+        // Set PickupOptions on child block
+        $this->emitChildComponent('monta.hyva.shipping.method.component.pickup', $this->pickupOptions);
     }
 
     /**
@@ -115,18 +126,9 @@ class Options extends Component
     protected function isMonta(string $method = null): bool
     {
         // Must return something, but Magewire is listening to the property
-        return $this->show = ($method == Monta::METHOD_CODE || $method == Monta::METHOD_CODE . "_" . Monta::METHOD_CODE);
-    }
+        $this->show = ($method == Monta::METHOD_CODE || $method == Monta::METHOD_CODE . "_" . Monta::METHOD_CODE);
 
-    /**
-     * @param array $options
-     * @return void
-     */
-    protected function setPickups(array $options): void
-    {
-        $this->pickupOptions = $options;
-        // Set PickupOptions on child block
-        $this->emitChildComponent('monta.hyva.shipping.method.component.pickup', $this->pickupOptions);
+        return $this->show;
     }
 
     /**
