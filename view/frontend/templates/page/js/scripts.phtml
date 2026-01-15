@@ -21,6 +21,13 @@
             document.querySelectorAll('.click-first').forEach(element => {
                 window.sharedUtils.clickFirst(element);
             });
+
+            // Component throws this event when Map is opened
+            // TODO move to maps.phtml
+            window.addEventListener('<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::INIT_MAP_EVENT?>', () => {
+                // Run Maps initializer again now that data is present
+                window.initGoogleMapsLibrary();
+            });
         });
     </script><?php
 $hyvaCsp->registerInlineScript() ?>

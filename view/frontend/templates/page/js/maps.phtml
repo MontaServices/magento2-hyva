@@ -25,7 +25,7 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
         (() => {
             const initMaps = async (elements) => {
 
-                const {Map, MapTypeControlStyle, InfoWindow} = await google.maps.importLibrary("maps");
+                const { Map, MapTypeControlStyle, InfoWindow } = await google.maps.importLibrary("maps");
 
                 const renderMap = (element) => {
                     const dataLocations = element.dataset.locations;
@@ -144,7 +144,7 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                     }
                 });
             };
-            // Load the Google Maps library (initialize and attach happens elsewhere)
+
             window.addEventListener('DOMContentLoaded', () => {
                 const mapElements = document.querySelectorAll('[data-content-type="map"]');
 

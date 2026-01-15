@@ -10,6 +10,10 @@ use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
 {
+    public const string INIT_MAP_EVENT = 'init-pickup-map';
+
+    public const string MAP_IDENTIFIER = 'montaPickupsMap';
+
     /** @var bool $showingMap */
     public bool $showingMap = false;
 
@@ -37,5 +41,9 @@ class Pickup extends Delivery
     {
         $this->showingMap = !$this->showingMap;
         // TODO when becomes true, bind Google Map to the element
+        if ($this->showingMap) {
+            // TODO and not yet already initialized
+            $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
+        }
     }
 }
