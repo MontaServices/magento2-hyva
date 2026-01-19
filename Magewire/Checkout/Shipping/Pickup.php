@@ -10,7 +10,7 @@ use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
 {
-    public const string INIT_MAP_EVENT = 'init-pickup-map';
+    public const string INIT_MAP_EVENT = 'monta:mode:' . PickupPoint::PICKUP_OPTIONS_KEY;
 
     public const string MAP_IDENTIFIER = 'montaPickupsMap';
 
