@@ -26,7 +26,10 @@
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
             <label>
-                <div class="rounded-tile monta-gray-tile w-full">
+                <div class="rounded-tile monta-gray-tile w-full <?=
+                // focus class to selected option
+                $magewire->selectedOptionCode == $pickup->getCode() ? 'monta-blue-focus' : '';
+                ?>">
                     <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
                            value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
                     <div class="pickup-option flex-col">
