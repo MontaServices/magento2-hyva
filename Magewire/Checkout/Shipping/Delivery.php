@@ -30,6 +30,10 @@ class Delivery extends Component
         protected readonly Quote $quoteHelper,
     )
     {
+        // When option was already chosen in Quote, set in component
+        if ($option = $this->quoteHelper->getOptionFromQuote()) {
+            $this->selectedOptionCode = $option->getCode();
+        }
     }
 
     /** Save selected Option JSON string to quote
