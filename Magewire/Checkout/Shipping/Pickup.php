@@ -19,11 +19,13 @@ class Pickup extends Delivery
 
     /** Override on activateTab
      *
+     * @param bool $active
      * @return void
      */
-    public function activateTab()
+    public function activateTab(bool $active)
     {
-        $this->tabActive = true;
+        parent::activateTab($active);
+
         // Reinitialize Map
         $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
     }

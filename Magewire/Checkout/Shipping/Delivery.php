@@ -41,11 +41,12 @@ class Delivery extends Component
 
     /** Show this mode tab
      *
+     * @param bool $active
      * @return void
      */
-    public function activateTab()
+    public function activateTab(bool $active)
     {
-        $this->tabActive = true;
+        $this->tabActive = $active;
     }
 
     /** Save selected Option JSON string to quote

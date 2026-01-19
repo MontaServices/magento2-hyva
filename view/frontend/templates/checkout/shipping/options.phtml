@@ -5,7 +5,6 @@
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Options $magewire
  * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
  */
-
 ?>
 
 <div id="block-shipping-options" class="max-w-lg mx-auto">
@@ -29,7 +28,7 @@
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
-                <div class="tabcontent tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent <?= $magewire->mode == 'delivery' ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons -->
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first">
                         <?php
