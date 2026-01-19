@@ -46,7 +46,9 @@
                         </div>
                         <?php
                         if ($openingTimes = $pickup->getOpeningTimes()): ?>
-                            <div class="business-hours text-sm text-gray-500 mt-2 hidden">
+                            <div class="business-hours text-sm text-gray-500 mt-2 <?=
+                            $magewire->selectedOptionCode == $pickup->getCode() ? '' : 'hidden';
+                            ?>">
                                 <?php
                                 foreach ($openingTimes as $slot): ?>
                                     <!-- TODO show opening times only on selected point -->
