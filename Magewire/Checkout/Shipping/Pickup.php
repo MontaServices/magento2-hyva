@@ -14,8 +14,8 @@ class Pickup extends Delivery
 
     public const string MAP_IDENTIFIER = 'montaPickupsMap';
 
-    /** @var bool $showingMap */
-    public bool $showingMap = false;
+    /** @var bool $showingMap - Start in Map mode */
+    public bool $showingMap = true;
 
     /**
      * @return PickupPoint[]
