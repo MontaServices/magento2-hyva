@@ -93,7 +93,7 @@ class Options extends Component
     public function hydrate(): void
     {
         // Set PickupOptions on child block
-        $this->emitChildComponent('monta.hyva.shipping.method.component.pickup', $this->pickupOptions);
+        $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
     }
 
     /**
@@ -183,7 +183,7 @@ class Options extends Component
         );
 
         // Update child component options
-        $this->emitChildComponent('monta.hyva.shipping.method.component.delivery', $timeframe->options);
+        $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
 
         // Magic method MUST return value to continue updating property
         return $date;
@@ -192,14 +192,15 @@ class Options extends Component
     /** Update options on child component
      *
      * @param string $childName
+     * @param string $event
      * @param array $data
      * @return void
      */
-    protected function emitChildComponent(string $childName, array $data): void
+    protected function emitChildComponent(string $childName, string $event, array $data = []): void
     {
         $this->emitTo(
-            name: $childName,
-            event: 'updateOptions',
+            name: 'monta.hyva.shipping.method.component.' . $childName,
+            event: $event,
             params: $data,
         );
     }
