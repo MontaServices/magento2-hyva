@@ -17,6 +17,17 @@ class Pickup extends Delivery
     /** @var bool $showingMap - Start in Map mode */
     public bool $showingMap = true;
 
+    /** Override on activateTab
+     *
+     * @return void
+     */
+    public function activateTab()
+    {
+        $this->tabActive = true;
+        // Reinitialize Map
+        $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
+    }
+
     /**
      * @return PickupPoint[]
      */

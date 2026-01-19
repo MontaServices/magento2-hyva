@@ -6,7 +6,7 @@
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup $magewire
  */
 ?>
-<div class="tabcontent hidden space-y-3 tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Options::PICKUP_OPTIONS_IDENTIFIER ?>">
+<div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden' ?> space-y-3 tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Options::PICKUP_OPTIONS_IDENTIFIER ?>">
     <!-- Attach map to this element-->
     <?php
     if ($magewire->showingMap): ?>
