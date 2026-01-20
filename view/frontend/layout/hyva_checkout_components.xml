@@ -32,8 +32,10 @@
                     </arguments>
                 </block>
             </block>
-            <block name="monta.hyva.shipping.scripts"
-                   template="Monta_Hyva::page/js/scripts.phtml"/>
+            <!-- Add custom JS-->
+            <block name="monta.hyva.shipping.scripts" template="Monta_Hyva::page/js/scripts.phtml"/>
+            <!-- Copy the same block from Hyva/Pagebuilder/Maps which loads everything -->
+            <block name="monta.hyva.checkout.google.maps" template="Monta_Hyva::page/js/maps.phtml"/>
         </referenceBlock>
     </body>
 </page>

@@ -10,8 +10,25 @@ use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
 {
-    /** @var bool $showingMap */
-    public bool $showingMap = false;
+    public const string INIT_MAP_EVENT = 'monta:mode:' . PickupPoint::PICKUP_OPTIONS_KEY;
+
+    public const string MAP_IDENTIFIER = 'montaPickupsMap';
+
+    /** @var bool $showingMap - Start in Map mode */
+    public bool $showingMap = true;
+
+    /** Override on activateTab
+     *
+     * @param bool $active
+     * @return void
+     */
+    public function activateTab(bool $active)
+    {
+        parent::activateTab($active);
+
+        // Reinitialize Map
+        $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
+    }
 
     /**
      * @return PickupPoint[]
@@ -37,5 +54,9 @@ class Pickup extends Delivery
     {
         $this->showingMap = !$this->showingMap;
         // TODO when becomes true, bind Google Map to the element
+        if ($this->showingMap) {
+            // TODO and not yet already initialized
+            $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
+        }
     }
 }

@@ -44,6 +44,12 @@ class Options extends Component
     /** @var string|null - State property for remembering selected date */
     public ?string $selectedTimeFrameDate = null;
 
+    /** Which tab is active?
+     *
+     * @var string - Start on Delivery
+     */
+    public string $mode = 'delivery';
+
     /**
      * @var string[]
      */
@@ -86,14 +92,14 @@ class Options extends Component
         }
     }
 
-    /** Hydrate runs after child Magewire components have been createed
+    /** Hydrate runs after child Magewire components have been created
      *
      * @return void
      */
     public function hydrate(): void
     {
         // Set PickupOptions on child block
-        $this->emitChildComponent('monta.hyva.shipping.method.component.pickup', $this->pickupOptions);
+        $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
     }
 
     /**
@@ -149,6 +155,32 @@ class Options extends Component
         ];
     }
 
+    /** Switch tab mode
+     *
+     * @param string $mode
+     * @return void
+     */
+    public function clickMode(string $mode)
+    {
+        // Convert tab identifiers to child component name
+        // TODO identify child components by exact identifiers directly
+        switch ($mode) {
+            case self::PICKUP_OPTIONS_IDENTIFIER:
+                $childName = 'pickup';
+                $this->emitChildComponent($childName, 'activateTab', true);
+                break;
+            default:
+            case self::DELIVERY_OPTIONS_IDENTIFIER:
+                $childName = 'delivery';
+                $this->emitChildComponent($childName, 'activateTab', true);
+                // And hide Pickup tab (for some reason not working via JS
+                $this->emitChildComponent('pickup', 'activateTab', false);
+                break;
+        }
+        $this->mode = $childName;
+        // TODO the other tab(s) are hidden by `sharedUtils.clickMode` from JS
+    }
+
     /** Get Timeframes (name for consistency)
      *
      * @return TimeFrame[]
@@ -183,7 +215,7 @@ class Options extends Component
         );
 
         // Update child component options
-        $this->emitChildComponent('monta.hyva.shipping.method.component.delivery', $timeframe->options);
+        $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
 
         // Magic method MUST return value to continue updating property
         return $date;
@@ -192,14 +224,15 @@ class Options extends Component
     /** Update options on child component
      *
      * @param string $childName
-     * @param array $data
+     * @param string $event
+     * @param mixed $data
      * @return void
      */
-    protected function emitChildComponent(string $childName, array $data): void
+    protected function emitChildComponent(string $childName, string $event, mixed $data = []): void
     {
         $this->emitTo(
-            name: $childName,
-            event: 'updateOptions',
+            name: 'monta.hyva.shipping.method.component.' . $childName,
+            event: $event,
             params: $data,
         );
     }

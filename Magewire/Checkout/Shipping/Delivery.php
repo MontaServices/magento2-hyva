@@ -12,7 +12,10 @@ use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 
 class Delivery extends Component
 {
-    protected $listeners = ['updateOptions'];
+    protected $listeners = ['updateOptions', 'activateTab'];
+
+    /** @var bool - Whether this component tab is active */
+    public bool $tabActive = false;
 
     /**
      * @var array[] $options - Array of arrays of Shipping Options for the selected Timeframe.
@@ -30,6 +33,20 @@ class Delivery extends Component
         protected readonly Quote $quoteHelper,
     )
     {
+        // When option was already chosen in Quote, set in component
+        if ($option = $this->quoteHelper->getOptionFromQuote()) {
+            $this->selectedOptionCode = $option->getCode();
+        }
+    }
+
+    /** Show this mode tab
+     *
+     * @param bool $active
+     * @return void
+     */
+    public function activateTab(bool $active)
+    {
+        $this->tabActive = $active;
     }
 
     /** Save selected Option JSON string to quote
