@@ -129,9 +129,7 @@ class Options extends Component
     protected function isMonta(string $method = null): bool
     {
         // Must return something, but Magewire is listening to the property
-        $this->show = ($method == Monta::METHOD_CODE || $method == Monta::METHOD_CODE . "_" . Monta::METHOD_CODE);
-
-        return $this->show;
+        return $this->show = ($method == Monta::METHOD_CODE || $method == Monta::METHOD_CODE . "_" . Monta::METHOD_CODE);
     }
 
     /**

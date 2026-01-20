@@ -53,9 +53,7 @@ class Pickup extends Delivery
     public function toggleMap(): void
     {
         $this->showingMap = !$this->showingMap;
-        // TODO when becomes true, bind Google Map to the element
         if ($this->showingMap) {
-            // TODO and not yet already initialized
             $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
         }
     }
