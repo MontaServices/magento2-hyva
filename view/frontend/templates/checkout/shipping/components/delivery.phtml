@@ -31,7 +31,9 @@
                     <!-- ShipperOptions -->
                     <?php
                     if ($deliveryOption->getShipperOptions()): ?>
-                        <div class="shipperoptions">
+                        <div class="shipperoptions" x-data="deliveryExtras"
+                             data-option-id="<?= $deliveryOption->getCode() ?>"
+                             data-initial-extras='<?= $deliveryOption->getShipperOptions(codesAsJson: true) ?>'>
                             <p class="font-semibold mb-2"><?= $escaper->escapeHtml(__("Extra shipperoptions:")) ?></p>
                             <div class="space-y-2">
                                 <!-- TODO border color should match tile border color -->
@@ -40,7 +42,7 @@
                                     <label class="flex justify-between rounded-tile p-2 monta-gray-tile hover:monta-blue-focus">
                                         <div class="items-center space-x-2">
                                             <!-- TODO click parents[2].clickShipperOption-->
-                                            <input type="checkbox" name="<?= $shipperOption->getCode() ?>"/>
+                                            <input type="checkbox" x-model="extras.<?= $shipperOption->getCode() ?>"/>
                                             <span><?= $shipperOption->description ?></span>
                                         </div>
                                         <span class="text-md">+ <?= $shipperOption->priceFormatted ?></span>

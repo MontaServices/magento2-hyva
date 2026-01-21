@@ -22,6 +22,22 @@
                 });
             });
 
+            Alpine.data('deliveryExtras', () => ({
+                    optionId: null,
+                    extras: {},
+
+                    init() {
+                        this.optionId = this.$el.dataset.optionId
+                        this.extras = JSON.parse(this.$el.dataset.initialExtras)
+                        console.log("init", this.optionId, this.extras);
+                    },
+
+                    sync() {
+                        Magewire.find('delivery')
+                            .call('updateExtras', this.optionId, this.extras)
+                    }
+                })
+            )
             // Bind clickFirst to those elements
             document.querySelectorAll('.click-first').forEach(element => {
                 window.sharedUtils.clickFirst(element);

@@ -81,6 +81,11 @@ class Delivery extends Component
         $this->options = $options;
     }
 
+    public function updateExtras(string $optionCode, array $extras): void
+    {
+        dd(__METHOD__, ...func_get_args());
+    }
+
     /** Convert array to real objects
      *
      * @return ShippingOption[]
