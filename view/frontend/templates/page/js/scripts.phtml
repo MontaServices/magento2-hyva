@@ -32,12 +32,19 @@
                     init() {
                         this.optionId = this.$el.dataset.optionId
 
-                        // When Shipping
+                        // When Shipping step was completed
+                        // TODO this cannot work because of race conditions. Magewire component needs time, and could throw Exception. Parallel the user continued to Payment, which will show incorrect Shipping Total
                         window.addEventListener('checkout:validation:success', (event) => {
                             // If the Shipping step is validated succesfully
                             if (event.detail.step === 'shipping') {
                                 // Sync with backend
-                                this.sync();
+                                let parentComponent = Magewire.find('monta.hyva.shipping.method.component.delivery');
+                                if (parentComponent && parentComponent.get('selectedOptionCode') === this.optionId) {
+                                    parentComponent.call('updateExtras', this.optionId, this.extras)
+                                } else {
+                                    console.warn("Could not find Delivery component!");
+
+                                }
                             }
                         })
                     },
@@ -51,19 +58,10 @@
                             this.extras.splice(this.extras.indexOf(checkbox.value), 1);
                         }
                     },
+
                     isChecked() {
                         return this.extras.includes(this.$el.value);
                     },
-
-                    sync() {
-                        let parentComponent = Magewire.find('monta.hyva.shipping.method.component.delivery');
-                        if (parentComponent && parentComponent.get('selectedOptionCode') === this.optionId) {
-                            parentComponent.call('updateExtras', this.optionId, this.extras)
-                        } else {
-                            console.warn("Could not find Delivery component!");
-
-                        }
-                    }
                 })
             )
             // Bind clickFirst to those elements
