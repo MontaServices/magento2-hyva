@@ -22,12 +22,24 @@
                 });
             });
 
+            /**
+             * Define Alpine component on each shipper option
+             */
             Alpine.data('deliveryExtras', () => ({
                     optionId: null,
                     extras: [],
 
                     init() {
                         this.optionId = this.$el.dataset.optionId
+
+                        // When Shipping
+                        window.addEventListener('checkout:validation:success', (event) => {
+                            // If the Shipping step is validated succesfully
+                            if (event.detail.step === 'shipping') {
+                                // Sync with backend
+                                this.sync();
+                            }
+                        })
                     },
 
                     updateSelection() {
@@ -44,8 +56,13 @@
                     },
 
                     sync() {
-                        Magewire.find('delivery')
-                            .call('updateExtras', this.optionId, this.extras)
+                        let parentComponent = Magewire.find('monta.hyva.shipping.method.component.delivery');
+                        if (parentComponent && parentComponent.get('selectedOptionCode') === this.optionId) {
+                            parentComponent.call('updateExtras', this.optionId, this.extras)
+                        } else {
+                            console.warn("Could not find Delivery component!");
+
+                        }
                     }
                 })
             )
