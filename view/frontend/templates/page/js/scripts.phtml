@@ -24,12 +24,23 @@
 
             Alpine.data('deliveryExtras', () => ({
                     optionId: null,
-                    extras: {},
+                    extras: [],
 
                     init() {
                         this.optionId = this.$el.dataset.optionId
-                        this.extras = JSON.parse(this.$el.dataset.initialExtras)
-                        console.log("init", this.optionId, this.extras);
+                    },
+
+                    updateSelection() {
+                        const checkbox = this.$event.target;
+                        if (checkbox.checked && !this.extras.includes(checkbox.value)) {
+                            this.extras.push(checkbox.value);
+                        }
+                        if (!checkbox.checked && this.extras.includes(checkbox.value)) {
+                            this.extras.splice(this.extras.indexOf(checkbox.value), 1);
+                        }
+                    },
+                    isChecked() {
+                        return this.extras.includes(this.$el.value);
                     },
 
                     sync() {
