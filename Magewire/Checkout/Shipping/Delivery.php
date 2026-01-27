@@ -86,14 +86,26 @@ class Delivery extends Component
     /** Magic method runs after property is updated
      * Basically 'clickShipperOption'
      *
-     * @param array $extras - The updated property after being updated
+     * @param bool[] $extras - Boolean truth map, keyed on ShipperOptionCode
      * @param string $property - Magewire passes name of property
      * @return array - the updated array
      */
     public function updatedExtras(array $extras): array
     {
         // Magic methods must always return the updated value
-        $this->quoteHelper->setShipperOptions($this->extras);
+        $this->quoteHelper->setShipperOptions(array_map(
+            callback: function (string $code) {
+                // Reconstruct ShipperOption as though it's still from the JSON object
+                return [
+                    'code' => $code,
+                ];
+            },
+            // Return the keys
+            array: array_keys(
+            // Keep only options that are selected (true)
+                array_filter($this->extras),
+            ),
+        ));
         return $extras;
     }
 
