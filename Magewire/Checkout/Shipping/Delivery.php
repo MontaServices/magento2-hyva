@@ -26,6 +26,8 @@ class Delivery extends Component
     /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
     public ?string $selectedOptionCode = null;
 
+    public array $extras = [];
+
     /**
      * @param Quote $quoteHelper
      */
@@ -80,10 +82,11 @@ class Delivery extends Component
         // updated array is received as array
         $this->options = $options;
     }
-
-    public function updateExtras(string $optionCode, array $extras): void
+    public function updatedExtras(array $extras): array
     {
         dd(__METHOD__, ...func_get_args());
+        // Magic methods must always return the updated value
+        return $extras;
     }
 
     /** Convert array to real objects

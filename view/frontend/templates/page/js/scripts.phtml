@@ -22,48 +22,6 @@
                 });
             });
 
-            /**
-             * Define Alpine component on each shipper option
-             */
-            Alpine.data('deliveryExtras', () => ({
-                    optionId: null,
-                    extras: [],
-
-                    init() {
-                        this.optionId = this.$el.dataset.optionId
-
-                        // When Shipping step was completed
-                        // TODO this cannot work because of race conditions. Magewire component needs time, and could throw Exception. Parallel the user continued to Payment, which will show incorrect Shipping Total
-                        window.addEventListener('checkout:validation:success', (event) => {
-                            // If the Shipping step is validated succesfully
-                            if (event.detail.step === 'shipping') {
-                                // Sync with backend
-                                let parentComponent = Magewire.find('monta.hyva.shipping.method.component.delivery');
-                                if (parentComponent && parentComponent.get('selectedOptionCode') === this.optionId) {
-                                    parentComponent.call('updateExtras', this.optionId, this.extras)
-                                } else {
-                                    console.warn("Could not find Delivery component!");
-
-                                }
-                            }
-                        })
-                    },
-
-                    updateSelection() {
-                        const checkbox = this.$event.target;
-                        if (checkbox.checked && !this.extras.includes(checkbox.value)) {
-                            this.extras.push(checkbox.value);
-                        }
-                        if (!checkbox.checked && this.extras.includes(checkbox.value)) {
-                            this.extras.splice(this.extras.indexOf(checkbox.value), 1);
-                        }
-                    },
-
-                    isChecked() {
-                        return this.extras.includes(this.$el.value);
-                    },
-                })
-            )
             // Bind clickFirst to those elements
             document.querySelectorAll('.click-first').forEach(element => {
                 window.sharedUtils.clickFirst(element);
