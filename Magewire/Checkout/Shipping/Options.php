@@ -38,14 +38,17 @@ class Options extends Component
     /** @var Address|null $address */
     public ?Address $address = null;
 
-    /** @var bool $showingMap */
-    public bool $showingMap = false;
-
     /** @var bool - Whether the block should be visible */
     public bool $show = false;
 
     /** @var string|null - State property for remembering selected date */
     public ?string $selectedTimeFrameDate = null;
+
+    /** Which tab is active?
+     *
+     * @var string - Start on Delivery
+     */
+    public string $mode = 'delivery';
 
     /**
      * @var string[]
@@ -68,7 +71,8 @@ class Options extends Component
     {
     }
 
-    /**
+    /** Mount runs before any child components exist
+     *
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -77,15 +81,25 @@ class Options extends Component
     {
         if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
             // Retrieve shipping options from same helper
-            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date
+            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date from Quote
             $options = $this->shippingHelper->getOptions($this->getQuote());
             if ($options) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
-                $this->setPickups($options[PickupPoint::PICKUP_OPTIONS_KEY] ?? []);
+                $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
                 $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
                 $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
             }
         }
+    }
+
+    /** Hydrate runs after child Magewire components have been created
+     *
+     * @return void
+     */
+    public function hydrate(): void
+    {
+        // Set PickupOptions on child block
+        $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
     }
 
     /**
@@ -119,21 +133,6 @@ class Options extends Component
     }
 
     /**
-     * @param array $options
-     * @return void
-     */
-    protected function setPickups(array $options): void
-    {
-        $this->pickupOptions = $options;
-        // Set PickupOptions on child block
-        $this->emitTo(
-            name: 'monta.hyva.shipping.method.component.pickup',
-            event: 'updateOptions',
-            params: $this->pickupOptions,
-        );
-    }
-
-    /**
      * @return array[]
      */
     public function getTabButtons(): array
@@ -152,6 +151,32 @@ class Options extends Component
                 'active' => (sizeof($this->pickupOptions) > 0),
             ],
         ];
+    }
+
+    /** Switch tab mode
+     *
+     * @param string $mode
+     * @return void
+     */
+    public function clickMode(string $mode)
+    {
+        // Convert tab identifiers to child component name
+        // TODO identify child components by exact identifiers directly
+        switch ($mode) {
+            case self::PICKUP_OPTIONS_IDENTIFIER:
+                $childName = 'pickup';
+                $this->emitChildComponent($childName, 'activateTab', true);
+                break;
+            default:
+            case self::DELIVERY_OPTIONS_IDENTIFIER:
+                $childName = 'delivery';
+                $this->emitChildComponent($childName, 'activateTab', true);
+                // And hide Pickup tab (for some reason not working via JS
+                $this->emitChildComponent('pickup', 'activateTab', false);
+                break;
+        }
+        $this->mode = $childName;
+        // TODO the other tab(s) are hidden by `sharedUtils.clickMode` from JS
     }
 
     /** Get Timeframes (name for consistency)
@@ -188,13 +213,25 @@ class Options extends Component
         );
 
         // Update child component options
-        $this->emitTo(
-            name: 'monta.hyva.shipping.method.component.delivery',
-            event: 'updateOptions',
-            params: $timeframe->options,
-        );
+        $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
 
         // Magic method MUST return value to continue updating property
         return $date;
+    }
+
+    /** Update options on child component
+     *
+     * @param string $childName
+     * @param string $event
+     * @param mixed $data
+     * @return void
+     */
+    protected function emitChildComponent(string $childName, string $event, mixed $data = []): void
+    {
+        $this->emitTo(
+            name: 'monta.hyva.shipping.method.component.' . $childName,
+            event: $event,
+            params: $data,
+        );
     }
 }

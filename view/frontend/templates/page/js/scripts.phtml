@@ -13,13 +13,25 @@
             // Select all tab Buttons
             document.querySelectorAll('.options-tab-button').forEach(btn => {
                 btn.addEventListener('click', (event) => {
+                    // Use existing JS for 'hide siblings'
                     window.sharedUtils.clickMode(btn.id, event);
+                    // Run Magewire callback directly on Options component
+                    Magewire.find("monta.hyva.shipping.method.options")
+                        .call('clickMode', btn.id);
+
                 });
             });
 
             // Bind clickFirst to those elements
             document.querySelectorAll('.click-first').forEach(element => {
                 window.sharedUtils.clickFirst(element);
+            });
+
+            // Component throws this event when Pickups tab is opened
+            // TODO move to maps.phtml
+            window.addEventListener('<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::INIT_MAP_EVENT?>', () => {
+                // Run Maps initializer again now that data is present
+                window.initGoogleMapsLibrary();
             });
         });
     </script><?php
