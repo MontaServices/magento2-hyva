@@ -82,10 +82,18 @@ class Delivery extends Component
         // updated array is received as array
         $this->options = $options;
     }
+
+    /** Magic method runs after property is updated
+     * Basically 'clickShipperOption'
+     *
+     * @param array $extras - The updated property after being updated
+     * @param string $property - Magewire passes name of property
+     * @return array - the updated array
+     */
     public function updatedExtras(array $extras): array
     {
-        dd(__METHOD__, ...func_get_args());
         // Magic methods must always return the updated value
+        $this->quoteHelper->setShipperOptions($this->extras);
         return $extras;
     }
 
