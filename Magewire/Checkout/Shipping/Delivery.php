@@ -26,7 +26,7 @@ class Delivery extends Component
     /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
     public ?string $selectedOptionCode = null;
 
-    public array $extras = [];
+    public array $selectedShipperOptions = [];
 
     /**
      * @param Quote $quoteHelper
@@ -68,7 +68,7 @@ class Delivery extends Component
         $this->quoteHelper->setOption(json_encode($option));
 
         // Shipper options are overwritten in Quote, match visually
-        $this->extras = [];
+        $this->selectedShipperOptions = [];
 
         return $deliveryOptionCode;
     }
@@ -86,11 +86,11 @@ class Delivery extends Component
     /** Magic method runs after property is updated
      * Basically 'clickShipperOption'
      *
-     * @param bool[] $extras - Boolean truth map, keyed on ShipperOptionCode
+     * @param bool[] $shipperOptions - Boolean truth map, keyed on ShipperOptionCode
      * @param string $property - Magewire passes name of property
      * @return array - the updated array
      */
-    public function updatedExtras(array $extras): array
+    public function updatedSelectedShipperOptions(array $shipperOptions): array
     {
         $this->quoteHelper->setShipperOptions(array_map(
             callback: function (string $code) {
@@ -99,11 +99,11 @@ class Delivery extends Component
             // Return the keys of the truth map
             array: array_keys(
             // Keep only options that are selected (true)
-                array_filter($this->extras),
+                array_filter($this->selectedShipperOptions),
             ),
         ));
         // Magic methods must always return the updated value
-        return $extras;
+        return $shipperOptions;
     }
 
     /** Reconstruct ShipperOption from originally loaded ShippingOption that is currently selected
