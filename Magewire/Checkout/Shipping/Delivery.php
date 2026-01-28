@@ -59,7 +59,7 @@ class Delivery extends Component
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function updatingSelectedOptionCode(string $deliveryOptionCode)
+    public function updatedSelectedOptionCode(string $deliveryOptionCode)
     {
         // First find the selected option in array by code
         $option = $this->getSelectedShippingOption();
