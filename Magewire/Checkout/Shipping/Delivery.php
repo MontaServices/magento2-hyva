@@ -62,10 +62,7 @@ class Delivery extends Component
     public function updatingSelectedOptionCode(string $deliveryOptionCode)
     {
         // First find the selected option in array by code
-        $option = array_find(
-        // call flat array directly instead of converting back and forth
-            array: $this->options,
-            callback: fn($option) => $option['code'] == $deliveryOptionCode);
+        $option = $this->getSelectedShippingOption();
 
         // Save to quote
         $this->quoteHelper->setOption(json_encode($option));
@@ -110,6 +107,20 @@ class Delivery extends Component
             ),
         ));
         return $extras;
+    }
+
+
+    /** Get the ShippingOption currently selected, originally loaded as array¶
+     *
+     * @return array|null
+     */
+    protected function getSelectedShippingOption(): ?array
+    {
+        return array_first(array_filter(
+        // call flat array directly instead of converting back and forth
+            array: $this->options,
+            callback: fn($option) => $option['code'] == $this->selectedOptionCode,
+        ));
     }
 
     /** Convert array to real objects
