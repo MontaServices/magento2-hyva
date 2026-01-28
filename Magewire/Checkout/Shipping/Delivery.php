@@ -70,6 +70,9 @@ class Delivery extends Component
         // Save to quote
         $this->quoteHelper->setOption(json_encode($option));
 
+        // Shipper options are overwritten in Quote, match visually
+        $this->extras = [];
+
         return $deliveryOptionCode;
     }
 
