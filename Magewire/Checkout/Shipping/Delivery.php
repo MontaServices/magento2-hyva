@@ -92,23 +92,37 @@ class Delivery extends Component
      */
     public function updatedExtras(array $extras): array
     {
-        // Magic methods must always return the updated value
         $this->quoteHelper->setShipperOptions(array_map(
             callback: function (string $code) {
-                // Reconstruct ShipperOption as though it's still from the JSON object
-                return [
-                    'code' => $code,
-                ];
+                return $this->getShipperOptionByCode($code);
             },
-            // Return the keys
+            // Return the keys of the truth map
             array: array_keys(
             // Keep only options that are selected (true)
                 array_filter($this->extras),
             ),
         ));
+        // Magic methods must always return the updated value
         return $extras;
     }
 
+    /** Reconstruct ShipperOption from originally loaded ShippingOption that is currently selected
+     * TODO merge duplicate code with ShippingOption::getShipperOptionByCode() except for arrays
+     *
+     * @param string $code
+     * @return array
+     */
+    protected function getShipperOptionByCode(string $code): array
+    {
+        $shipperOption = [];
+        if ($shippingOption = $this->getSelectedShippingOption()) {
+            $shipperOption = array_first(array_filter(
+                array: $shippingOption['deliveryOptions'],
+                callback: fn($option) => $option['code'] == $code,
+            )) ?? []; // TODO when could that ever be NULL?
+        }
+        return $shipperOption;
+    }
 
     /** Get the ShippingOption currently selected, originally loaded as array¶
      *
