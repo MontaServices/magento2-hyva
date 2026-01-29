@@ -146,15 +146,15 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
             };
 
             window.addEventListener('DOMContentLoaded', () => {
-                const mapElements = document.querySelectorAll('[data-content-type="map"]');
+                const mapElements = document.querySelectorAll('#<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::MAP_IDENTIFIER ?>');
 
                 if (mapElements.length > 0) {
                     const script = document.createElement('script');
                     script.type = 'text/javascript';
 
-                    script.src = '<?= $escaper->escapeJs($googleMapsApi->getLibraryUrl()) ?>&loading=async&callback=initGoogleMapsLibrary';
+                    script.src = '<?= $escaper->escapeJs($googleMapsApi->getLibraryUrl()) ?>&loading=async&callback=startGoogleMapsLibrary';
 
-                    window.initGoogleMapsLibrary = () => initMaps(mapElements);
+                    window.startGoogleMapsLibrary = () => initMaps(mapElements);
                     document.head.appendChild(script);
                 }
             });

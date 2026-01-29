@@ -11,7 +11,7 @@
     <?php
     if ($magewire->showingMap): ?>
         <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md">
-            <!-- TODO this little 'data-content-type' attribute causes Hyva to load map.phtml which is not CSP-safe but something runs🤔-->
+            <!-- TODO this little 'data-content-type' attribute causes Hyva to load map.phtml with CSP warnings but something runs🤔-->
             <div id="<?= $magewire::MAP_IDENTIFIER ?>"
                  data-content-type="map"
                  data-locations='<?= $escaper->escapeHtmlAttr(json_encode($magewire->getPickupOptions())) ?>'
