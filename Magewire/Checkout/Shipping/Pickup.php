@@ -26,8 +26,7 @@ class Pickup extends Delivery
     {
         parent::activateTab($active);
 
-        // Reinitialize Map
-        $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
+        $this->triggerMap();
     }
 
     /**
@@ -54,7 +53,16 @@ class Pickup extends Delivery
     {
         $this->showingMap = !$this->showingMap;
         if ($this->showingMap) {
-            $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
+            $this->triggerMap();
         }
+    }
+
+    /** Dispatch event to trigger mounting the Google Maps widget
+     *
+     * @return void
+     */
+    protected function triggerMap(): void
+    {
+        $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
     }
 }
