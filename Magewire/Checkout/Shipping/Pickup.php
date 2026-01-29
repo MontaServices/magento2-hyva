@@ -57,6 +57,20 @@ class Pickup extends Delivery
         }
     }
 
+    /** Magic method after property has changed
+     *
+     * @param string $deliveryOptionCode
+     * @return string
+     */
+    public function updatedSelectedOptionCode(string $deliveryOptionCode)
+    {
+        if ($this->showingMap) {
+            $this->triggerMap();
+        }
+        // Magic methods must return the value
+        return $deliveryOptionCode;
+    }
+
     /** Dispatch event to trigger mounting the Google Maps widget
      *
      * @return void
