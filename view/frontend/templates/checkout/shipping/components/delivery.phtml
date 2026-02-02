@@ -20,6 +20,7 @@
                     <div class="flex justify-between space-x-2">
                         <div class="flex">
                             <img src="<?= $deliveryOption->imageUrl ?>"
+                                 alt="<?= $deliveryOption->getDisplayName() ?>"
                                  class="w-16 h-16 pr-2"/>
                             <div>
                                 <p class="font-semibold"><?= $deliveryOption->shipper ?></p>

@@ -36,7 +36,8 @@
                     <div class="pickup-option flex-col">
                         <div class="pickup-header flex justify-between space-x-2">
                             <div class="flex">
-                                <img src="<?= $pickup->imageUrl ?>" class="pickup-logo w-16 h-16 pr-2">
+                                <img src="<?= $pickup->imageUrl ?>" alt="<?= $pickup->getDisplayName(); ?>"
+                                     class="pickup-logo w-16 h-16 pr-2">
                                 <div class="pickup-container">
                                     <strong><?= $pickup->getCompany() ?></strong>
                                     <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
@@ -48,6 +49,7 @@
                         <?php
                         if ($openingTimes = $pickup->getOpeningTimes()): ?>
                             <div class="business-hours text-sm text-gray-500 mt-2 <?=
+                            // Hide opening times on the non-selected points
                             $magewire->selectedOptionCode == $pickup->getCode() ? '' : 'hidden';
                             ?>">
                                 <?php
