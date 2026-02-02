@@ -143,11 +143,15 @@ class Pickup extends Delivery
         $classes = [];
 
         // Focus class on selected option
-        if ($this->selectedOptionCode == $code) {
+        $isSelected = ($this->selectedOptionCode == $code);
+        if ($isSelected) {
             $classes[] = 'monta-blue-focus';
-        } elseif ($this->showingMap) {
-            // in Map mode, hide every other option
-            $classes[] = 'hidden';
+        }
+        // In Map mode, hide the options that are not selected
+        if ($this->showingMap && $this->selectedOptionCode && !$isSelected) {
+            // in Map mode, hide every other option when one is selected
+            // TODO fix this properly, but property lifecycle makes it difficult
+//            $classes[] = 'hidden';
         }
         return $classes;
     }
