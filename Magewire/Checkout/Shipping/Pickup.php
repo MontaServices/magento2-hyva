@@ -132,4 +132,23 @@ class Pickup extends Delivery
         // TODO replace manual magic call with proper lifecycle control
         $this->updatedSelectedOptionCode($this->selectedOptionCode);
     }
+
+    /** Get the HTML classes for one Pickup Point tile
+     *
+     * @param string $code - Pickup Point code
+     * @return array
+     */
+    public function getClasses(string $code): array
+    {
+        $classes = [];
+
+        // Focus class on selected option
+        if ($this->selectedOptionCode == $code) {
+            $classes[] = 'monta-blue-focus';
+        } elseif ($this->showingMap) {
+            // in Map mode, hide every other option
+            $classes[] = 'hidden';
+        }
+        return $classes;
+    }
 }
