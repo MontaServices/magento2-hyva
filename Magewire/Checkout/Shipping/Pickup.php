@@ -25,7 +25,7 @@ class Pickup extends Delivery
      * @param bool $active
      * @return void
      */
-    public function activateTab(bool $active)
+    public function activateTab(bool $active): void
     {
         parent::activateTab($active);
         if ($active) {
@@ -67,7 +67,7 @@ class Pickup extends Delivery
      * @param string $deliveryOptionCode
      * @return string
      */
-    public function updatedSelectedOptionCode(string $deliveryOptionCode)
+    public function updatedSelectedOptionCode(string $deliveryOptionCode): string
     {
         if ($this->showingMap) {
             $this->triggerMap();

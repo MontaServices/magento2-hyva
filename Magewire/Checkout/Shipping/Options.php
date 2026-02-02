@@ -158,7 +158,7 @@ class Options extends Component
      * @param string $mode
      * @return void
      */
-    public function clickMode(string $mode)
+    public function clickMode(string $mode): void
     {
         // Convert tab identifiers to child component name
         // TODO identify child components by exact identifiers directly
