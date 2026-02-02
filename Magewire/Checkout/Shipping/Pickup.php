@@ -17,8 +17,8 @@ class Pickup extends Delivery
     /** @var bool $showingMap - Start in Map mode */
     public bool $showingMap = true;
 
-    /** @var int $currentSelectedPickup - Index of the selected pickup point in the available options */
-    public int $currentSelectedPickup = 0;
+    /** @var int $selectedPickupKey - Index of the selected pickup point in the available options */
+    public int $selectedPickupKey = 0;
 
     /** Override on activateTab
      *
@@ -39,6 +39,7 @@ class Pickup extends Delivery
     public function getPickupOptions(): array
     {
         // Magewire serializes objects into array on rerender
+        // array_first is available in PHP 8.5 but already in polyfill
         if (is_array(array_first($this->options))) {
             return array_map(
                 callback: [PickupPoint::class, 'construct'],
@@ -82,7 +83,7 @@ class Pickup extends Delivery
     protected function triggerMap(): void
     {
         // Update counter
-        $this->currentSelectedPickup = array_find_key(
+        $this->selectedPickupKey = array_find_key(
             array: $this->options,
             callback: fn($option) => $option['code'] == $this->selectedOptionCode)
             // if not found or options empty, fallback to one
@@ -118,15 +119,17 @@ class Pickup extends Delivery
     protected function getPickup(int $incrementer): void
     {
         // If there is an option on that index, change it
-        if (!empty($this->options[$this->currentSelectedPickup + $incrementer])) {
-            $this->currentSelectedPickup += $incrementer;
-        }
+        if (!empty($this->options[$this->selectedPickupKey + $incrementer])) {
+            $this->selectedPickupKey += $incrementer;
+        } // TODO else if no next option available, disable arrow button
+
         // Update selected option
         $this->selectedOptionCode =
             // find by updated index, pluck the code
-            $this->options[$this->currentSelectedPickup]['code'];
+            $this->options[$this->selectedPickupKey]['code'];
 
-        // Manually trigger magic method, internal update to property is not counted
+        // Manually trigger magic method, updating property from code does not trigger hooks
+        // TODO replace manual magic call with proper lifecycle control
         $this->updatedSelectedOptionCode($this->selectedOptionCode);
     }
 }
