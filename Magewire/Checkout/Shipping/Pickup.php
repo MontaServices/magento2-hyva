@@ -121,9 +121,12 @@ class Pickup extends Delivery
         if (!empty($this->options[$this->currentSelectedPickup + $incrementer])) {
             $this->currentSelectedPickup += $incrementer;
         }
-        // Update selected option, TODO property listeners are not triggered
+        // Update selected option
         $this->selectedOptionCode =
             // find by updated index, pluck the code
             $this->options[$this->currentSelectedPickup]['code'];
+
+        // Manually trigger magic method, internal update to property is not counted
+        $this->updatedSelectedOptionCode($this->selectedOptionCode);
     }
 }
