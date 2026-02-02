@@ -12,7 +12,6 @@ use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
 use Monta\Checkout\Helper\Shipping;
 use Monta\Checkout\Model\Carrier\Monta;
-use Monta\CheckoutApiWrapper\Objects\Address;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 use Monta\CheckoutApiWrapper\Objects\TimeFrame;
@@ -34,9 +33,6 @@ class Options extends Component
 
     /** @var ShippingOption|array|null $standardShipper */
     public ShippingOption|array|null $standardShipper = null;
-
-    /** @var Address|null $address */
-    public ?Address $address = null;
 
     /** @var bool - Whether the block should be visible */
     public bool $show = false;
