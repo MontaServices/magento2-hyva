@@ -75,7 +75,11 @@
             <div class="flex items-center justify-between mb-4">
                 <p>&larr;</p><!-- TODO onclick prevPickup-->
                 <div>
-                    <p class="text-gray-500"><?= $escaper->escapeHtml(__('%s of %s pickup points')) ?></p>
+                    <p class="text-gray-500"><?= $escaper->escapeHtml(
+                            __('%1 of %2 pickup points',
+                                $magewire->currentSelectedPickup + 1, // index plus one is the readable nth counter
+                                count($magewire->options),
+                            )) ?></p>
                     <span>&equiv; </span>
                     <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
                 </div>

@@ -17,6 +17,9 @@ class Pickup extends Delivery
     /** @var bool $showingMap - Start in Map mode */
     public bool $showingMap = true;
 
+    /** @var int $currentSelectedPickup - Index of the selected pickup point in the available options */
+    public int $currentSelectedPickup = 0;
+
     /** Override on activateTab
      *
      * @param bool $active
@@ -25,8 +28,9 @@ class Pickup extends Delivery
     public function activateTab(bool $active)
     {
         parent::activateTab($active);
-
-        $this->triggerMap();
+        if ($active) {
+            $this->triggerMap();
+        }
     }
 
     /**
@@ -77,6 +81,14 @@ class Pickup extends Delivery
      */
     protected function triggerMap(): void
     {
+        // Update counter
+        $this->currentSelectedPickup = array_find_key(
+            array: $this->options,
+            callback: fn($option) => $option['code'] == $this->selectedOptionCode)
+            // if not found or options empty, fallback to one
+            ?? 1;
+
+        // Browser event triggers Google map
         $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
     }
 }
