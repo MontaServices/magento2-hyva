@@ -146,6 +146,7 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
             };
 
             window.addEventListener('DOMContentLoaded', () => {
+                // Load google Maps widget script
                 const mapElements = document.querySelectorAll('#<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::MAP_IDENTIFIER ?>');
 
                 if (mapElements.length > 0) {
@@ -157,6 +158,12 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                     window.startGoogleMapsLibrary = () => initMaps(mapElements);
                     document.head.appendChild(script);
                 }
+
+                // Component throws this event when Pickups tab is opened
+                window.addEventListener('<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::INIT_MAP_EVENT?>', () => {
+                    // Run Maps initializer again now that data is present
+                    window.startGoogleMapsLibrary();
+                });
             });
         })();
     </script>
