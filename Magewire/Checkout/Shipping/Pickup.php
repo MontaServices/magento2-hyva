@@ -91,4 +91,39 @@ class Pickup extends Delivery
         // Browser event triggers Google map
         $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
     }
+
+    /** Step one pickup ahead
+     *
+     * @return void
+     */
+    public function nextPickup(): void
+    {
+        $this->getPickup(1);
+    }
+
+    /** Step one pickup down
+     *
+     * @return void
+     */
+    public function prevPickup(): void
+    {
+        $this->getPickup(-1);
+    }
+
+    /** Select another Pickup from the available options
+     *
+     * @param int $incrementer - change Pickup by index in array (plus or minus)
+     * @return void
+     */
+    protected function getPickup(int $incrementer): void
+    {
+        // If there is an option on that index, change it
+        if (!empty($this->options[$this->currentSelectedPickup + $incrementer])) {
+            $this->currentSelectedPickup += $incrementer;
+        }
+        // Update selected option, TODO property listeners are not triggered
+        $this->selectedOptionCode =
+            // find by updated index, pluck the code
+            $this->options[$this->currentSelectedPickup]['code'];
+    }
 }

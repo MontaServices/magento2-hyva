@@ -73,7 +73,7 @@
         if ($magewire->showingMap): ?>
             <!-- When in Maps mode -->
             <div class="flex items-center justify-between mb-4">
-                <p>&larr;</p><!-- TODO onclick prevPickup-->
+                <p wire:click="prevPickup">&larr;</p>
                 <div>
                     <p class="text-gray-500"><?= $escaper->escapeHtml(
                             __('%1 of %2 pickup points',
@@ -83,7 +83,7 @@
                     <span>&equiv; </span>
                     <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
                 </div>
-                <p>&rarr;</p><!-- TODO onclick nextPickup-->
+                <p wire:click="nextPickup">&rarr;</p>
             </div>
         <?php
         else: ?>
