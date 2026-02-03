@@ -46,7 +46,7 @@ class Delivery extends Component
      * @param bool $active
      * @return void
      */
-    public function activateTab(bool $active)
+    public function activateTab(bool $active): void
     {
         $this->tabActive = $active;
     }
@@ -59,7 +59,7 @@ class Delivery extends Component
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function updatedSelectedOptionCode(string $deliveryOptionCode)
+    public function updatedSelectedOptionCode(string $deliveryOptionCode): string
     {
         // First find the selected option in array by code
         $option = $this->getSelectedShippingOption();

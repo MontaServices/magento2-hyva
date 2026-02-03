@@ -3,8 +3,9 @@
   "description": "Companion module for Monta Checkout on Hyva projects.",
   "require": {
     "php": "^8.3|^8.4",
+    "hyva-themes/magento2-hyva-checkout": "*",
     "monta/checkout": "*",
-    "hyva-themes/magento2-hyva-checkout": "*"
+    "symfony/polyfill-php85": "*"
   },
   "type": "magento2-module",
   "minimum-stability": "stable",
