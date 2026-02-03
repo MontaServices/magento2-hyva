@@ -2,7 +2,7 @@
   "name": "monta/hyva",
   "description": "Companion module for Monta Checkout on Hyva projects.",
   "require": {
-    "php": "^8.3",
+    "php": "^8.3|^8.4",
     "hyva-themes/magento2-hyva-checkout": "*",
     "monta/checkout": "*",
     "symfony/polyfill-php85": "*"

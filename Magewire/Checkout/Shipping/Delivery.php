@@ -26,6 +26,8 @@ class Delivery extends Component
     /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
     public ?string $selectedOptionCode = null;
 
+    public array $selectedShipperOptions = [];
+
     /**
      * @param Quote $quoteHelper
      */
@@ -57,16 +59,16 @@ class Delivery extends Component
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function updatingSelectedOptionCode(string $deliveryOptionCode): string
+    public function updatedSelectedOptionCode(string $deliveryOptionCode): string
     {
         // First find the selected option in array by code
-        $option = array_find(
-        // call flat array directly instead of converting back and forth
-            array: $this->options,
-            callback: fn($option) => $option['code'] == $deliveryOptionCode);
+        $option = $this->getSelectedShippingOption();
 
         // Save to quote
         $this->quoteHelper->setOption(json_encode($option));
+
+        // Shipper options are overwritten in Quote, match visually
+        $this->selectedShipperOptions = [];
 
         return $deliveryOptionCode;
     }
@@ -79,6 +81,60 @@ class Delivery extends Component
     {
         // updated array is received as array
         $this->options = $options;
+    }
+
+    /** Magic method runs after property is updated
+     * Basically 'clickShipperOption'
+     *
+     * @param bool[] $shipperOptions - Boolean truth map, keyed on ShipperOptionCode
+     * @param string $property - Magewire passes name of property
+     * @return array - the updated array
+     */
+    public function updatedSelectedShipperOptions(array $shipperOptions): array
+    {
+        $this->quoteHelper->setShipperOptions(array_map(
+            callback: function (string $code) {
+                return $this->getShipperOptionByCode($code);
+            },
+            // Return the keys of the truth map
+            array: array_keys(
+            // Keep only options that are selected (true)
+                array_filter($this->selectedShipperOptions),
+            ),
+        ));
+        // Magic methods must always return the updated value
+        return $shipperOptions;
+    }
+
+    /** Reconstruct ShipperOption from originally loaded ShippingOption that is currently selected
+     * TODO merge duplicate code with ShippingOption::getShipperOptionByCode() except for arrays
+     *
+     * @param string $code
+     * @return array
+     */
+    protected function getShipperOptionByCode(string $code): array
+    {
+        $shipperOption = [];
+        if ($shippingOption = $this->getSelectedShippingOption()) {
+            $shipperOption = array_first(array_filter(
+                array: $shippingOption['deliveryOptions'],
+                callback: fn($option) => $option['code'] == $code,
+            )) ?? []; // TODO when could that ever be NULL?
+        }
+        return $shipperOption;
+    }
+
+    /** Get the ShippingOption currently selected, originally loaded as array¶
+     *
+     * @return array|null
+     */
+    protected function getSelectedShippingOption(): ?array
+    {
+        return array_first(array_filter(
+        // call flat array directly instead of converting back and forth
+            array: $this->options,
+            callback: fn($option) => $option['code'] == $this->selectedOptionCode,
+        ));
     }
 
     /** Convert array to real objects

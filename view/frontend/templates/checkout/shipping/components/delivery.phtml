@@ -38,10 +38,11 @@
                                 <!-- TODO border color should match tile border color -->
                                 <?php
                                 foreach ($deliveryOption->getShipperOptions() as $shipperOption): ?>
+                                    <!-- TODO nested <label> elements is not valid HTML. Works in browser but might cause problems in JS -->
                                     <label class="flex justify-between rounded-tile p-2 monta-gray-tile hover:monta-blue-focus">
                                         <div class="items-center space-x-2">
-                                            <!-- TODO click parents[2].clickShipperOption-->
-                                            <input type="checkbox" name="<?= $shipperOption->getCode() ?>"/>
+                                            <input type="checkbox"
+                                                   wire:model="selectedShipperOptions.<?= $shipperOption->getCode() ?>"/>
                                             <span><?= $shipperOption->description ?></span>
                                         </div>
                                         <span class="text-md">+ <?= $shipperOption->priceFormatted ?></span>

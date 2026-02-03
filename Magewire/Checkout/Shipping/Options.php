@@ -113,7 +113,7 @@ class Options extends Component
      * @param array|null $method
      * @return bool
      */
-    public function onShippingMethodSelected(array $method = null): bool
+    public function onShippingMethodSelected(?array $method = null): bool
     {
         return $this->isMonta($method[\Magento\Quote\Model\Shipping::METHOD] ?? null);
     }
@@ -122,7 +122,7 @@ class Options extends Component
      * @param string|null $method
      * @return bool
      */
-    protected function isMonta(string $method = null): bool
+    protected function isMonta(?string $method = null): bool
     {
         // Must return something, but Magewire is listening to the property
         return $this->show = ($method == Monta::METHOD_CODE || $method == Monta::METHOD_CODE . "_" . Monta::METHOD_CODE);
