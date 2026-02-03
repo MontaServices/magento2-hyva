@@ -66,14 +66,16 @@ class Pickup extends Delivery
      *
      * @param string $deliveryOptionCode
      * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function updatedSelectedOptionCode(string $deliveryOptionCode): string
     {
         if ($this->showingMap) {
             $this->triggerMap();
         }
-        // Magic methods must return the value
-        return $deliveryOptionCode;
+        // Call parent to save the option to quote
+        return parent::updatedSelectedOptionCode($deliveryOptionCode);
     }
 
     /** Dispatch event to trigger mounting the Google Maps widget
