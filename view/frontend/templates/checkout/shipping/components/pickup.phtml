@@ -32,8 +32,13 @@
                     <div class="pickup-option flex-col">
                         <div class="pickup-header flex justify-between space-x-2">
                             <div class="flex">
-                                <img src="<?= $pickup->imageUrl ?>" alt="<?= $pickup->getDisplayName(); ?>"
-                                     class="pickup-logo w-16 h-16 pr-2">
+                                <?php
+                                if ($imageUrl = $pickup->getImageUrl()): ?>
+                                    <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
+                                         alt="<?= $escaper->escapeHtmlAttr($pickup->getDisplayName()); ?>"
+                                         class="pickup-logo w-16 h-16 pr-2">
+                                <?php
+                                endif; ?>
                                 <div class="pickup-container">
                                     <strong><?= $pickup->getCompany() ?></strong>
                                     <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
