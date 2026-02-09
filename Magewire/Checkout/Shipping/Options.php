@@ -22,7 +22,7 @@ class Options extends Component
 
     public const string PICKUP_OPTIONS_IDENTIFIER = "PickupOptions";
 
-    /** @var TimeFrame[]|array[] $deliveryOptions - These are actually the Timeframes */
+    /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
     public array $deliveryOptions = [];
 
     /** @var PickupPoint[] */
@@ -93,19 +93,7 @@ class Options extends Component
      */
     public function isFallbackShippper(): bool
     {
-        if (sizeof($this->deliveryOptions) !== 1) {
-            return false;
-        }
-
-        $firstFrame = array_first($this->deliveryOptions);
-
-        // might be either an array
-        if (is_array($firstFrame)) {
-            return TimeFrame::isFallbackShipperCode($firstFrame);
-        }
-
-        // or the proper Timeframe object, call directly then
-        return $firstFrame->isFallbackShipper();
+        return (sizeof($this->deliveryOptions) == 1 && array_first($this->getDeliveryOptions())->isFallbackShipper());
     }
 
     /** Hydrate runs after child Magewire components have been created
