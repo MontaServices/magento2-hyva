@@ -93,12 +93,19 @@ class Options extends Component
      */
     public function isFallbackShippper(): bool
     {
+        if (sizeof($this->deliveryOptions) !== 1) {
+            return false;
+        }
+
         $firstFrame = array_first($this->deliveryOptions);
-        return (sizeof($this->deliveryOptions) == 1) &&
-        // when it is an array, check that
-        is_array($firstFrame) ? TimeFrame::isFallbackShipperCode($firstFrame)
-            // otherwise just call the method
-            : $firstFrame->isFallbackShipper();
+
+        // might be either an array
+        if (is_array($firstFrame)) {
+            return TimeFrame::isFallbackShipperCode($firstFrame);
+        }
+
+        // or the proper Timeframe object, call directly then
+        return $firstFrame->isFallbackShipper();
     }
 
     /** Hydrate runs after child Magewire components have been created
