@@ -30,7 +30,9 @@
             if (sizeof($magewire->getDeliveryOptions())): ?>
                 <div class="tabcontent <?= $magewire->mode == 'delivery' ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first">
+                    <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first <?=
+                    // Hide Day buttons if there is only one
+                    $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
                             <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus <?=

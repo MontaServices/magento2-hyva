@@ -19,9 +19,13 @@
                 <div class="flex-col">
                     <div class="flex justify-between space-x-2">
                         <div class="flex">
-                            <img src="<?= $deliveryOption->imageUrl ?>"
-                                 alt="<?= $deliveryOption->getDisplayName() ?>"
-                                 class="w-16 h-16 pr-2"/>
+                            <?php
+                            if ($imageUrl = $deliveryOption->getImageUrl()): ?>
+                                <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
+                                     alt="<?= $escaper->escapeHtmlAttr($deliveryOption->getDisplayName()) ?>"
+                                     class="w-16 h-16 pr-2"/>
+                            <?php
+                            endif; ?>
                             <div>
                                 <p class="font-semibold"><?= $deliveryOption->shipper ?></p>
                                 <p class="text-sm text-gray-600"><?= $deliveryOption->displayNameShort ?></p>

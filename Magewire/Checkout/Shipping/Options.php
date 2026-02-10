@@ -88,6 +88,14 @@ class Options extends Component
         }
     }
 
+    /**
+     * @return bool
+     */
+    public function isFallbackShippper(): bool
+    {
+        return (sizeof($this->deliveryOptions) == 1 && array_first($this->getDeliveryOptions())->isFallbackShipper());
+    }
+
     /** Hydrate runs after child Magewire components have been created
      *
      * @return void
