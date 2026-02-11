@@ -20,6 +20,9 @@ class Pickup extends Delivery
     /** @var int $selectedPickupKey - Index of the selected pickup point in the available options */
     public int $selectedPickupKey = 0;
 
+    /** @var string $packstationPostnumber */
+    public string $packstationPostnumber = "";
+
     /** Override on activateTab
      *
      * @param bool $active
@@ -76,6 +79,18 @@ class Pickup extends Delivery
         }
         // Call parent to save the option to quote
         return parent::updatedSelectedOptionCode($deliveryOptionCode);
+    }
+
+    /** Magic method listening to updated Postnumber
+     *
+     * @param string $newPostnumber - the updated value, now equal to property
+     * @return string - Magic methods must return the value
+     */
+    public function updatedPackstationPostnumber(string $newPostnumber)
+    {
+        // TODO save to Quote
+        // Magic methods must return the value
+        return $newPostnumber;
     }
 
     /** Dispatch event to trigger mounting the Google Maps widget
