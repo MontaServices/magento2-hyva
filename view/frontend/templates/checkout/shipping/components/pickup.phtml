@@ -51,7 +51,7 @@
                         if ($openingTimes = $pickup->getOpeningTimes()): ?>
                             <div class="business-hours text-sm text-gray-500 mt-2 <?=
                             // Hide opening times on the non-selected points
-                            $magewire->selectedOptionCode == $pickup->getCode() ? '' : 'hidden';
+                            $magewire->isSelected($pickup->getCode()) ? '' : 'hidden';
                             ?>">
                                 <?php
                                 foreach ($openingTimes as $slot): ?>

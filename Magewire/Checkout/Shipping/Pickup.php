@@ -87,7 +87,7 @@ class Pickup extends Delivery
         // Update counter
         $this->selectedPickupKey = array_find_key(
             array: $this->options,
-            callback: fn($option) => $option['code'] == $this->selectedOptionCode)
+            callback: fn($option) => $this->isSelected($option['code']))
             // if not found or options empty, fallback to one
             ?? 1;
 
@@ -145,7 +145,7 @@ class Pickup extends Delivery
         $classes = [];
 
         // Focus class on selected option
-        $isSelected = ($this->selectedOptionCode == $code);
+        $isSelected = $this->isSelected($code);
         if ($isSelected) {
             $classes[] = 'monta-blue-focus';
         }
