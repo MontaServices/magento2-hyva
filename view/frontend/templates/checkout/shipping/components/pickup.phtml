@@ -48,20 +48,21 @@
                             <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
                         </div>
                         <?php
-                        if ($openingTimes = $pickup->getOpeningTimes()): ?>
-                            <div class="business-hours text-sm text-gray-500 mt-2 <?=
-                            // Hide opening times on the non-selected points
-                            $magewire->isSelected($pickup->getCode()) ? '' : 'hidden';
-                            ?>">
-                                <?php
-                                foreach ($openingTimes as $slot): ?>
-                                    <!-- TODO show opening times only on selected point -->
-                                    <!-- TODO tab character is not rendered-->
-                                    <p class="text-sm"
-                                    ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
-                                <?php
-                                endforeach; ?>
-                            </div>
+                        if ($magewire->isSelected($pickup->getCode())): ?>
+                            <?php
+                            if ($openingTimes = $pickup->getOpeningTimes()): ?>
+                                <div class="business-hours text-sm text-gray-500 mt-2">
+                                    <?php
+                                    foreach ($openingTimes as $slot): ?>
+                                        <!-- TODO show opening times only on selected point -->
+                                        <!-- TODO tab character is not rendered-->
+                                        <p class="text-sm"
+                                        ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
+                                    <?php
+                                    endforeach; ?>
+                                </div>
+                            <?php
+                            endif; ?>
                         <?php
                         endif; ?>
                     </div>
