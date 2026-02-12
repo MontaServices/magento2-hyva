@@ -88,7 +88,7 @@ class Pickup extends Delivery
      */
     public function updatedPackstationPostnumber(string $newPostnumber)
     {
-        // TODO save to Quote
+        $this->quoteHelper->updatePackstation($this->packstationPostnumber);
         // Magic methods must return the value
         return $newPostnumber;
     }
