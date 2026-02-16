@@ -53,7 +53,7 @@
                             if ($pickup->isPackstation()): ?>
                                 <div id="packstation-postnumber">
                                     <span class="normal"><?= $escaper->escapeHtml(__("Post number")) ?></span>
-                                    <input type="text" wire:model="packstationPostnumber">
+                                    <input type="text" wire:model.debounce.500ms="packstationPostnumber">
                                 </div>
                             <?php
                             endif; ?>
