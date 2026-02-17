@@ -137,23 +137,19 @@ class Options extends Component
     }
 
     /**
-     * @return array[]
+     * @return string[] - Button labels keyed on tab identifier
      */
     public function getTabButtons(): array
     {
-        return [
-            [
-                // id is also the name of the property this corresponds to
-                "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
-                "label" => __("Delivery"),
-                'enabled' => (sizeof($this->deliveryOptions) > 0),
-            ],
-            [
-                "id" => self::PICKUP_OPTIONS_IDENTIFIER,
-                "label" => __("Pickup"),
-                'enabled' => (sizeof($this->pickupOptions) > 0),
-            ],
-        ];
+        $buttons = [];
+        if (sizeof($this->deliveryOptions) > 0) {
+            // tabId is also the name of the property this corresponds to
+            $buttons[self::DELIVERY_OPTIONS_IDENTIFIER] = __("Delivery");
+        }
+        if (sizeof($this->pickupOptions) > 0) {
+            $buttons[self::PICKUP_OPTIONS_IDENTIFIER] = __("Pickup");
+        }
+        return $buttons;
     }
 
     /** Switch tab mode

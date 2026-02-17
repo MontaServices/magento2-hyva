@@ -13,22 +13,18 @@
         <!-- Buttons-->
         <div class="flex mx-auto mb-5">
             <?php
-            foreach ($magewire->getTabButtons() as $button): ?>
+            foreach ($magewire->getTabButtons() as $tabId => $label): ?>
                 <?php
-                if ($button['enabled']):
-                    $isActive = ($magewire->mode == $button['id']); ?>
-                    <label for="<?= $escaper->escapeHtmlAttr($button['id']) ?>"
-                           class="w-1/2 mx-auto select-none text-center cursor-pointer py-2 text-white rounded-md transition hover:monta-blue-focus border
+                $isActive = ($magewire->mode == $tabId); ?>
+                <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                       class="w-1/2 mx-auto select-none text-center cursor-pointer py-2 text-white rounded-md transition hover:monta-blue-focus border
                            <?= $isActive ? 'monta-blue-focus' : 'monta-gray-tile' ?>">
-                        <input type="radio" class="hidden" name="shipping-mode"
-                               id="<?= $escaper->escapeHtmlAttr($button['id']) ?>"
-                               wire:model="mode"
-                               value="<?= $escaper->escapeHtmlAttr($button['id']) ?>"
-                        />
-                        <?= $escaper->escapeHtml($button['label']) ?>
-                    </label>
-                <?php
-                endif;
+                    <input type="radio" class="hidden" name="shipping-mode"
+                           id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                           wire:model="mode" value="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                    /><?= $escaper->escapeHtml($label) ?>
+                </label>
+            <?php
             endforeach; ?>
         </div>
         <div class="tabs">
