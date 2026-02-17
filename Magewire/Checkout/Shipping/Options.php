@@ -152,12 +152,6 @@ class Options extends Component
         return $buttons;
     }
 
-    /** Switch tab mode
-     *
-     * @param string $mode
-     * @return void
-     */
-
     /** Magic listener
      *
      * @param string $mode - new value
