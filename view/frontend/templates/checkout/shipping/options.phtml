@@ -14,12 +14,19 @@
         <div class="flex mx-auto mb-5">
             <?php
             foreach ($magewire->getTabButtons() as $button): ?>
-                <!-- TODO for some reason Tailwind doesn't work on button element -->
                 <?php
-                if ($button['active']): ?>
-                    <button type="button" id="<?= $button['id'] ?>"
-                            class="button btn options-tab-button action w-1/2 py-2 text-white mx-auto"><?= $button['label'] ?>
-                    </button>
+                if ($button['enabled']):
+                    $isActive = ($magewire->mode == $button['id']); ?>
+                    <label for="<?= $escaper->escapeHtmlAttr($button['id']) ?>"
+                           class="w-1/2 mx-auto select-none text-center cursor-pointer py-2 text-white rounded-md transition hover:monta-blue-focus border
+                           <?= $isActive ? 'monta-blue-focus' : 'monta-gray-tile' ?>">
+                        <input type="radio" class="hidden" name="shipping-mode"
+                               id="<?= $escaper->escapeHtmlAttr($button['id']) ?>"
+                               wire:model="mode"
+                               value="<?= $escaper->escapeHtmlAttr($button['id']) ?>"
+                        />
+                        <?= $escaper->escapeHtml($button['label']) ?>
+                    </label>
                 <?php
                 endif;
             endforeach; ?>
@@ -28,7 +35,7 @@
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
-                <div class="tabcontent <?= $magewire->mode == 'delivery' ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent <?= $magewire->mode == $magewire::DELIVERY_OPTIONS_IDENTIFIER ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons -->
                     <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first <?=
                     // Hide Day buttons if there is only one

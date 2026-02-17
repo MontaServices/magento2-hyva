@@ -44,7 +44,7 @@ class Options extends Component
      *
      * @var string - Start on Delivery
      */
-    public string $mode = 'delivery';
+    public string $mode = self::DELIVERY_OPTIONS_IDENTIFIER;
 
     /**
      * @var string[]
@@ -146,13 +146,12 @@ class Options extends Component
                 // id is also the name of the property this corresponds to
                 "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
                 "label" => __("Delivery"),
-                'active' => (sizeof($this->deliveryOptions) > 0),
+                'enabled' => (sizeof($this->deliveryOptions) > 0),
             ],
-
             [
                 "id" => self::PICKUP_OPTIONS_IDENTIFIER,
                 "label" => __("Pickup"),
-                'active' => (sizeof($this->pickupOptions) > 0),
+                'enabled' => (sizeof($this->pickupOptions) > 0),
             ],
         ];
     }
@@ -162,25 +161,31 @@ class Options extends Component
      * @param string $mode
      * @return void
      */
-    public function clickMode(string $mode): void
+
+    /** Magic listener
+     *
+     * @param string $mode - new value
+     * @return string - Magic methods must always return the updated value
+     */
+    public function updatedMode(string $mode): string
     {
         // Convert tab identifiers to child component name
         // TODO identify child components by exact identifiers directly
         switch ($mode) {
             case self::PICKUP_OPTIONS_IDENTIFIER:
                 $childName = 'pickup';
-                $this->emitChildComponent($childName, 'activateTab', true);
                 break;
             default:
             case self::DELIVERY_OPTIONS_IDENTIFIER:
                 $childName = 'delivery';
-                $this->emitChildComponent($childName, 'activateTab', true);
-                // And hide Pickup tab (for some reason not working via JS
+                // And hide Pickup tab (for some reason not working via JS)
                 $this->emitChildComponent('pickup', 'activateTab', false);
                 break;
         }
-        $this->mode = $childName;
-        // TODO the other tab(s) are hidden by `sharedUtils.clickMode` from JS
+        $this->emitChildComponent($childName, 'activateTab', true);
+
+        // Update and return property, tabs are shown/hidden accordingly.
+        return $this->mode = $mode;
     }
 
     /** Get Timeframes (name for consistency)
