@@ -26,6 +26,9 @@ class Delivery extends Component
     /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
     public ?string $selectedOptionCode = null;
 
+    /**
+     * @var array $selectedShipperOptions - Truth map, keyed on code, e.g. ['NoNeighbor' => true]
+     */
     public array $selectedShipperOptions = [];
 
     /**

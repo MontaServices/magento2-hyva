@@ -39,11 +39,12 @@
                         <div class="shipperoptions">
                             <p class="font-semibold mb-2"><?= $escaper->escapeHtml(__("Extra shipperoptions:")) ?></p>
                             <div class="space-y-2">
-                                <!-- TODO border color should match tile border color -->
                                 <?php
                                 foreach ($deliveryOption->getShipperOptions() as $shipperOption): ?>
                                     <!-- TODO nested <label> elements is not valid HTML. Works in browser but might cause problems in JS -->
-                                    <label class="flex justify-between rounded-tile p-2 monta-gray-tile hover:monta-blue-focus">
+                                    <label class="flex justify-between rounded-tile p-2 hover:monta-blue-focus <?=
+                                    // if shipperoption is selected, show focus. Cannot use `checked:monta-blue-focus` but that does not work on label
+                                     (!empty($magewire->selectedShipperOptions[$shipperOption->getCode()]) ? 'monta-blue-focus' : '') ?>">
                                         <div class="items-center space-x-2">
                                             <input type="checkbox"
                                                    wire:model="selectedShipperOptions.<?= $shipperOption->getCode() ?>"/>
