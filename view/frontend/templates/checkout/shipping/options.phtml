@@ -7,9 +7,21 @@
  */
 ?>
 
-<div id="block-shipping-options" class="max-w-lg mx-auto">
+<div id="block-shipping-options" class="w-full mt-6 max-w-full overflow-hidden"
+     style="contain: inline-size;">
     <?php
     if ($magewire->show): ?>
+        <style>
+            #block-shipping-options .day-scroll {
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            #block-shipping-options .day-scroll::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
         <!-- Buttons-->
         <div class="flex mx-auto mb-5">
             <?php
@@ -17,8 +29,8 @@
                 <?php
                 $isActive = ($magewire->mode == $tabId); ?>
                 <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                       class="w-1/2 text-center rounded-tile transition hover:monta-blue-focus <?=
-                       $isActive ? 'bg-blue-500 text-white text-bold' : 'monta-gray-tile' ?>">
+                       class="w-1/2 text-center rounded-tile transition font-semibold py-4 transition <?=
+                       $isActive ? 'bg-blue-500 text-white' : 'monta-gray-tile hover:monta-blue-focus' ?>">
                     <input type="radio" class="hidden" name="shipping-mode"
                            id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
                            wire:model="mode" value="<?= $escaper->escapeHtmlAttr($tabId) ?>"
@@ -27,22 +39,22 @@
             <?php
             endforeach; ?>
         </div>
-        <div class="tabs">
+        <div class="tabs w-full min-w-0">
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
                 <div class="tabcontent <?= $magewire->mode == $magewire::DELIVERY_OPTIONS_IDENTIFIER ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first <?=
+                    <div class="flex overflow-x-auto day-scroll gap-2 mb-5 click-first <?=
                     // Hide Day buttons if there is only one
                     $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus <?=
+                            <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus py-4 px-2 transition-all <?=
                             $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
                                 <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
-                                <p class="font-semibold py-2"><?= $option->getDay() ?></p>
+                                <p class="font-semibold"><?= $option->getDay() ?></p>
                                 <p class="text-sm text-gray-500"><?= $option->getDateFormatted() ?></p>
                             </label>
                         <?php
