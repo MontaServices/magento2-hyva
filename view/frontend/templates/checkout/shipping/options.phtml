@@ -11,17 +11,6 @@
      style="contain: inline-size;">
     <?php
     if ($magewire->show): ?>
-        <style>
-            #block-shipping-options .day-scroll {
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-            }
-
-            #block-shipping-options .day-scroll::-webkit-scrollbar {
-                display: none;
-            }
-        </style>
         <!-- Buttons-->
         <div class="flex mx-auto mb-5">
             <?php
@@ -45,7 +34,7 @@
             if (sizeof($magewire->getDeliveryOptions())): ?>
                 <div class="tabcontent <?= $magewire->mode == $magewire::DELIVERY_OPTIONS_IDENTIFIER ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="flex overflow-x-auto day-scroll gap-2 mb-5 click-first <?=
+                    <div class="flex overflow-x-auto gap-2 mb-5 click-first <?=
                     // Hide Day buttons if there is only one
                     $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
