@@ -11,10 +11,10 @@
     // TODO class 'click-first' but not yet loaded then
     foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
         <label>
-            <div class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto <?=
+            <div class="selectShippingOption rounded-tile monta-gray-tile mb-2 <?=
             // conditionally add focus class to the selected option (similar to `focusSelection()`)
             $magewire->isSelected($deliveryOption->getCode()) ? 'monta-blue-focus' : ''; ?>">
-                <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
+                <input type="radio" class="hidden" wire:model="selectedOptionCode"
                        value="<?= $escaper->escapeHtmlAttr($deliveryOption->getCode()) ?>"/>
                 <div class="flex-col">
                     <div class="flex justify-between space-x-2">
