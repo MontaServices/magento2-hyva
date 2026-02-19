@@ -39,7 +39,7 @@
                     $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus py-4 px-2 transition-all <?=
+                            <label class="selectDayButton shrink-0 basis-1/4 flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus py-4 px-2 transition-all <?=
                             $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
                                 <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
