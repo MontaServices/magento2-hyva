@@ -18,7 +18,7 @@
                 <?php
                 $isActive = ($magewire->mode == $tabId); ?>
                 <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                       class="w-1/2 text-center rounded-tile transition font-semibold <?=
+                       class="flex-1 text-center rounded-tile transition font-semibold <?=
                        $isActive ? 'bg-blue-500 text-white' : 'monta-gray-tile hover:monta-blue-focus' ?>">
                     <input type="radio" class="hidden" name="shipping-mode"
                            id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
