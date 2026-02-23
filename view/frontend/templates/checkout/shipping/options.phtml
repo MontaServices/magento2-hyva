@@ -50,14 +50,14 @@
                         endforeach; ?>
                     </div>
                     <!-- Selected day options -->
-                    <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')->toHtml(); ?>
+                    <?= $block->getChildBlock($magewire->childComponent('delivery'))->toHtml(); ?>
                 </div>
             <?php
             endif; ?>
             <!-- Pickup Options (entire tab is inside childblock, unlike regular module -->
             <?php
             if (sizeof($magewire->pickupOptions)): ?>
-                <?= $block->getChildBlock('monta.hyva.shipping.method.component.pickup')->toHtml() ?>
+                <?= $block->getChildBlock($magewire->childComponent('pickup'))->toHtml() ?>
             <?php
             endif; ?>
         </div>

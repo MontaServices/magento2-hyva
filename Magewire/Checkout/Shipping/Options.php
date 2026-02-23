@@ -228,9 +228,18 @@ class Options extends Component
     protected function emitChildComponent(string $childName, string $event, mixed $data = []): void
     {
         $this->emitTo(
-            name: 'monta.hyva.shipping.method.component.' . $childName,
+            name: $this->childComponent($childName),
             event: $event,
             params: $data,
         );
+    }
+
+    /**
+     * @param string $childName
+     * @return string
+     */
+    public function childComponent(string $childName): string
+    {
+        return 'monta.hyva.shipping.method.component.' . $childName;
     }
 }
