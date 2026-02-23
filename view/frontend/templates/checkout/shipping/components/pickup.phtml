@@ -12,7 +12,7 @@
     if ($magewire->showingMap): ?>
         <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md">
             <!-- TODO this little 'data-content-type' attribute causes Hyva to load map.phtml with CSP warnings but something runs🤔-->
-            <div id="<?= $magewire::MAP_IDENTIFIER ?>"
+            <div id="<?= $escaper->escapeHtmlAttr($magewire::MAP_IDENTIFIER) ?>"
                  data-content-type="map"
                  data-locations='<?= $escaper->escapeHtmlAttr(json_encode($magewire->getPickupOptions())) ?>'
                  data-show-controls="true"
@@ -41,11 +41,11 @@
                                 endif; ?>
                                 <div class="pickup-container">
                                     <strong><?= $pickup->getCompany() ?></strong>
-                                    <p class="text-sm text-gray-500"><?= $pickup->getDisplayName() ?></p>
-                                    <p class="text-sm text-gray-600"><?= $pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber ?></p>
+                                    <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($pickup->getDisplayName()) ?></p>
+                                    <p class="text-sm text-gray-600"><?= $escaper->escapeHtml($pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber) ?></p>
                                 </div>
                             </div>
-                            <p class="text-green font-medium"><?= $pickup->priceFormatted ?></p>
+                            <p class="text-green font-medium"><?= $escaper->escapeHtml($pickup->priceFormatted) ?></p>
                         </div>
                         <?php
                         if ($magewire->isSelected($pickup->getCode())): ?>
@@ -65,7 +65,7 @@
                                         <!-- TODO show opening times only on selected point -->
                                         <!-- TODO tab character is not rendered-->
                                         <p class="text-sm"
-                                        ><?= $slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo() ?></p>
+                                        ><?= $escaper->escapeHtml($slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo()) ?></p>
                                     <?php
                                     endforeach; ?>
                                 </div>
