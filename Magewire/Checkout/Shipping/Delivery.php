@@ -23,11 +23,13 @@ class Delivery extends Component
      */
     public array $options = [];
 
-    /** @var string|null $selectedOptionCode - Code of the selected Shipping Option in state */
+    /**
+     * @var string|null $selectedOptionCode - Code of the selected Shipping Option in state
+     */
     public ?string $selectedOptionCode = null;
 
     /**
-     * @var array $selectedShipperOptions - Truth map, keyed on code, e.g. ['NoNeighbor' => true]
+     * @var array $selectedShipperOptions - Truth map, keyed on code, e.g. ['NoNeighbor' => false, 'SignatureRequired' => true]
      */
     public array $selectedShipperOptions = [];
 

@@ -11,7 +11,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
 use Monta\Checkout\Helper\Shipping;
-use Monta\Checkout\Model\Carrier\Monta;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 use Monta\CheckoutApiWrapper\Objects\TimeFrame;
@@ -174,8 +173,8 @@ class Options extends Component
         }
         $this->emitChildComponent($childName, 'activateTab', true);
 
-        // Update and return property, tabs are shown/hidden accordingly.
-        return $this->mode = $mode;
+        // Return updated property, tabs are displayed accordingly
+        return $mode;
     }
 
     /** Get Timeframes (name for consistency)
@@ -214,7 +213,7 @@ class Options extends Component
         // Update child component options
         $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
 
-        // Magic method MUST return value to continue updating property
+        // Magic method returns the new value to continue updating property
         return $date;
     }
 

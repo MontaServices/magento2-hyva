@@ -7,7 +7,7 @@
  */
 ?>
 
-<div id="block-shipping-options" class="w-full mt-6 max-w-full overflow-hidden"
+<div id="block-shipping-options" class="w-full mt-6"
      style="contain: inline-size;">
     <?php
     if ($magewire->show): ?>
@@ -18,7 +18,7 @@
                 <?php
                 $isActive = ($magewire->mode == $tabId); ?>
                 <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                       class="w-1/2 text-center rounded-tile transition font-semibold py-4 transition <?=
+                       class="w-1/2 text-center rounded-tile transition font-semibold <?=
                        $isActive ? 'bg-blue-500 text-white' : 'monta-gray-tile hover:monta-blue-focus' ?>">
                     <input type="radio" class="hidden" name="shipping-mode"
                            id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
@@ -28,7 +28,7 @@
             <?php
             endforeach; ?>
         </div>
-        <div class="tabs w-full min-w-0">
+        <div class="tabs">
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
@@ -39,9 +39,9 @@
                     $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <label class="selectDayButton shadow-lg shrink-0 basis-1/4 flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus py-4 px-2 transition-all <?=
+                            <label class="selectDayButton shadow-lg shrink-0 basis-1/4 flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus transition <?=
                             $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
-                                <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio hidden"
+                                <input type="radio" wire:model="selectedTimeFrameDate" class="hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
                                 <p class="font-semibold"><?= $escaper->escapeHtml(ucfirst($option->getDay())) ?></p>
                                 <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?></p>
