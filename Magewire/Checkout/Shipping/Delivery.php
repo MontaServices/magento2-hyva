@@ -124,7 +124,7 @@ class Delivery extends Component
         return $shipperOption;
     }
 
-    /** Get the ShippingOption currently selected, originally loaded as array¶
+    /** Get the ShippingOption currently selected, originally loaded as array
      *
      * @return array|null
      */
@@ -133,7 +133,7 @@ class Delivery extends Component
         return array_first(array_filter(
         // call flat array directly instead of converting back and forth
             array: $this->options,
-            callback: fn($option) => $option['code'] == $this->selectedOptionCode,
+            callback: fn($option) => $this->isSelected($option['code']),
         ));
     }
 
@@ -148,5 +148,15 @@ class Delivery extends Component
             callback: [ShippingOption::class, 'construct'],
             array: $this->options,
         );
+    }
+
+    /** Check if this is the selected Option
+     *
+     * @param string $code
+     * @return bool
+     */
+    public function isSelected(string $code): bool
+    {
+        return $this->selectedOptionCode == $code;
     }
 }

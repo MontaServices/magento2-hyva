@@ -20,6 +20,9 @@ class Pickup extends Delivery
     /** @var int $selectedPickupKey - Index of the selected pickup point in the available options */
     public int $selectedPickupKey = 0;
 
+    /** @var string $packstationPostnumber */
+    public string $packstationPostnumber = "";
+
     /** Override on activateTab
      *
      * @param bool $active
@@ -78,6 +81,18 @@ class Pickup extends Delivery
         return parent::updatedSelectedOptionCode($deliveryOptionCode);
     }
 
+    /** Magic method listening to updated Postnumber
+     *
+     * @param string $newPostnumber - the updated value, now equal to property
+     * @return string - Magic methods must return the value
+     */
+    public function updatedPackstationPostnumber(string $newPostnumber)
+    {
+        $this->quoteHelper->updatePackstation($this->packstationPostnumber);
+        // Magic methods must return the value
+        return $newPostnumber;
+    }
+
     /** Dispatch event to trigger mounting the Google Maps widget
      *
      * @return void
@@ -87,7 +102,7 @@ class Pickup extends Delivery
         // Update counter
         $this->selectedPickupKey = array_find_key(
             array: $this->options,
-            callback: fn($option) => $option['code'] == $this->selectedOptionCode)
+            callback: fn($option) => $this->isSelected($option['code']))
             // if not found or options empty, fallback to one
             ?? 1;
 
@@ -145,7 +160,7 @@ class Pickup extends Delivery
         $classes = [];
 
         // Focus class on selected option
-        $isSelected = ($this->selectedOptionCode == $code);
+        $isSelected = $this->isSelected($code);
         if ($isSelected) {
             $classes[] = 'monta-blue-focus';
         }
