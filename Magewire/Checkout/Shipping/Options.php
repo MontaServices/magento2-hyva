@@ -76,7 +76,6 @@ class Options extends Component
     {
         if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
             // Retrieve shipping options from same helper
-            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date from Quote
             $options = $this->shippingHelper->getOptions($this->getQuote());
             if ($options) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
@@ -84,6 +83,7 @@ class Options extends Component
                 $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
                 $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
             }
+            // TODO set selectedTimeframe date from Quote
         }
     }
 
@@ -101,7 +101,7 @@ class Options extends Component
      */
     public function hydrate(): void
     {
-        // Set PickupOptions on child block
+        // Set PickupOptions on child block now that both components are mounted
         $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
     }
 
