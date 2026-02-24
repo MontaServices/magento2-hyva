@@ -69,21 +69,34 @@ class Options extends Component
     /** Mount runs before any child components exist
      *
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     * @throws GuzzleException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function mount(): void
     {
-        if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
+        $this->loadShippingOptions();
+    }
+
+    /**
+     * @return void
+     * @throws GuzzleException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    protected function loadShippingOptions(): void
+    {
+        $quote = $this->getQuote();
+        if ($this->isMonta($quote->getShippingAddress()->getShippingMethod())) {
+            // TODO set selectedTimeframe date from Quote
             // Retrieve shipping options from same helper
-            $options = $this->shippingHelper->getOptions($this->getQuote());
-            if ($options) {
+            if ($options = $this->shippingHelper->getOptions($quote)) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
                 $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
                 $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
                 $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
             }
-            // TODO set selectedTimeframe date from Quote
         }
     }
 
@@ -107,7 +120,7 @@ class Options extends Component
 
     /**
      * @return Quote
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function getQuote(): Quote
