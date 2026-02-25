@@ -227,8 +227,10 @@ class Options extends Component
             callback: fn($option) => $option->getDate() == $date,
         );
 
-        // Update child component options
-        $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
+        if ($timeframe && $timeframe->options) {
+            // Update child component options
+            $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
+        }
 
         // Magic method returns the new value to continue updating property
         return $date;

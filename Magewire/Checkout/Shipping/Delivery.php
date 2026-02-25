@@ -78,14 +78,16 @@ class Delivery extends Component
         return $deliveryOptionCode;
     }
 
-    /**
+    /** TODO when is $options ever NULL? Strange errors
      * @param array[] $options - ShippingOptions from selected Timeframe (as array)
      * @return void
      */
-    public function updateOptions(array $options): void
+    public function updateOptions(?array $options = null): void
     {
         // updated array is received as array
-        $this->options = $options;
+        if ($options) {
+            $this->options = $options;
+        }
     }
 
     /** Magic method runs after property is updated
