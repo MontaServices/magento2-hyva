@@ -83,15 +83,16 @@ class Options extends Component
 
     /** Attempt to load Shipping options for current quote
      *
+     * @param string|null $method
      * @return void
      * @throws GuzzleException
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function loadShippingOptions(): void
+    public function loadShippingOptions(?string $method = null): void
     {
         $quote = $this->getQuote();
-        if ($this->isMonta($quote->getShippingAddress()->getShippingMethod())) {
+        if ($this->isMonta($method ?? $quote->getShippingAddress()->getShippingMethod())) {
             // Retrieve shipping options from same helper
             if ($options = $this->shippingHelper->getOptions($quote)) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
@@ -137,7 +138,8 @@ class Options extends Component
      */
     public function onShippingMethodSelected(?array $method = null): bool
     {
-        return $this->isMonta($method[\Magento\Quote\Model\Shipping::METHOD] ?? null);
+        $this->loadShippingOptions($method[\Magento\Quote\Model\Shipping::METHOD] ?? null);
+        return $this->show;
     }
 
     /**
