@@ -7,7 +7,6 @@ namespace Monta\Hyva\Magewire\Checkout\Shipping;
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
 use Monta\Checkout\Helper\Shipping;
@@ -56,9 +55,6 @@ class Options extends Component
     /**
      * @param Session $checkoutSession
      * @param Shipping $shippingHelper
-     * @throws GuzzleException
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function __construct(
         protected readonly Session $checkoutSession,
@@ -70,10 +66,6 @@ class Options extends Component
     /** Mount runs before any child components exist
      *
      * @return void
-     * @throws LocalizedException
-     * @throws GuzzleException
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function mount(): void
     {
@@ -85,21 +77,24 @@ class Options extends Component
      *
      * @param string|null $method
      * @return void
-     * @throws GuzzleException
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function loadShippingOptions(?string $method = null): void
     {
-        $quote = $this->getQuote();
-        if ($this->isMonta($method ?? $quote->getShippingAddress()->getShippingMethod())) {
-            // Retrieve shipping options from same helper
-            if ($options = $this->shippingHelper->getOptions($quote)) {
-                $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
-                $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
-                $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
-                $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
+        try {
+            $quote = $this->getQuote();
+            if ($this->isMonta($method ?? $quote->getShippingAddress()->getShippingMethod())) {
+                // Retrieve shipping options from same helper
+                if ($options = $this->shippingHelper->getOptions($quote)) {
+                    $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
+                    $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
+                    $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
+                    $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
+                }
             }
+        } catch (GuzzleException $exception) {
+            // Catch and ignore
+        } catch (LocalizedException $exception) {
+            // Catch and ignore
         }
     }
 
