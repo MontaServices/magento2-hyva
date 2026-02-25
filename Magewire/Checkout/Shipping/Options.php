@@ -50,6 +50,7 @@ class Options extends Component
      */
     protected $listeners = [
         'shipping_method_selected' => 'onShippingMethodSelected',
+        'shipping_address_saved' => 'loadShippingOptions',
     ];
 
     /**
@@ -77,19 +78,20 @@ class Options extends Component
     public function mount(): void
     {
         $this->loadShippingOptions();
+        // TODO set selectedTimeframe date from Quote
     }
 
-    /**
+    /** Attempt to load Shipping options for current quote
+     *
      * @return void
      * @throws GuzzleException
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    protected function loadShippingOptions(): void
+    public function loadShippingOptions(): void
     {
         $quote = $this->getQuote();
         if ($this->isMonta($quote->getShippingAddress()->getShippingMethod())) {
-            // TODO set selectedTimeframe date from Quote
             // Retrieve shipping options from same helper
             if ($options = $this->shippingHelper->getOptions($quote)) {
                 $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
