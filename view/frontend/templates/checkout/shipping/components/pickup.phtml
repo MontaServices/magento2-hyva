@@ -21,10 +21,10 @@
     <?php
     endif; ?>
     <!-- List of PickupOptions -->
-    <div id="pickupPointsList" class="space-y-3">
+    <div id="pickupPointsList" class="space-y-2">
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
-            <label>
+            <label class="flex">
                 <div class="rounded-tile monta-gray-tile w-full <?=
                 $escaper->escapeHtmlAttr(implode(separator: " ", array: $magewire->getClasses($pickup->getCode()))) ?>">
                     <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
