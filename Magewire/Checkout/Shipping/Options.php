@@ -109,13 +109,13 @@ class Options extends Component
         return (sizeof($this->deliveryOptions) == 1 && array_first($this->getDeliveryOptions())->isFallbackShipper());
     }
 
-    /** Hydrate runs after child Magewire components have been created
+    /** Runs after everything is created and properties exist
      *
      * @return void
      */
-    public function hydrate(): void
+    public function booted(): void
     {
-        // Set PickupOptions on child block now that both components are mounted
+        // Set PickupOptions on child block now that both components exist
         $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
     }
 
@@ -236,10 +236,10 @@ class Options extends Component
         return $date;
     }
 
-    /** Update options on child component
+    /** Pass data to child component
      *
-     * @param string $childName
-     * @param string $event
+     * @param string $childName - Child name as declared in XML
+     * @param string $event - function name on child component
      * @param mixed $data
      * @return void
      */
