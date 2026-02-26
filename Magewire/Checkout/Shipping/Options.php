@@ -91,6 +91,9 @@ class Options extends Component
                     $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
                 }
             }
+
+            // "click" the selected Timeframe because the magic method only runs on updates
+            $this->updatingSelectedTimeFrameDate($this->selectedTimeFrameDate);
         } catch (GuzzleException $exception) {
             // Catch and ignore
         } catch (LocalizedException $exception) {
@@ -211,16 +214,18 @@ class Options extends Component
     /** Magic method runs when model changes value in frontend
      * basically 'clickDayTile'
      *
-     * @param string $date - New value passed by request
-     * @return string - Updated value
+     * @param string|null $date - New value passed by request
+     * @return string|null - Updated value
      */
-    public function updatingSelectedTimeFrameDate(string $date): string
+    public function updatingSelectedTimeFrameDate(?string $date = null): ?string
     {
         // Find Timeframe for this date (can be only one)
         $timeframe = array_find(
             array: $this->getDeliveryOptions(),
             callback: fn($option) => $option->getDate() == $date,
-        );
+        )
+            // when it was not found, select the first Timeframe
+            ?? array_first($this->getDeliveryOptions());
 
         if ($timeframe && $timeframe->options) {
             // Update child component options
