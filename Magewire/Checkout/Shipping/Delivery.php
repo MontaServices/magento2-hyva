@@ -6,6 +6,8 @@
 
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magewirephp\Magewire\Component;
 use Monta\Checkout\Helper\Quote;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
@@ -60,25 +62,33 @@ class Delivery extends Component
      * Works on Pickup as well, since properties are the same
      *
      * @param string $deliveryOptionCode - New value passed by browser
+     * @param string $property - Magewire always passes property name
+     * @param array $shipperOptions - Custom property when updating with options
      * @return string - Magic method must return new value
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function updatedSelectedOptionCode(string $deliveryOptionCode): string
+    public function updatedSelectedOptionCode(
+        string $deliveryOptionCode,
+        string $property = "",
+        array $shipperOptions = [],
+    ): string
     {
-        // First find the selected option in array by code
+        // First the currently selected option by the updated code
         $option = $this->getSelectedShippingOption();
+        $option['selectedShipperOptions'] = $shipperOptions;
 
         // Save to quote
         $this->quoteHelper->setOption(json_encode($option));
 
         // Shipper options are overwritten in Quote, match visually
-        $this->selectedShipperOptions = [];
+        $this->selectedShipperOptions = $shipperOptions;
 
         return $deliveryOptionCode;
     }
 
     /** TODO when is $options ever NULL? Strange errors
+     *
      * @param array[] $options - ShippingOptions from selected Timeframe (as array)
      * @return void
      */
@@ -93,23 +103,39 @@ class Delivery extends Component
     /** Magic method runs after property is updated
      * Basically 'clickShipperOption'
      *
-     * @param bool[] $shipperOptions - Boolean truth map, keyed on ShipperOptionCode
-     * @param string $property - Magewire passes name of property
+     * @param array $shipperOptions - Boolean truth map, keyed on ShipperOptionCode grouped on DeliveryOption code
+     * e.g. ['PostNL_20260101' => ["NoNeighbor"=>true]]
+     * @param string $property - Magewire passes name of property as well
      * @return array - the updated array
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function updatedSelectedShipperOptions(array $shipperOptions): array
     {
-        $this->quoteHelper->setShipperOptions(array_map(
+        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption should select that DeliveryOption
+        $this->selectedOptionCode = array_key_first($shipperOptions);
+
+        // Pluck this option's ShipperOptions from the updated array (keyed on DeliveryOptionCode)
+        $selectedShipperOptions = $shipperOptions[$this->selectedOptionCode];
+
+        // Convert truth map into flat array of strings
+        $flatSelectedShipperOptions = array_map(
             callback: function (string $code) {
                 return $this->getShipperOptionByCode($code);
             },
-            // Return the keys of the truth map
             array: array_keys(
             // Keep only options that are selected (true)
-                array_filter($this->selectedShipperOptions),
+                array_filter($selectedShipperOptions),
             ),
-        ));
-        // Magic methods must always return the updated value
+        );
+
+        // Save the DeliveryOption (with ShipperOptions) to quote, since only updating property does not run listeners
+        $this->updatedSelectedOptionCode(
+            deliveryOptionCode: $this->selectedOptionCode,
+            shipperOptions: $flatSelectedShipperOptions,
+        );
+
+        // Return new array to update value
         return $shipperOptions;
     }
 

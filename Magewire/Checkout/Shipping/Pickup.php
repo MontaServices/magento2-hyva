@@ -68,11 +68,17 @@ class Pickup extends Delivery
     /** Magic method after property has changed
      *
      * @param string $deliveryOptionCode
+     * @param string $property - Always passed by Magewire
+     * @param array $shipperOptions - Ignored by this child
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function updatedSelectedOptionCode(string $deliveryOptionCode): string
+    public function updatedSelectedOptionCode(
+        string $deliveryOptionCode,
+        string $property = "",
+        array $shipperOptions = [],
+    ): string
     {
         if ($this->showingMap) {
             $this->triggerMap();
