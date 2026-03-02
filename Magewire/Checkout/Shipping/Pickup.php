@@ -179,10 +179,19 @@ class Pickup extends Delivery
             $classes[] = 'monta-blue-focus';
         }
         // In Map mode, hide the options that are not selected
-        if ($this->showingMap && $this->selectedOptionCode && !$isSelected) {
-            // in Map mode, hide every other option when one is selected
-            // TODO fix this properly, but property lifecycle makes it difficult
-//            $classes[] = 'hidden';
+        if ($this->showingMap && $this->options) {
+            // Pluck 'code' from array, works also on PickupPoint[] objects
+            $pickupCodes = array_column($this->options, 'code');
+
+            // if the selected option is a Pickup
+            $visibleCode = in_array(needle: $this->selectedOptionCode, haystack: $pickupCodes)
+                ? $this->selectedOptionCode
+                // when no Pickup point is selected, only show the first one
+                : ($pickupCodes[array_key_first($pickupCodes)] ?? null);
+
+            if (!$isSelected && $code !== $visibleCode) {
+                $classes[] = 'hidden';
+            }
         }
         return $classes;
     }
