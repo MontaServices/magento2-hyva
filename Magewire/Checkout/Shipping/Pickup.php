@@ -6,6 +6,8 @@
 
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
@@ -71,8 +73,8 @@ class Pickup extends Delivery
      * @param string $property - Always passed by Magewire
      * @param array $shipperOptions - Ignored by this child
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function updatedSelectedOptionCode(
         string $deliveryOptionCode,
@@ -92,7 +94,7 @@ class Pickup extends Delivery
      * @param string $newPostnumber - the updated value, now equal to property
      * @return string - Magic methods must return the value
      */
-    public function updatedPackstationPostnumber(string $newPostnumber)
+    public function updatedPackstationPostnumber(string $newPostnumber): string
     {
         $this->quoteHelper->updatePackstation($this->packstationPostnumber);
         // Magic methods must return the value
@@ -119,6 +121,8 @@ class Pickup extends Delivery
     /** Step one pickup ahead
      *
      * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function nextPickup(): void
     {
@@ -128,6 +132,8 @@ class Pickup extends Delivery
     /** Step one pickup down
      *
      * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function prevPickup(): void
     {
@@ -138,6 +144,8 @@ class Pickup extends Delivery
      *
      * @param int $incrementer - change Pickup by index in array (plus or minus)
      * @return void
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     protected function getPickup(int $incrementer): void
     {

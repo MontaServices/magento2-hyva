@@ -7,6 +7,7 @@ namespace Monta\Hyva\Magewire\Checkout\Shipping;
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
 use Monta\Checkout\Helper\Shipping;
@@ -94,9 +95,7 @@ class Options extends Component
 
             // "click" the selected Timeframe because the magic method only runs on updates
             $this->updatingSelectedTimeFrameDate($this->selectedTimeFrameDate);
-        } catch (GuzzleException $exception) {
-            // Catch and ignore
-        } catch (LocalizedException $exception) {
+        } catch (GuzzleException|LocalizedException $exception) {
             // Catch and ignore
         }
     }
@@ -126,7 +125,7 @@ class Options extends Component
     /**
      * @return Quote
      * @throws LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
     protected function getQuote(): Quote
     {

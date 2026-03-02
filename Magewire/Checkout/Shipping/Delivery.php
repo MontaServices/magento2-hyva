@@ -107,8 +107,8 @@ class Delivery extends Component
      * e.g. ['PostNL_20260101' => ["NoNeighbor"=>true]]
      * @param string $property - Magewire passes name of property as well
      * @return array - the updated array
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     public function updatedSelectedShipperOptions(array $shipperOptions): array
     {
