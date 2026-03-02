@@ -58,9 +58,15 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
             endif; ?>
             <!-- Pickup Options (entire tab is inside childblock, unlike regular module -->
             <?php
-            if (sizeof($magewire->pickupOptions)): ?>
-                <?= $block->getChildBlock($magewire->childComponent('pickup'))->toHtml() ?>
-            <?php
+            if (sizeof($magewire->pickupOptions)):
+                $childBlock = $block->getChildBlock($magewire->childComponent('pickup'));
+                // Set options on childblock's Magewire component directly
+                $childBlock->getMagewire()->updateOptions($magewire->pickupOptions);
+                if ($magewire->mode == $magewire::PICKUP_OPTIONS_IDENTIFIER) {
+                    $childBlock->getMagewire()->activateTab(true);
+                }
+                // Render block
+                echo $childBlock->toHtml();
             endif; ?>
         </div>
     <?php

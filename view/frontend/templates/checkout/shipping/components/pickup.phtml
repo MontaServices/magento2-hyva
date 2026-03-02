@@ -7,9 +7,9 @@
  */
 ?>
 <div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden' ?> space-y-3 tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Options::PICKUP_OPTIONS_IDENTIFIER ?>">
-    <!-- Attach map to this element-->
     <?php
     if ($magewire->showingMap): ?>
+        <!-- Attach map to this element-->
         <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md">
             <!-- TODO this little 'data-content-type' attribute causes Hyva to load map.phtml with CSP warnings but something runs🤔-->
             <div id="<?= $escaper->escapeHtmlAttr($magewire::MAP_IDENTIFIER) ?>"

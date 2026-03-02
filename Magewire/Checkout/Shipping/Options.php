@@ -237,6 +237,7 @@ class Options extends Component
     }
 
     /** Pass data to child component
+     * Caution: If child component does not yet exist, it fails quietly
      *
      * @param string $childName - Child name as declared in XML
      * @param string $event - function name on child component

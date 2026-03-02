@@ -107,8 +107,8 @@ class Pickup extends Delivery
     {
         // Update counter
         $this->selectedPickupKey = array_find_key(
-            array: $this->options,
-            callback: fn($option) => $this->isSelected($option['code']))
+            array: $this->getPickupOptions(),
+            callback: fn($option) => $this->isSelected($option->getCode()))
             // if not found or options empty, fallback to one
             ?? 1;
 
