@@ -21,7 +21,7 @@
     <?php
     endif; ?>
     <!-- List of PickupOptions -->
-    <div id="pickupPointsList" class="space-y-2">
+    <div id="pickupPointsList" class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
             <label class="flex">
