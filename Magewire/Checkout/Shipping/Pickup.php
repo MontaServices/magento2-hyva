@@ -120,33 +120,41 @@ class Pickup extends Delivery
 
     /** Step one pickup ahead
      *
-     * @return void
+     * @param bool $dry
+     * @return bool
      */
-    public function nextPickup(): void
+    public function nextPickup(bool $dry = false): bool
     {
-        $this->getPickup(1);
+        return $this->getPickup(incrementer: 1, dryRun: $dry);
     }
 
     /** Step one pickup down
      *
-     * @return void
+     * @param bool $dry
+     * @return bool
      */
-    public function prevPickup(): void
+    public function prevPickup(bool $dry = false): bool
     {
-        $this->getPickup(-1);
+        return $this->getPickup(incrementer: -1, dryRun: $dry);
     }
 
     /** Select another Pickup from the available options
      *
      * @param int $incrementer - change Pickup by index in array (plus or minus)
-     * @return void
+     * @param bool $dryRun - Only check if that step is possible
+     * @return bool
      */
-    protected function getPickup(int $incrementer): void
+    protected function getPickup(int $incrementer, bool $dryRun = false): bool
     {
-        // If there is an option on that index, change it
-        if (!empty($this->options[$this->selectedPickupKey + $incrementer])) {
+        // If there is an option on that index
+        $nextStepAvailable = !empty($this->options[$this->selectedPickupKey + $incrementer]);
+
+        // Dry run only checks if that step is possible
+        if ($dryRun) {
+            return $nextStepAvailable;
+        } elseif ($nextStepAvailable) {
             $this->selectedPickupKey += $incrementer;
-        } // TODO else if no next option available, disable arrow button
+        }
 
         // Update selected option
         $this->selectedOptionCode =
@@ -160,6 +168,7 @@ class Pickup extends Delivery
         } catch (LocalizedException|NoSuchEntityException $e) {
             // Catch and ignore
         }
+        return true;
     }
 
     /** Get the HTML classes for one Pickup Point tile
