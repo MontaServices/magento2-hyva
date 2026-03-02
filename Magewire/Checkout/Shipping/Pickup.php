@@ -121,8 +121,6 @@ class Pickup extends Delivery
     /** Step one pickup ahead
      *
      * @return void
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function nextPickup(): void
     {
@@ -132,8 +130,6 @@ class Pickup extends Delivery
     /** Step one pickup down
      *
      * @return void
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function prevPickup(): void
     {
@@ -144,8 +140,6 @@ class Pickup extends Delivery
      *
      * @param int $incrementer - change Pickup by index in array (plus or minus)
      * @return void
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     protected function getPickup(int $incrementer): void
     {
@@ -160,8 +154,12 @@ class Pickup extends Delivery
             $this->options[$this->selectedPickupKey]['code'];
 
         // Manually trigger magic method, updating property from code does not trigger hooks
-        // TODO replace manual magic call with proper lifecycle control
-        $this->updatedSelectedOptionCode($this->selectedOptionCode);
+        try {
+            // TODO replace manual magic call with proper lifecycle control
+            $this->updatedSelectedOptionCode($this->selectedOptionCode);
+        } catch (LocalizedException|NoSuchEntityException $e) {
+            // Catch and ignore
+        }
     }
 
     /** Get the HTML classes for one Pickup Point tile
