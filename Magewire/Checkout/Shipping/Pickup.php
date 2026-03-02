@@ -111,8 +111,8 @@ class Pickup extends Delivery
         $this->selectedPickupKey = array_find_key(
             array: $this->getPickupOptions(),
             callback: fn($option) => $this->isSelected($option->getCode()))
-            // if not found or options empty, fallback to one
-            ?? 1;
+            // if not found or options empty, fallback to first item
+            ?? array_key_first($this->options);
 
         // Browser event triggers Google map
         $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
