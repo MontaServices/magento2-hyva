@@ -80,30 +80,35 @@
     </div>
 
     <!-- Button to switch map or list -->
-    <div class="text-center text-blue-500">
-        <!-- When in List mode-->
-        <?php
-        if ($magewire->showingMap): ?>
-            <!-- When in Maps mode -->
-            <div class="flex items-center justify-between mb-4">
-                <p wire:click="prevPickup">&larr;</p>
-                <div>
-                    <p class="text-gray-500"><?= $escaper->escapeHtml(
-                            __('%1 of %2 pickup points',
-                                $magewire->selectedPickupKey + 1, // index plus one is the readable nth counter
-                                count($magewire->options),
-                            )) ?></p>
-                    <span>&equiv; </span>
-                    <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
+    <?php
+    if (sizeof($magewire->options) > 1): ?>
+        <div class="text-center text-blue-500">
+            <!-- When in List mode-->
+            <?php
+            if ($magewire->showingMap): ?>
+                <!-- When in Maps mode -->
+                <div class="flex items-center justify-between mb-4">
+                    <p wire:click="prevPickup">&larr;</p>
+                    <div>
+                        <p class="text-gray-500"><?= $escaper->escapeHtml(
+                                __('%1 of %2 pickup points',
+                                    $magewire->selectedPickupKey + 1, // index plus one is the readable nth counter
+                                    count($magewire->options),
+                                )) ?></p>
+                        <span>&equiv; </span>
+                        <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
+                    </div>
+                    <p wire:click="nextPickup">&rarr;</p>
                 </div>
-                <p wire:click="nextPickup">&rarr;</p>
-            </div>
-        <?php
-        else: ?>
-            <div wire:click="toggleMap">
-                <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
-            </div>
-        <?php
-        endif; ?>
-    </div>
+
+            <?php
+            else: ?>
+                <div wire:click="toggleMap">
+                    <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
+                </div>
+            <?php
+            endif; ?>
+        </div>
+    <?php
+    endif; ?>
 </div>
