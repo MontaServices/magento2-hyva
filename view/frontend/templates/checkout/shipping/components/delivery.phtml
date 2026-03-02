@@ -47,7 +47,7 @@
                                     (!empty($magewire->selectedShipperOptions[$deliveryOption->getCode()][$shipperOption->getCode()]) ? 'monta-blue-focus' : '') ?>">
                                         <div class="items-center space-x-2">
                                             <input type="checkbox"
-                                                   wire:model="selectedShipperOptions.<?= $escaper->escapeHtmlAttr($deliveryOption->getCode() . "." . $shipperOption->getCode()) ?>"/>
+                                                   wire:model.debounce.500ms="selectedShipperOptions.<?= $escaper->escapeHtmlAttr($deliveryOption->getCode() . "." . $shipperOption->getCode()) ?>"/>
                                             <span><?= $escaper->escapeHtml($shipperOption->description) ?></span>
                                         </div>
                                         <span class="text-md">+ <?= $escaper->escapeHtml($shipperOption->priceFormatted) ?></span>
