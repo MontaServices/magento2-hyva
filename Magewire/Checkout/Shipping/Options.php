@@ -115,8 +115,12 @@ class Options extends Component
      */
     public function booted(): void
     {
-        // Set PickupOptions on child block now that both components exist
-        $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
+        // When only Pickups, switch mode
+        if (!$this->deliveryOptions && $this->pickupOptions) {
+            $this->mode = self::PICKUP_OPTIONS_IDENTIFIER;
+            $this->updatedMode($this->mode); // Magic listeners don't run when called internally
+            // PickupOptions are passed to child block already during render
+        }
     }
 
     /**
