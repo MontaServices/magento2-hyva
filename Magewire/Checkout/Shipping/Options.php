@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Magento\Checkout\Model\Session;
+use Magento\Checkout\Model\Session\Proxy as Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;

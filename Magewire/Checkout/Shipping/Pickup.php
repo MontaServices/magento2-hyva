@@ -165,7 +165,7 @@ class Pickup extends Delivery
         try {
             // TODO replace manual magic call with proper lifecycle control
             $this->updatedSelectedOptionCode($this->selectedOptionCode);
-        } catch (LocalizedException|NoSuchEntityException $e) {
+        } catch (LocalizedException $exception) {
             // Catch and ignore
         }
         return true;
