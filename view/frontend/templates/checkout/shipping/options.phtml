@@ -25,8 +25,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                     <input type="radio" class="hidden" name="shipping-mode"
                            id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
                            wire:model="mode" value="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                    /><?= $escaper->escapeHtml($label) ?>
-                </label>
+                    /><?= $escaper->escapeHtml($label) ?></label>
             <?php
             endforeach; ?>
         </div>

@@ -21,14 +21,16 @@ class Options extends Component
 
     public const string PICKUP_OPTIONS_IDENTIFIER = "PickupOptions";
 
+    public const string STORECOLLECT_IDENTIFIER = "StoreCollect";
+
     /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
     public array $deliveryOptions = [];
 
     /** @var PickupPoint[] */
     public array $pickupOptions = [];
 
-    /** @var ?PickupPoint */
-    public ?PickupPoint $storeLocation = null;
+    /** @var PickupPoint|array|null $storeLocation - StoreCollect */
+    public PickupPoint|array|null $storeLocation = null;
 
     /** @var ShippingOption|array|null $standardShipper */
     public ShippingOption|array|null $standardShipper = null;
@@ -165,6 +167,9 @@ class Options extends Component
         }
         if (sizeof($this->pickupOptions) > 0) {
             $buttons[self::PICKUP_OPTIONS_IDENTIFIER] = __("Pickup");
+        }
+        if ($this->storeLocation) {
+            $buttons[self::STORECOLLECT_IDENTIFIER] = __("Collect");
         }
         return $buttons;
     }
