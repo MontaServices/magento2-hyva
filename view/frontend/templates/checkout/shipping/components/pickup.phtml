@@ -1,6 +1,7 @@
 <?php
 
-/**
+/** Template for both Pickup and StoreCollect components
+ *
  * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup|\Monta\Hyva\Magewire\Checkout\Shipping\Collect $magewire - Both components use this template
@@ -20,7 +21,6 @@
         </div>
     <?php
     endif; ?>
-    <!-- List of PickupOptions -->
     <div class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
@@ -62,9 +62,10 @@
                                 <div class="business-hours text-sm text-gray-500 mt-2">
                                     <?php
                                     foreach ($openingTimes as $slot): ?>
-                                        <!-- TODO tab character is not rendered-->
-                                        <p class="text-sm"
-                                        ><?= $escaper->escapeHtml($slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo()) ?></p>
+                                        <p class="text-sm flex">
+                                            <span class="w-32 shrink-0"><?= $escaper->escapeHtml($slot->getDay()) ?>:</span>
+                                            <span><?= $escaper->escapeHtml($slot->getFrom() . " - " . $slot->getTo()) ?></span>
+                                        </p>
                                     <?php
                                     endforeach; ?>
                                 </div>
