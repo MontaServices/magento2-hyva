@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Magento\Checkout\Model\Session\Proxy as Session;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
@@ -18,7 +18,10 @@ use Monta\CheckoutApiWrapper\Objects\TimeFrame;
 class Options extends Component
 {
 
-    /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
+    /**
+     * @var TimeFrame[] $deliveryOptions - These are actually the Timeframes
+     * not accessed externally but making this protected causes the entire Delivery tab to hide
+     */
     public array $deliveryOptions = [];
 
     /** @var PickupPoint[] */
@@ -156,14 +159,14 @@ class Options extends Component
     public function getTabButtons(): array
     {
         $buttons = [];
-        if (sizeof($this->deliveryOptions) > 0) {
+        if ($this->hasDeliveryOptions()) {
             // tabId is also the name of the property this corresponds to
             $buttons[Delivery::IDENTIFIER] = __("Delivery");
         }
-        if (sizeof($this->pickupOptions) > 0) {
+        if ($this->hasPickupOptions()) {
             $buttons[Pickup::IDENTIFIER] = __("Pickup");
         }
-        if (sizeof($this->storeLocations)) {
+        if ($this->hasStoreLocations()) {
             $buttons[Collect::IDENTIFIER] = __("Collect");
         }
         return $buttons;
@@ -224,6 +227,30 @@ class Options extends Component
 
         // Magic method returns the new value to continue updating property
         return $date;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDeliveryOptions(): bool
+    {
+        return (bool)sizeof($this->deliveryOptions);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPickupOptions(): bool
+    {
+        return (bool)sizeof($this->pickupOptions);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasStoreLocations(): bool
+    {
+        return (bool)sizeof($this->storeLocations);
     }
 
     /** Pass data to child component

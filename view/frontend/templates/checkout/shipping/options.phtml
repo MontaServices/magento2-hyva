@@ -32,7 +32,8 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
         <div class="tabs">
             <!-- Delivery Options -->
             <?php
-            if (sizeof($magewire->getDeliveryOptions())): ?>
+            // TODO move "tabcontent" inside Delivery like other child components
+            if ($magewire->hasDeliveryOptions()): ?>
                 <div class="tabcontent <?= $magewire->mode == Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ? '' : 'hidden'
                 ?> tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ?>">
                     <!-- Day buttons -->
@@ -58,7 +59,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
             endif; ?>
             <!-- Pickup Options (entire tab is inside childblock, unlike regular module -->
             <?php
-            if (sizeof($magewire->pickupOptions)):
+            if ($magewire->hasPickupOptions()):
                 $childBlock = $block->getChildBlock($magewire->childComponent('pickup'));
                 // Set options on childblock's Magewire component directly
                 $childBlock->getMagewire()->updateOptions($magewire->pickupOptions);
@@ -68,7 +69,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
             endif; ?>
             <!-- StoreCollect child block -->
             <?php
-            if (sizeof($magewire->storeLocations)):
+            if ($magewire->hasStoreLocations()):
                 $childBlock = $block->getChildBlock($magewire->childComponent('collect'));
                 $childBlock->getMagewire()->updateOptions($magewire->storeLocations);
                 echo $childBlock->toHtml();
