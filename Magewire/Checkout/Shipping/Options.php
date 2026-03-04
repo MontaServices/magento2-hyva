@@ -24,8 +24,8 @@ class Options extends Component
     /** @var PickupPoint[] */
     public array $pickupOptions = [];
 
-    /** @var PickupPoint|array|null $storeLocation - StoreCollect */
-    public PickupPoint|array|null $storeLocation = null;
+    /** @var PickupPoint[] $storeLocations - StoreCollect (array like other properties, but just one) */
+    public array $storeLocations = [];
 
     /** @var ShippingOption|array|null $standardShipper */
     public ShippingOption|array|null $standardShipper = null;
@@ -85,7 +85,7 @@ class Options extends Component
                 if ($options = $this->shippingHelper->getOptions($quote)) {
                     $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
                     $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
-                    $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
+                    $this->storeLocations = [$options[PickupPoint::PICKUP_STORE_KEY]] ?? [];
                     $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
                 }
             }
@@ -163,7 +163,7 @@ class Options extends Component
         if (sizeof($this->pickupOptions) > 0) {
             $buttons[Pickup::IDENTIFIER] = __("Pickup");
         }
-        if ($this->storeLocation) {
+        if (sizeof($this->storeLocations)) {
             $buttons[Collect::IDENTIFIER] = __("Collect");
         }
         return $buttons;

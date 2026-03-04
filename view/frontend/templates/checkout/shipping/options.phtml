@@ -70,7 +70,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
             <?php
             if (sizeof($magewire->storeLocations)):
                 $childBlock = $block->getChildBlock($magewire->childComponent('collect'));
-                $childBlock->getMagewire()->updateOptions([$magewire->storeLocations]);
+                $childBlock->getMagewire()->updateOptions($magewire->storeLocations);
                 echo $childBlock->toHtml();
             endif;
             ?>
