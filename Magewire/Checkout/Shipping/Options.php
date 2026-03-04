@@ -17,11 +17,6 @@ use Monta\CheckoutApiWrapper\Objects\TimeFrame;
 
 class Options extends Component
 {
-    public const string DELIVERY_OPTIONS_IDENTIFIER = "DeliveryOptions";
-
-    public const string PICKUP_OPTIONS_IDENTIFIER = "PickupOptions";
-
-    public const string STORECOLLECT_IDENTIFIER = "StoreCollect";
 
     /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
     public array $deliveryOptions = [];
@@ -45,7 +40,7 @@ class Options extends Component
      *
      * @var string - Start on Delivery
      */
-    public string $mode = self::DELIVERY_OPTIONS_IDENTIFIER;
+    public string $mode = Delivery::IDENTIFIER;
 
     /**
      * @var string[]
@@ -118,7 +113,7 @@ class Options extends Component
     {
         // When only Pickups, switch mode
         if (!$this->deliveryOptions && $this->pickupOptions) {
-            $this->mode = self::PICKUP_OPTIONS_IDENTIFIER;
+            $this->mode = Pickup::IDENTIFIER;
             $this->updatedMode($this->mode); // Magic listeners don't run when called internally
             // PickupOptions are passed to child block already during render
         }
@@ -163,13 +158,13 @@ class Options extends Component
         $buttons = [];
         if (sizeof($this->deliveryOptions) > 0) {
             // tabId is also the name of the property this corresponds to
-            $buttons[self::DELIVERY_OPTIONS_IDENTIFIER] = __("Delivery");
+            $buttons[Delivery::IDENTIFIER] = __("Delivery");
         }
         if (sizeof($this->pickupOptions) > 0) {
-            $buttons[self::PICKUP_OPTIONS_IDENTIFIER] = __("Pickup");
+            $buttons[Pickup::IDENTIFIER] = __("Pickup");
         }
         if ($this->storeLocation) {
-            $buttons[self::STORECOLLECT_IDENTIFIER] = __("Collect");
+            $buttons[Collect::IDENTIFIER] = __("Collect");
         }
         return $buttons;
     }
@@ -184,11 +179,11 @@ class Options extends Component
         // Convert tab identifiers to child component name
         // TODO identify child components by exact identifiers directly
         switch ($mode) {
-            case self::PICKUP_OPTIONS_IDENTIFIER:
+            case Pickup::IDENTIFIER:
                 $childName = 'pickup';
                 break;
             default:
-            case self::DELIVERY_OPTIONS_IDENTIFIER:
+            case Delivery::IDENTIFIER:
                 $childName = 'delivery';
                 // And hide Pickup tab (for some reason not working via JS)
                 $this->emitChildComponent('pickup', 'activateTab', false);

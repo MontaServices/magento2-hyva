@@ -33,7 +33,8 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
-                <div class="tabcontent <?= $magewire->mode == $magewire::DELIVERY_OPTIONS_IDENTIFIER ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent <?= $magewire->mode == Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ? '' : 'hidden'
+                ?> tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ?>">
                     <!-- Day buttons -->
                     <div class="flex overflow-x-auto gap-2 mb-5 click-first <?=
                     // Hide Day buttons if there is only one
@@ -61,7 +62,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                 $childBlock = $block->getChildBlock($magewire->childComponent('pickup'));
                 // Set options on childblock's Magewire component directly
                 $childBlock->getMagewire()->updateOptions($magewire->pickupOptions);
-                if ($magewire->mode == $magewire::PICKUP_OPTIONS_IDENTIFIER) {
+                if ($magewire->mode == \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::IDENTIFIER) {
                     $childBlock->getMagewire()->activateTab(true);
                 }
                 // Render block

@@ -14,6 +14,8 @@ use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 
 class Delivery extends Component
 {
+    public const string IDENTIFIER = "DeliveryOptions";
+
     protected $listeners = ['updateOptions', 'activateTab'];
 
     /** @var bool - Whether this component tab is active */

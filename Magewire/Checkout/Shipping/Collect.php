@@ -5,7 +5,9 @@
  */
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
-class Collect extends Delivery
+class Collect extends Pickup
 {
+    public const string IDENTIFIER = "StoreCollect";
 
+    public bool $showingMap = false;
 }
