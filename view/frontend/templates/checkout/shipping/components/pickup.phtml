@@ -3,7 +3,7 @@
 /**
  * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Element\Template $block
- * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup $magewire
+ * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup|\Monta\Hyva\Magewire\Checkout\Shipping\Collect $magewire - Both components use this template
  */
 ?>
 <div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden' ?> space-y-3 tab-<?= $magewire::IDENTIFIER ?>">
@@ -21,7 +21,7 @@
     <?php
     endif; ?>
     <!-- List of PickupOptions -->
-    <div id="pickupPointsList" class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
+    <div class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
             <label class="flex">
@@ -29,8 +29,8 @@
                 $escaper->escapeHtmlAttr(implode(separator: " ", array: $magewire->getClasses($pickup->getCode()))) ?>">
                     <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
                            value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
-                    <div class="pickup-option flex-col">
-                        <div class="pickup-header flex justify-between space-x-2">
+                    <div class="flex-col">
+                        <div class="flex justify-between space-x-2">
                             <div class="flex">
                                 <?php
                                 if ($imageUrl = $pickup->getImageUrl()): ?>
@@ -51,7 +51,7 @@
                         if ($magewire->isSelected($pickup->getCode())): ?>
                             <?php
                             if ($pickup->isPackstation()): ?>
-                                <div id="packstation-postnumber">
+                                <div>
                                     <span class="normal"><?= $escaper->escapeHtml(__("Post number")) ?></span>
                                     <input type="text" wire:model.debounce.500ms="packstationPostnumber">
                                 </div>

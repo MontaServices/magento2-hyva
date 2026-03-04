@@ -32,7 +32,7 @@
                     </arguments>
                 </block>
                 <block name="monta.hyva.shipping.method.component.collect"
-                       template="Monta_Hyva::checkout/shipping/components/collect.phtml">
+                       template="Monta_Hyva::checkout/shipping/components/pickup.phtml">
                     <arguments>
                         <argument name="magewire" xsi:type="object">
                             Monta\Hyva\Magewire\Checkout\Shipping\Collect
