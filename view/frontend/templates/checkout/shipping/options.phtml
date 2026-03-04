@@ -62,9 +62,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                 $childBlock = $block->getChildBlock($magewire->childComponent('pickup'));
                 // Set options on childblock's Magewire component directly
                 $childBlock->getMagewire()->updateOptions($magewire->pickupOptions);
-                if ($magewire->mode == \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::IDENTIFIER) {
-                    $childBlock->getMagewire()->activateTab(true);
-                }
+                $childBlock->getMagewire()->activateTab($magewire->mode);
                 // Render block
                 echo $childBlock->toHtml();
             endif; ?>

@@ -176,20 +176,7 @@ class Options extends Component
      */
     public function updatedMode(string $mode): string
     {
-        // Convert tab identifiers to child component name
-        // TODO identify child components by exact identifiers directly
-        switch ($mode) {
-            case Pickup::IDENTIFIER:
-                $childName = 'pickup';
-                break;
-            default:
-            case Delivery::IDENTIFIER:
-                $childName = 'delivery';
-                // And hide Pickup tab (for some reason not working via JS)
-                $this->emitChildComponent('pickup', 'activateTab', false);
-                break;
-        }
-        $this->emitChildComponent($childName, 'activateTab', true);
+        $this->emitChildComponent(event: 'activateTab', data: $mode);
 
         // Return updated property, tabs are displayed accordingly
         return $mode;
@@ -232,7 +219,7 @@ class Options extends Component
 
         if ($timeframe && $timeframe->options) {
             // Update child component options
-            $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
+            $this->emitChildComponent(event: 'updateOptions', childName: 'delivery', data: $timeframe->options);
         }
 
         // Magic method returns the new value to continue updating property
@@ -242,18 +229,23 @@ class Options extends Component
     /** Pass data to child component
      * Caution: If child component does not yet exist, it fails quietly
      *
-     * @param string $childName - Child name as declared in XML
      * @param string $event - function name on child component
+     * @param ?string $childName - Child name as declared in XML (optional: otherwise just emit globally)
      * @param mixed $data
      * @return void
      */
-    protected function emitChildComponent(string $childName, string $event, mixed $data = []): void
+    protected function emitChildComponent(string $event, ?string $childName = null, mixed $data = []): void
     {
-        $this->emitTo(
-            name: $this->childComponent($childName),
-            event: $event,
-            params: $data,
-        );
+        if ($childName) {
+            $this->emitTo(
+                name: $this->childComponent($childName),
+                event: $event,
+                params: $data,
+            );
+        } else {
+            // No target, just emit. Let child components listen
+            $this->emit(event: $event, params: $data);
+        }
     }
 
     /**
