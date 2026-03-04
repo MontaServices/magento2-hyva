@@ -67,6 +67,12 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                 // Render block
                 echo $childBlock->toHtml();
             endif; ?>
+            <!-- StoreCollect child block -->
+            <?php
+            if ($magewire->storeLocation):
+                echo $block->getChildBlock($magewire->childComponent('collect'))->toHtml();
+            endif;
+            ?>
         </div>
     <?php
     endif; ?>
