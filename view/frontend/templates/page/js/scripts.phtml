@@ -10,18 +10,6 @@
 ?>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Select all tab Buttons
-            document.querySelectorAll('.options-tab-button').forEach(btn => {
-                btn.addEventListener('click', (event) => {
-                    // Use existing JS for 'hide siblings'
-                    window.sharedUtils.clickMode(btn.id, event);
-                    // Run Magewire callback directly on Options component
-                    Magewire.find("monta.hyva.shipping.method.options")
-                        .call('clickMode', btn.id);
-
-                });
-            });
-
             // Bind clickFirst to those elements
             document.querySelectorAll('.click-first').forEach(element => {
                 window.sharedUtils.clickFirst(element);

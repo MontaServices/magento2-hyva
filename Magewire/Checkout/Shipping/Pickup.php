@@ -6,6 +6,8 @@
 
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 
 class Pickup extends Delivery
@@ -68,11 +70,17 @@ class Pickup extends Delivery
     /** Magic method after property has changed
      *
      * @param string $deliveryOptionCode
+     * @param string $property - Always passed by Magewire
+     * @param array $shipperOptions - Ignored by this child
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function updatedSelectedOptionCode(string $deliveryOptionCode): string
+    public function updatedSelectedOptionCode(
+        string $deliveryOptionCode,
+        string $property = "",
+        array $shipperOptions = [],
+    ): string
     {
         if ($this->showingMap) {
             $this->triggerMap();
@@ -86,7 +94,7 @@ class Pickup extends Delivery
      * @param string $newPostnumber - the updated value, now equal to property
      * @return string - Magic methods must return the value
      */
-    public function updatedPackstationPostnumber(string $newPostnumber)
+    public function updatedPackstationPostnumber(string $newPostnumber): string
     {
         $this->quoteHelper->updatePackstation($this->packstationPostnumber);
         // Magic methods must return the value
@@ -101,10 +109,10 @@ class Pickup extends Delivery
     {
         // Update counter
         $this->selectedPickupKey = array_find_key(
-            array: $this->options,
-            callback: fn($option) => $this->isSelected($option['code']))
-            // if not found or options empty, fallback to one
-            ?? 1;
+            array: $this->getPickupOptions(),
+            callback: fn($option) => $this->isSelected($option->getCode()))
+            // if not found or options empty, fallback to first item
+            ?? array_key_first($this->options);
 
         // Browser event triggers Google map
         $this->dispatchBrowserEvent(self::INIT_MAP_EVENT);
@@ -112,33 +120,41 @@ class Pickup extends Delivery
 
     /** Step one pickup ahead
      *
-     * @return void
+     * @param bool $dry
+     * @return bool
      */
-    public function nextPickup(): void
+    public function nextPickup(bool $dry = false): bool
     {
-        $this->getPickup(1);
+        return $this->getPickup(incrementer: 1, dryRun: $dry);
     }
 
     /** Step one pickup down
      *
-     * @return void
+     * @param bool $dry
+     * @return bool
      */
-    public function prevPickup(): void
+    public function prevPickup(bool $dry = false): bool
     {
-        $this->getPickup(-1);
+        return $this->getPickup(incrementer: -1, dryRun: $dry);
     }
 
     /** Select another Pickup from the available options
      *
      * @param int $incrementer - change Pickup by index in array (plus or minus)
-     * @return void
+     * @param bool $dryRun - Only check if that step is possible
+     * @return bool
      */
-    protected function getPickup(int $incrementer): void
+    protected function getPickup(int $incrementer, bool $dryRun = false): bool
     {
-        // If there is an option on that index, change it
-        if (!empty($this->options[$this->selectedPickupKey + $incrementer])) {
+        // If there is an option on that index
+        $nextStepAvailable = !empty($this->options[$this->selectedPickupKey + $incrementer]);
+
+        // Dry run only checks if that step is possible
+        if ($dryRun) {
+            return $nextStepAvailable;
+        } elseif ($nextStepAvailable) {
             $this->selectedPickupKey += $incrementer;
-        } // TODO else if no next option available, disable arrow button
+        }
 
         // Update selected option
         $this->selectedOptionCode =
@@ -146,8 +162,13 @@ class Pickup extends Delivery
             $this->options[$this->selectedPickupKey]['code'];
 
         // Manually trigger magic method, updating property from code does not trigger hooks
-        // TODO replace manual magic call with proper lifecycle control
-        $this->updatedSelectedOptionCode($this->selectedOptionCode);
+        try {
+            // TODO replace manual magic call with proper lifecycle control
+            $this->updatedSelectedOptionCode($this->selectedOptionCode);
+        } catch (LocalizedException $exception) {
+            // Catch and ignore
+        }
+        return true;
     }
 
     /** Get the HTML classes for one Pickup Point tile
@@ -165,10 +186,19 @@ class Pickup extends Delivery
             $classes[] = 'monta-blue-focus';
         }
         // In Map mode, hide the options that are not selected
-        if ($this->showingMap && $this->selectedOptionCode && !$isSelected) {
-            // in Map mode, hide every other option when one is selected
-            // TODO fix this properly, but property lifecycle makes it difficult
-//            $classes[] = 'hidden';
+        if ($this->showingMap && $this->options) {
+            // Pluck 'code' from array, works also on PickupPoint[] objects
+            $pickupCodes = array_column($this->options, 'code');
+
+            // if the selected option is a Pickup
+            $visibleCode = in_array(needle: $this->selectedOptionCode, haystack: $pickupCodes)
+                ? $this->selectedOptionCode
+                // when no Pickup point is selected, only show the first one
+                : ($pickupCodes[array_key_first($pickupCodes)] ?? null);
+
+            if (!$isSelected && $code !== $visibleCode) {
+                $classes[] = 'hidden';
+            }
         }
         return $classes;
     }

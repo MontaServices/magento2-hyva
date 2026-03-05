@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Magento\Checkout\Model\Session;
+use Magento\Checkout\Model\Session\Proxy as Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
 use Monta\Checkout\Helper\Shipping;
-use Monta\Checkout\Model\Carrier\Monta;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 use Monta\CheckoutApiWrapper\Objects\TimeFrame;
@@ -44,21 +43,19 @@ class Options extends Component
      *
      * @var string - Start on Delivery
      */
-    public string $mode = 'delivery';
+    public string $mode = self::DELIVERY_OPTIONS_IDENTIFIER;
 
     /**
      * @var string[]
      */
     protected $listeners = [
         'shipping_method_selected' => 'onShippingMethodSelected',
+        'shipping_address_saved' => 'loadShippingOptions',
     ];
 
     /**
      * @param Session $checkoutSession
      * @param Shipping $shippingHelper
-     * @throws GuzzleException
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function __construct(
         protected readonly Session $checkoutSession,
@@ -70,21 +67,36 @@ class Options extends Component
     /** Mount runs before any child components exist
      *
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function mount(): void
     {
-        if ($this->isMonta($this->getQuote()->getShippingAddress()->getShippingMethod())) {
-            // Retrieve shipping options from same helper
-            // TODO clean up duplicate code with MethodConverter, also set selectedTimeframe date from Quote
-            $options = $this->shippingHelper->getOptions($this->getQuote());
-            if ($options) {
-                $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
-                $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
-                $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
-                $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
+        $this->loadShippingOptions();
+        // TODO set selectedTimeframe date from Quote
+    }
+
+    /** Attempt to load Shipping options for current quote
+     *
+     * @param string|null $method
+     * @return void
+     */
+    public function loadShippingOptions(?string $method = null): void
+    {
+        try {
+            $quote = $this->getQuote();
+            if ($this->isMonta($method ?? $quote->getShippingAddress()->getShippingMethod())) {
+                // Retrieve shipping options from same helper
+                if ($options = $this->shippingHelper->getOptions($quote)) {
+                    $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
+                    $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
+                    $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
+                    $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
+                }
             }
+
+            // "click" the selected Timeframe because the magic method only runs on updates
+            $this->updatingSelectedTimeFrameDate($this->selectedTimeFrameDate);
+        } catch (GuzzleException|LocalizedException $exception) {
+            // Catch and ignore
         }
     }
 
@@ -96,20 +108,24 @@ class Options extends Component
         return (sizeof($this->deliveryOptions) == 1 && array_first($this->getDeliveryOptions())->isFallbackShipper());
     }
 
-    /** Hydrate runs after child Magewire components have been created
+    /** Runs after everything is created and properties exist
      *
      * @return void
      */
-    public function hydrate(): void
+    public function booted(): void
     {
-        // Set PickupOptions on child block
-        $this->emitChildComponent('pickup', 'updateOptions', $this->pickupOptions);
+        // When only Pickups, switch mode
+        if (!$this->deliveryOptions && $this->pickupOptions) {
+            $this->mode = self::PICKUP_OPTIONS_IDENTIFIER;
+            $this->updatedMode($this->mode); // Magic listeners don't run when called internally
+            // PickupOptions are passed to child block already during render
+        }
     }
 
     /**
      * @return Quote
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     protected function getQuote(): Quote
     {
@@ -123,7 +139,8 @@ class Options extends Component
      */
     public function onShippingMethodSelected(?array $method = null): bool
     {
-        return $this->isMonta($method[\Magento\Quote\Model\Shipping::METHOD] ?? null);
+        $this->loadShippingOptions($method[\Magento\Quote\Model\Shipping::METHOD] ?? null);
+        return $this->show;
     }
 
     /**
@@ -137,50 +154,45 @@ class Options extends Component
     }
 
     /**
-     * @return array[]
+     * @return string[] - Button labels keyed on tab identifier
      */
     public function getTabButtons(): array
     {
-        return [
-            [
-                // id is also the name of the property this corresponds to
-                "id" => self::DELIVERY_OPTIONS_IDENTIFIER,
-                "label" => __("Delivery"),
-                'active' => (sizeof($this->deliveryOptions) > 0),
-            ],
-
-            [
-                "id" => self::PICKUP_OPTIONS_IDENTIFIER,
-                "label" => __("Pickup"),
-                'active' => (sizeof($this->pickupOptions) > 0),
-            ],
-        ];
+        $buttons = [];
+        if (sizeof($this->deliveryOptions) > 0) {
+            // tabId is also the name of the property this corresponds to
+            $buttons[self::DELIVERY_OPTIONS_IDENTIFIER] = __("Delivery");
+        }
+        if (sizeof($this->pickupOptions) > 0) {
+            $buttons[self::PICKUP_OPTIONS_IDENTIFIER] = __("Pickup");
+        }
+        return $buttons;
     }
 
-    /** Switch tab mode
+    /** Magic listener
      *
-     * @param string $mode
-     * @return void
+     * @param string $mode - new value
+     * @return string - Magic methods must always return the updated value
      */
-    public function clickMode(string $mode): void
+    public function updatedMode(string $mode): string
     {
         // Convert tab identifiers to child component name
         // TODO identify child components by exact identifiers directly
         switch ($mode) {
             case self::PICKUP_OPTIONS_IDENTIFIER:
                 $childName = 'pickup';
-                $this->emitChildComponent($childName, 'activateTab', true);
                 break;
             default:
             case self::DELIVERY_OPTIONS_IDENTIFIER:
                 $childName = 'delivery';
-                $this->emitChildComponent($childName, 'activateTab', true);
-                // And hide Pickup tab (for some reason not working via JS
+                // And hide Pickup tab (for some reason not working via JS)
                 $this->emitChildComponent('pickup', 'activateTab', false);
                 break;
         }
-        $this->mode = $childName;
-        // TODO the other tab(s) are hidden by `sharedUtils.clickMode` from JS
+        $this->emitChildComponent($childName, 'activateTab', true);
+
+        // Return updated property, tabs are displayed accordingly
+        return $mode;
     }
 
     /** Get Timeframes (name for consistency)
@@ -205,37 +217,51 @@ class Options extends Component
     /** Magic method runs when model changes value in frontend
      * basically 'clickDayTile'
      *
-     * @param string $date - New value passed by request
-     * @return string - Updated value
+     * @param string|null $date - New value passed by request
+     * @return string|null - Updated value
      */
-    public function updatingSelectedTimeFrameDate(string $date): string
+    public function updatingSelectedTimeFrameDate(?string $date = null): ?string
     {
         // Find Timeframe for this date (can be only one)
         $timeframe = array_find(
             array: $this->getDeliveryOptions(),
             callback: fn($option) => $option->getDate() == $date,
-        );
+        )
+            // when it was not found, select the first Timeframe
+            ?? array_first($this->getDeliveryOptions());
 
-        // Update child component options
-        $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
+        if ($timeframe && $timeframe->options) {
+            // Update child component options
+            $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
+        }
 
-        // Magic method MUST return value to continue updating property
+        // Magic method returns the new value to continue updating property
         return $date;
     }
 
-    /** Update options on child component
+    /** Pass data to child component
+     * Caution: If child component does not yet exist, it fails quietly
      *
-     * @param string $childName
-     * @param string $event
+     * @param string $childName - Child name as declared in XML
+     * @param string $event - function name on child component
      * @param mixed $data
      * @return void
      */
     protected function emitChildComponent(string $childName, string $event, mixed $data = []): void
     {
         $this->emitTo(
-            name: 'monta.hyva.shipping.method.component.' . $childName,
+            name: $this->childComponent($childName),
             event: $event,
             params: $data,
         );
+    }
+
+    /**
+     * @param string $childName
+     * @return string
+     */
+    public function childComponent(string $childName): string
+    {
+        return 'monta.hyva.shipping.method.component.' . $childName;
     }
 }

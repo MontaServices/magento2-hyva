@@ -5,56 +5,68 @@
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Options $magewire
  * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
  */
+$onlyOneTab = count($magewire->getTabButtons()) == 1;
 ?>
 
-<div id="block-shipping-options" class="max-w-lg mx-auto">
+<div id="block-shipping-options" class="w-full <?= $onlyOneTab ? '' : 'mt-3' ?>"
+     style="contain: inline-size;">
     <?php
     if ($magewire->show): ?>
         <!-- Buttons-->
-        <div class="flex mx-auto mb-5">
+        <div class="flex gap-2 mb-5">
             <?php
-            foreach ($magewire->getTabButtons() as $button): ?>
-                <!-- TODO for some reason Tailwind doesn't work on button element -->
+            foreach ($magewire->getTabButtons() as $tabId => $label): ?>
                 <?php
-                if ($button['active']): ?>
-                    <button type="button" id="<?= $button['id'] ?>"
-                            class="button btn options-tab-button action w-1/2 py-2 text-white mx-auto"><?= $button['label'] ?>
-                    </button>
-                <?php
-                endif;
+                $isActive = ($magewire->mode == $tabId); ?>
+                <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                       class="flex-1 text-center rounded-tile transition font-semibold <?=
+                       $onlyOneTab ? 'hidden' : ''; ?> <?=
+                       $isActive ? 'bg-blue-500 text-white' : 'monta-gray-tile hover:monta-blue-focus' ?>">
+                    <input type="radio" class="hidden" name="shipping-mode"
+                           id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                           wire:model="mode" value="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                    /><?= $escaper->escapeHtml($label) ?>
+                </label>
+            <?php
             endforeach; ?>
         </div>
         <div class="tabs">
             <!-- Delivery Options -->
             <?php
             if (sizeof($magewire->getDeliveryOptions())): ?>
-                <div class="tabcontent <?= $magewire->mode == 'delivery' ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
+                <div class="tabcontent <?= $magewire->mode == $magewire::DELIVERY_OPTIONS_IDENTIFIER ? '' : 'hidden' ?> tab-<?= $magewire::DELIVERY_OPTIONS_IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="flex max-w-md mx-auto justify-center gap-5 mb-5 click-first <?=
+                    <div class="flex overflow-x-auto gap-2 mb-5 click-first <?=
                     // Hide Day buttons if there is only one
                     $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <label class="selectDayButton flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus <?=
+                            <label class="selectDayButton shadow-lg shrink-0 basis-1/4 flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus transition <?=
                             $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
-                                <input type="radio" wire:model="selectedTimeFrameDate" class="form-radio hidden"
+                                <input type="radio" wire:model="selectedTimeFrameDate" class="hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
-                                <p class="font-semibold py-2"><?= $option->getDay() ?></p>
-                                <p class="text-sm text-gray-500"><?= $option->getDateFormatted() ?></p>
+                                <p class="font-semibold"><?= $escaper->escapeHtml(ucfirst($option->getDay())) ?></p>
+                                <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?></p>
                             </label>
                         <?php
                         endforeach; ?>
                     </div>
                     <!-- Selected day options -->
-                    <?= $block->getChildBlock('monta.hyva.shipping.method.component.delivery')->toHtml(); ?>
+                    <?= $block->getChildBlock($magewire->childComponent('delivery'))->toHtml(); ?>
                 </div>
             <?php
             endif; ?>
             <!-- Pickup Options (entire tab is inside childblock, unlike regular module -->
             <?php
-            if (sizeof($magewire->pickupOptions)): ?>
-                <?= $block->getChildBlock('monta.hyva.shipping.method.component.pickup')->toHtml() ?>
-            <?php
+            if (sizeof($magewire->pickupOptions)):
+                $childBlock = $block->getChildBlock($magewire->childComponent('pickup'));
+                // Set options on childblock's Magewire component directly
+                $childBlock->getMagewire()->updateOptions($magewire->pickupOptions);
+                if ($magewire->mode == $magewire::PICKUP_OPTIONS_IDENTIFIER) {
+                    $childBlock->getMagewire()->activateTab(true);
+                }
+                // Render block
+                echo $childBlock->toHtml();
             endif; ?>
         </div>
     <?php

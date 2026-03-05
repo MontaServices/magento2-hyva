@@ -11,13 +11,13 @@
     // TODO class 'click-first' but not yet loaded then
     foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
         <label>
-            <div class="selectShippingOption rounded-tile monta-gray-tile mb-5 max-w-lg mx-auto <?=
+            <div class="selectShippingOption rounded-tile monta-gray-tile mb-2 <?=
             // conditionally add focus class to the selected option (similar to `focusSelection()`)
             $magewire->isSelected($deliveryOption->getCode()) ? 'monta-blue-focus' : ''; ?>">
-                <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
+                <input type="radio" class="hidden" wire:model="selectedOptionCode"
                        value="<?= $escaper->escapeHtmlAttr($deliveryOption->getCode()) ?>"/>
                 <div class="flex-col">
-                    <div class="flex justify-between space-x-2">
+                    <div class="flex justify-between">
                         <div class="flex">
                             <?php
                             if ($imageUrl = $deliveryOption->getImageUrl()): ?>
@@ -27,11 +27,11 @@
                             <?php
                             endif; ?>
                             <div>
-                                <p class="font-semibold"><?= $deliveryOption->shipper ?></p>
-                                <p class="text-sm text-gray-600"><?= $deliveryOption->displayNameShort ?></p>
+                                <p class="font-semibold"><?= $escaper->escapeHtml($deliveryOption->shipper) ?></p>
+                                <p class="text-sm text-gray-600"><?= $escaper->escapeHtml($deliveryOption->displayNameShort) ?></p>
                             </div>
                         </div>
-                        <p class="text-md font-medium"><?= $deliveryOption->priceFormatted ?></p>
+                        <p class="text-md font-medium"><?= $escaper->escapeHtml($deliveryOption->priceFormatted) ?></p>
                     </div>
                     <!-- ShipperOptions -->
                     <?php
@@ -39,17 +39,18 @@
                         <div class="shipperoptions">
                             <p class="font-semibold mb-2"><?= $escaper->escapeHtml(__("Extra shipperoptions:")) ?></p>
                             <div class="space-y-2">
-                                <!-- TODO border color should match tile border color -->
                                 <?php
                                 foreach ($deliveryOption->getShipperOptions() as $shipperOption): ?>
                                     <!-- TODO nested <label> elements is not valid HTML. Works in browser but might cause problems in JS -->
-                                    <label class="flex justify-between rounded-tile p-2 monta-gray-tile hover:monta-blue-focus">
+                                    <label class="flex justify-between rounded-tile p-2 hover:monta-blue-focus <?=
+                                    // if shipperoption is selected, show focus. `checked:monta-blue-focus` does not work on label
+                                    (!empty($magewire->selectedShipperOptions[$deliveryOption->getCode()][$shipperOption->getCode()]) ? 'monta-blue-focus' : '') ?>">
                                         <div class="items-center space-x-2">
                                             <input type="checkbox"
-                                                   wire:model="selectedShipperOptions.<?= $shipperOption->getCode() ?>"/>
-                                            <span><?= $shipperOption->description ?></span>
+                                                   wire:model.debounce.500ms="selectedShipperOptions.<?= $escaper->escapeHtmlAttr($deliveryOption->getCode() . "." . $shipperOption->getCode()) ?>"/>
+                                            <span><?= $escaper->escapeHtml($shipperOption->description) ?></span>
                                         </div>
-                                        <span class="text-md">+ <?= $shipperOption->priceFormatted ?></span>
+                                        <span class="text-md">+ <?= $escaper->escapeHtml($shipperOption->priceFormatted) ?></span>
                                     </label>
                                 <?php
                                 endforeach; ?>
