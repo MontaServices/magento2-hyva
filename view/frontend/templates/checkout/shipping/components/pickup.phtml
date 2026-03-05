@@ -1,5 +1,4 @@
 <?php
-
 /** Template for both Pickup and StoreCollect components
  *
  * @var \Magento\Framework\Escaper $escaper
@@ -36,7 +35,7 @@
                                 if ($imageUrl = $pickup->getImageUrl()): ?>
                                     <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
                                          alt="<?= $escaper->escapeHtmlAttr($pickup->getDisplayName()); ?>"
-                                         class="pickup-logo w-16 h-16 pr-2">
+                                         class="pickup-logo w-16 h-16 mr-2">
                                 <?php
                                 endif; ?>
                                 <div class="pickup-container">
