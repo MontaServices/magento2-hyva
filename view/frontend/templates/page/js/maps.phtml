@@ -57,13 +57,14 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                         const infowindow = new InfoWindow({
                             content: getInfoWindowContent(location),
                         });
-                        const marker = new google.maps.Marker({
+                        const marker = new google.maps.marker.AdvancedMarkerElement({
+                            gmpClickable: true,
                             position: position,
-                            map,
+                            map: map,
                             title: location.location_name,
                         });
 
-                        marker.addListener('click', () => {
+                        marker.addListener('gmp-click', () => {
                             infowindow.open(map, marker);
                         });
                     });
@@ -91,10 +92,9 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                         mapTypeControlOptions: {
                             style: MapTypeControlStyle.DEFAULT,
                         },
-                        styles: style ? JSON.parse(style) : [],
                         disableDefaultUI: disableDefaultUI,
                         mapTypeControl: mapTypeControl,
-                        mapId: Map.DEMO_MAP_ID
+                        mapId: "<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::MAP_IDENTIFIER?>",
                     };
                 };
 
