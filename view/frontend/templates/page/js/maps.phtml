@@ -47,6 +47,8 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                     const latitudeLongitudeBounds = new google.maps.LatLngBounds();
                     const bounds = [];
 
+                    const infowindow = new InfoWindow();
+
                     locations.forEach(location => {
                         const position = {
                             lat: parseFloat(location.position.latitude),
@@ -54,9 +56,6 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                         };
                         bounds.push(position);
 
-                        const infowindow = new InfoWindow({
-                            content: getInfoWindowContent(location),
-                        });
                         const marker = new google.maps.marker.AdvancedMarkerElement({
                             gmpClickable: true,
                             position: position,
@@ -65,6 +64,7 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                         });
 
                         marker.addListener('gmp-click', () => {
+                            infowindow.setContent(getInfoWindowContent(location))
                             infowindow.open(map, marker);
                         });
                     });
