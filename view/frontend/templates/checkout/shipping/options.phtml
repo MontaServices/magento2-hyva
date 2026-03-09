@@ -19,7 +19,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                 <?php
                 $isActive = ($magewire->mode == $tabId); ?>
                 <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                       class="flex-1 text-center rounded-tile transition font-semibold <?=
+                       class="flex flex-1 items-center justify-center text-center rounded-tile transition font-semibold <?=
                        $onlyOneTab ? 'hidden' : ''; ?> <?=
                        $isActive ? 'bg-blue-500 text-white' : 'monta-gray-tile hover:monta-blue-focus' ?>">
                     <input type="radio" class="hidden" name="shipping-mode"
