@@ -15,6 +15,7 @@
             <div id="<?= $escaper->escapeHtmlAttr($magewire::MAP_IDENTIFIER) ?>"
                  data-content-type="map"
                  data-locations='<?= $escaper->escapeHtmlAttr(json_encode($magewire->getPickupOptions())) ?>'
+                 data-selected='<?= $escaper->escapeHtmlAttr($magewire->selectedOptionCode) ?>'
                  data-show-controls="true"
                  class="w-full h-[250px] bg-gray-100"></div>
         </div>

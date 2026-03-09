@@ -29,6 +29,7 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
 
                 const renderMap = (element) => {
                     const dataLocations = element.dataset.locations;
+                    let selectedOptionCode = element.dataset.selected;
 
                     // Hide map if no locations set
                     if (!dataLocations || dataLocations === '[]') {
@@ -63,7 +64,7 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                             position: position,
                             map: map,
                             title: location.location_name,
-                            content: getMarkerIcon(location),
+                            content: getMarkerIcon(location, selectedOptionCode),
                         });
 
                         marker.addListener('gmp-click', () => {
@@ -124,18 +125,25 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                       `;
                 };
 
-                /** Maps icon for Pickup location
+                /** Map icon for Pickup location
                  *
                  * @param pickup
-                 * @returns {null}
+                 * @param selectedOptionCode - the selected option, to highlight on the map
+                 * @returns {Element|null}
                  */
-                const getMarkerIcon = (pickup) => {
+                const getMarkerIcon = (pickup, selectedOptionCode) => {
                     let markerContent = null;
                     // If Pickup location has an image, use it as icon
                     if (pickup.imageUrl) {
                         // Create container div
                         markerContent = document.createElement('div');
                         markerContent.className = 'w-10 rounded-full overflow-hidden';
+
+                        // If this is the selected Pickup, add a blue ring
+                        if (selectedOptionCode == pickup.code) {
+                            // TODO very similar to 'monta-blue-focus' utility but this is not a tile
+                            markerContent.className += ' ring-3 ring-blue-500';
+                        }
 
                         // Create image inside
                         const img = document.createElement('img');
