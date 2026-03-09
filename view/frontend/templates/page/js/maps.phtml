@@ -56,11 +56,14 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                         };
                         bounds.push(position);
 
+
+                        // Create Maps marker
                         const marker = new google.maps.marker.AdvancedMarkerElement({
                             gmpClickable: true,
                             position: position,
                             map: map,
                             title: location.location_name,
+                            content: getMarkerIcon(location),
                         });
 
                         marker.addListener('gmp-click', () => {
@@ -98,6 +101,11 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                     };
                 };
 
+                /** HTML for Marker info window
+                 *
+                 * @param location
+                 * @returns string
+                 */
                 const getInfoWindowContent = (location) => {
                     return `
                         <div class="max-w-xs p-4 bg-white rounded-lg shadow-md">
@@ -114,6 +122,30 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                           </address>
                         </div>
                       `;
+                };
+
+                /** Maps icon for Pickup location
+                 *
+                 * @param pickup
+                 * @returns {null}
+                 */
+                const getMarkerIcon = (pickup) => {
+                    let markerContent = null;
+                    // If Pickup location has an image, use it as icon
+                    if (pickup.imageUrl) {
+                        // Create container div
+                        markerContent = document.createElement('div');
+                        markerContent.className = 'w-10 rounded-full overflow-hidden';
+
+                        // Create image inside
+                        const img = document.createElement('img');
+                        img.src = pickup.imageUrl;
+                        img.alt = pickup.location_name || '';
+                        img.className = 'w-full h-full object-cover';
+
+                        markerContent.appendChild(img);
+                    }
+                    return markerContent;
                 };
 
                 const hideAllMaps = () => {
