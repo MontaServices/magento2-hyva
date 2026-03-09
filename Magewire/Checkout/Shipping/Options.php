@@ -88,7 +88,10 @@ class Options extends Component
                 if ($options = $this->shippingHelper->getOptions($quote)) {
                     $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
                     $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
-                    $this->storeLocations = [$options[PickupPoint::PICKUP_STORE_KEY]] ?? [];
+                    // If storelocation was set, convert to array
+                    if (!empty($options[PickupPoint::PICKUP_STORE_KEY])) {
+                        $this->storeLocations = [$options[PickupPoint::PICKUP_STORE_KEY]];
+                    }
                     $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
                 }
             }
