@@ -82,8 +82,8 @@ class Delivery extends Component
         // Save to quote
         $this->quoteHelper->setOption(json_encode($option));
 
-        // Address update triggers Totals refresh in PriceSummary component
-        $this->emit('shipping_address_saved');
+        // Address update triggers Totals refresh in PriceSummary component (avoid 'saved' because parent component Options reloads Options then)
+        $this->emit('shipping_address_activated');
 
         // Shipper options are overwritten in Quote, match visually
         $this->selectedShipperOptions = $shipperOptions;
