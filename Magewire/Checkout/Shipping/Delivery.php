@@ -61,10 +61,9 @@ class Delivery extends Component
     }
 
     /** Save selected Option JSON string to quote
-     * Works on Pickup as well, since properties are the same
      *
      * @param string $deliveryOptionCode - New value passed by browser
-     * @param string $property - Magewire always passes property name
+     * @param string $property - Magewire always passes property name as second parameter
      * @param array $shipperOptions - Custom property when updating with options
      * @return string - Magic method must return new value
      * @throws LocalizedException
@@ -82,6 +81,9 @@ class Delivery extends Component
 
         // Save to quote
         $this->quoteHelper->setOption(json_encode($option));
+
+        // Address update triggers Totals refresh in PriceSummary component
+        $this->emit('shipping_address_saved');
 
         // Shipper options are overwritten in Quote, match visually
         $this->selectedShipperOptions = $shipperOptions;
