@@ -42,12 +42,20 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                     $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <label class="selectDayButton shadow-lg shrink-0 basis-1/4 flex-col text-center rounded-tile monta-gray-tile hover:monta-blue-focus transition <?=
-                            $magewire->selectedTimeFrameDate == $option->getDate() ? 'monta-blue-focus' : '' ?>">
+                            <label class="selectDayButton shadow-lg shrink-0 basis-1/4 flex flex-col justify-center items-center text-center rounded-tile monta-gray-tile hover:monta-blue-focus transition <?=
+                            $magewire->selectedTimeFrameDate === $option->getDate() ? 'monta-blue-focus' : '' ?>">
                                 <input type="radio" wire:model="selectedTimeFrameDate" class="hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
-                                <p class="font-semibold"><?= $escaper->escapeHtml(ucfirst($option->getDay())) ?></p>
-                                <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?></p>
+                                <?php
+                                if ($option->getDay()): ?>
+                                    <p class="font-semibold"><?= $escaper->escapeHtml(ucfirst($option->getDay())) ?></p>
+                                    <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?></p>
+                                <?php
+                                else: // Timeframes without date, just use method title
+                                    ?>
+                                    <p class="font-semibold text-center"><?= $escaper->escapeHtml($magewire->getCarrierTitle()) ?></p>
+                                <?php
+                                endif; ?>
                             </label>
                         <?php
                         endforeach; ?>

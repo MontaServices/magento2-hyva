@@ -10,6 +10,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
+use Monta\Checkout\Helper\Configuration;
 use Monta\Checkout\Helper\Shipping;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
@@ -56,10 +57,12 @@ class Options extends Component
     /**
      * @param Session $checkoutSession
      * @param Shipping $shippingHelper
+     * @param Configuration $configHelper
      */
     public function __construct(
         protected readonly Session $checkoutSession,
         protected readonly Shipping $shippingHelper,
+        protected readonly Configuration $configHelper,
     )
     {
     }
@@ -101,6 +104,14 @@ class Options extends Component
         } catch (GuzzleException|LocalizedException $exception) {
             // Catch and ignore
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCarrierTitle(): string
+    {
+        return $this->configHelper->getCarrierTitle();
     }
 
     /**
