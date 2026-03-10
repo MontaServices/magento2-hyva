@@ -9,11 +9,8 @@ class Collect extends Pickup
 {
     public const string IDENTIFIER = "StoreCollect";
 
-    public function boot(): void
-    {
-        // Never show Map for Collect
-        $this->showingMap = false;
-    }
+    /** @var bool $showingMap - Override to never show Map widget for Collect */
+    public bool $showingMap = false;
 
     /** Override from parent to avoid breaking
      *
