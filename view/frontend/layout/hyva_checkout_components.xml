@@ -8,6 +8,7 @@
     <body>
         <!-- Inject our small Magewire component after the shipping methods list -->
         <referenceBlock name="checkout.shipping.methods.after">
+            <!-- TODO use 'checkout.shipping.methods' to replace Options::$show functionality -->
             <block name="monta.hyva.shipping.method.options"
                    template="Monta_Hyva::checkout/shipping/options.phtml">
                 <arguments>
