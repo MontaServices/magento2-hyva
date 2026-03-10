@@ -1,12 +1,12 @@
 <?php
-
-/**
+/** Template for both Pickup and StoreCollect components
+ *
  * @var \Magento\Framework\Escaper $escaper
  * @var \Magento\Framework\View\Element\Template $block
- * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup $magewire
+ * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup|\Monta\Hyva\Magewire\Checkout\Shipping\Collect $magewire - Both components use this template
  */
 ?>
-<div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden' ?> space-y-3 tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Options::PICKUP_OPTIONS_IDENTIFIER ?>">
+<div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden' ?> space-y-3 tab-<?= $magewire::IDENTIFIER ?>">
     <?php
     if ($magewire->showingMap): ?>
         <!-- Attach map to this element-->
@@ -15,13 +15,13 @@
             <div id="<?= $escaper->escapeHtmlAttr($magewire::MAP_IDENTIFIER) ?>"
                  data-content-type="map"
                  data-locations='<?= $escaper->escapeHtmlAttr(json_encode($magewire->getPickupOptions())) ?>'
+                 data-selected='<?= $escaper->escapeHtmlAttr($magewire->selectedOptionCode) ?>'
                  data-show-controls="true"
                  class="w-full h-[250px] bg-gray-100"></div>
         </div>
     <?php
     endif; ?>
-    <!-- List of PickupOptions -->
-    <div id="pickupPointsList" class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
+    <div class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
             <label class="flex">
@@ -29,14 +29,14 @@
                 $escaper->escapeHtmlAttr(implode(separator: " ", array: $magewire->getClasses($pickup->getCode()))) ?>">
                     <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
                            value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
-                    <div class="pickup-option flex-col">
-                        <div class="pickup-header flex justify-between space-x-2">
+                    <div class="flex-col">
+                        <div class="flex justify-between space-x-2">
                             <div class="flex">
                                 <?php
                                 if ($imageUrl = $pickup->getImageUrl()): ?>
                                     <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
                                          alt="<?= $escaper->escapeHtmlAttr($pickup->getDisplayName()); ?>"
-                                         class="pickup-logo w-16 h-16 pr-2">
+                                         class="pickup-logo w-16 h-16 mr-2">
                                 <?php
                                 endif; ?>
                                 <div class="pickup-container">
@@ -51,7 +51,7 @@
                         if ($magewire->isSelected($pickup->getCode())): ?>
                             <?php
                             if ($pickup->isPackstation()): ?>
-                                <div id="packstation-postnumber">
+                                <div>
                                     <span class="normal"><?= $escaper->escapeHtml(__("Post number")) ?></span>
                                     <input type="text" wire:model.debounce.500ms="packstationPostnumber">
                                 </div>
@@ -62,9 +62,10 @@
                                 <div class="business-hours text-sm text-gray-500 mt-2">
                                     <?php
                                     foreach ($openingTimes as $slot): ?>
-                                        <!-- TODO tab character is not rendered-->
-                                        <p class="text-sm"
-                                        ><?= $escaper->escapeHtml($slot->getDay() . ":\t" . $slot->getFrom() . " - " . $slot->getTo()) ?></p>
+                                        <p class="text-sm flex">
+                                            <span class="w-32 shrink-0"><?= $escaper->escapeHtml($slot->getDay()) ?>:</span>
+                                            <span><?= $escaper->escapeHtml($slot->getFrom() . " - " . $slot->getTo()) ?></span>
+                                        </p>
                                     <?php
                                     endforeach; ?>
                                 </div>

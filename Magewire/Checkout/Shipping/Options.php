@@ -10,6 +10,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
 use Magewirephp\Magewire\Component;
+use Monta\Checkout\Helper\Configuration;
 use Monta\Checkout\Helper\Shipping;
 use Monta\CheckoutApiWrapper\Objects\PickupPoint;
 use Monta\CheckoutApiWrapper\Objects\ShippingOption;
@@ -17,18 +18,18 @@ use Monta\CheckoutApiWrapper\Objects\TimeFrame;
 
 class Options extends Component
 {
-    public const string DELIVERY_OPTIONS_IDENTIFIER = "DeliveryOptions";
 
-    public const string PICKUP_OPTIONS_IDENTIFIER = "PickupOptions";
-
-    /** @var TimeFrame[] $deliveryOptions - These are actually the Timeframes */
+    /**
+     * @var TimeFrame[] $deliveryOptions - These are actually the Timeframes
+     * not accessed externally but making this protected causes the entire Delivery tab to hide
+     */
     public array $deliveryOptions = [];
 
     /** @var PickupPoint[] */
     public array $pickupOptions = [];
 
-    /** @var ?PickupPoint */
-    public ?PickupPoint $storeLocation = null;
+    /** @var PickupPoint[] $storeLocations - StoreCollect (array like other properties, but just one) */
+    public array $storeLocations = [];
 
     /** @var ShippingOption|array|null $standardShipper */
     public ShippingOption|array|null $standardShipper = null;
@@ -43,7 +44,7 @@ class Options extends Component
      *
      * @var string - Start on Delivery
      */
-    public string $mode = self::DELIVERY_OPTIONS_IDENTIFIER;
+    public string $mode = Delivery::IDENTIFIER;
 
     /**
      * @var string[]
@@ -56,10 +57,12 @@ class Options extends Component
     /**
      * @param Session $checkoutSession
      * @param Shipping $shippingHelper
+     * @param Configuration $configHelper
      */
     public function __construct(
         protected readonly Session $checkoutSession,
         protected readonly Shipping $shippingHelper,
+        protected readonly Configuration $configHelper,
     )
     {
     }
@@ -88,7 +91,10 @@ class Options extends Component
                 if ($options = $this->shippingHelper->getOptions($quote)) {
                     $this->deliveryOptions = $options[ShippingOption::SHIPPING_OPTIONS_KEY] ?? [];
                     $this->pickupOptions = $options[PickupPoint::PICKUP_OPTIONS_KEY] ?? [];
-                    $this->storeLocation = $options[PickupPoint::PICKUP_STORE_KEY] ?? null;
+                    // If storelocation was set, convert to array
+                    if (!empty($options[PickupPoint::PICKUP_STORE_KEY])) {
+                        $this->storeLocations = [$options[PickupPoint::PICKUP_STORE_KEY]];
+                    }
                     $this->standardShipper = $options[ShippingOption::SHIPPING_STANDARD_KEY] ?? null;
                 }
             }
@@ -98,6 +104,14 @@ class Options extends Component
         } catch (GuzzleException|LocalizedException $exception) {
             // Catch and ignore
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCarrierTitle(): string
+    {
+        return $this->configHelper->getCarrierTitle();
     }
 
     /**
@@ -116,7 +130,7 @@ class Options extends Component
     {
         // When only Pickups, switch mode
         if (!$this->deliveryOptions && $this->pickupOptions) {
-            $this->mode = self::PICKUP_OPTIONS_IDENTIFIER;
+            $this->mode = Pickup::IDENTIFIER;
             $this->updatedMode($this->mode); // Magic listeners don't run when called internally
             // PickupOptions are passed to child block already during render
         }
@@ -159,12 +173,15 @@ class Options extends Component
     public function getTabButtons(): array
     {
         $buttons = [];
-        if (sizeof($this->deliveryOptions) > 0) {
+        if ($this->hasDeliveryOptions()) {
             // tabId is also the name of the property this corresponds to
-            $buttons[self::DELIVERY_OPTIONS_IDENTIFIER] = __("Delivery");
+            $buttons[Delivery::IDENTIFIER] = __("Delivery");
         }
-        if (sizeof($this->pickupOptions) > 0) {
-            $buttons[self::PICKUP_OPTIONS_IDENTIFIER] = __("Pickup");
+        if ($this->hasPickupOptions()) {
+            $buttons[Pickup::IDENTIFIER] = __("Pickup");
+        }
+        if ($this->hasStoreLocations()) {
+            $buttons[Collect::IDENTIFIER] = __("Collect");
         }
         return $buttons;
     }
@@ -176,20 +193,7 @@ class Options extends Component
      */
     public function updatedMode(string $mode): string
     {
-        // Convert tab identifiers to child component name
-        // TODO identify child components by exact identifiers directly
-        switch ($mode) {
-            case self::PICKUP_OPTIONS_IDENTIFIER:
-                $childName = 'pickup';
-                break;
-            default:
-            case self::DELIVERY_OPTIONS_IDENTIFIER:
-                $childName = 'delivery';
-                // And hide Pickup tab (for some reason not working via JS)
-                $this->emitChildComponent('pickup', 'activateTab', false);
-                break;
-        }
-        $this->emitChildComponent($childName, 'activateTab', true);
+        $this->emitChildComponent(event: 'activateTab', data: $mode);
 
         // Return updated property, tabs are displayed accordingly
         return $mode;
@@ -232,28 +236,57 @@ class Options extends Component
 
         if ($timeframe && $timeframe->options) {
             // Update child component options
-            $this->emitChildComponent('delivery', 'updateOptions', $timeframe->options);
+            $this->emitChildComponent(event: 'updateOptions', childName: 'delivery', data: $timeframe->options);
         }
 
         // Magic method returns the new value to continue updating property
         return $date;
     }
 
+    /**
+     * @return bool
+     */
+    public function hasDeliveryOptions(): bool
+    {
+        return (bool)sizeof($this->deliveryOptions);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPickupOptions(): bool
+    {
+        return (bool)sizeof($this->pickupOptions);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasStoreLocations(): bool
+    {
+        return (bool)sizeof($this->storeLocations);
+    }
+
     /** Pass data to child component
      * Caution: If child component does not yet exist, it fails quietly
      *
-     * @param string $childName - Child name as declared in XML
      * @param string $event - function name on child component
+     * @param ?string $childName - Child name as declared in XML (optional: otherwise just emit globally)
      * @param mixed $data
      * @return void
      */
-    protected function emitChildComponent(string $childName, string $event, mixed $data = []): void
+    protected function emitChildComponent(string $event, ?string $childName = null, mixed $data = []): void
     {
-        $this->emitTo(
-            name: $this->childComponent($childName),
-            event: $event,
-            params: $data,
-        );
+        if ($childName) {
+            $this->emitTo(
+                name: $this->childComponent($childName),
+                event: $event,
+                params: $data,
+            );
+        } else {
+            // No target, just emit. Let child components listen
+            $this->emit(event: $event, params: $data);
+        }
     }
 
     /**

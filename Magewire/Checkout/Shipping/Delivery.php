@@ -14,6 +14,8 @@ use Monta\CheckoutApiWrapper\Objects\ShippingOption;
 
 class Delivery extends Component
 {
+    public const string IDENTIFIER = "DeliveryOptions";
+
     protected $listeners = ['updateOptions', 'activateTab'];
 
     /** @var bool - Whether this component tab is active */
@@ -50,12 +52,12 @@ class Delivery extends Component
 
     /** Show this mode tab
      *
-     * @param bool $active
-     * @return void
+     * @param string $mode
+     * @return bool
      */
-    public function activateTab(bool $active): void
+    public function activateTab(string $mode): bool
     {
-        $this->tabActive = $active;
+        return $this->tabActive = ($mode == $this::IDENTIFIER);
     }
 
     /** Save selected Option JSON string to quote

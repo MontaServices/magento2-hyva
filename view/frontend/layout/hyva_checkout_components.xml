@@ -31,6 +31,14 @@
                         </argument>
                     </arguments>
                 </block>
+                <block name="monta.hyva.shipping.method.component.collect"
+                       template="Monta_Hyva::checkout/shipping/components/pickup.phtml">
+                    <arguments>
+                        <argument name="magewire" xsi:type="object">
+                            Monta\Hyva\Magewire\Checkout\Shipping\Collect
+                        </argument>
+                    </arguments>
+                </block>
             </block>
             <!-- Add custom JS-->
             <block name="monta.hyva.shipping.scripts" template="Monta_Hyva::page/js/scripts.phtml"/>

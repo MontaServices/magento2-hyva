@@ -16,6 +16,8 @@ class Pickup extends Delivery
 
     public const string MAP_IDENTIFIER = 'montaPickupsMap';
 
+    public const string IDENTIFIER = "PickupOptions";
+
     /** @var bool $showingMap - Start in Map mode */
     public bool $showingMap = true;
 
@@ -27,15 +29,16 @@ class Pickup extends Delivery
 
     /** Override on activateTab
      *
-     * @param bool $active
-     * @return void
+     * @param string $mode
+     * @return bool
      */
-    public function activateTab(bool $active): void
+    public function activateTab(string $mode): bool
     {
-        parent::activateTab($active);
+        $active = parent::activateTab($mode);
         if ($active) {
             $this->triggerMap();
         }
+        return $active;
     }
 
     /**
