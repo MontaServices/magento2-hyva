@@ -14,6 +14,6 @@ class Totals extends Collect
      */
     public function getPickupAddress(): ?Address
     {
-        return $this->quoteHelper->convertShippingAddress();
+        return $this->quoteHelper->convertShippingAddress(onlyPickup: true);
     }
 }

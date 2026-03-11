@@ -15,7 +15,7 @@ $addressRenderer = $viewModels->require(\Hyva\Checkout\ViewModel\Checkout\Addres
 ?>
 <div>
     <?php
-    if ($pickupAddress = $magewire->getPickupAddress()->exportCustomerAddress()): ?>
+    if ($pickupAddress = $magewire->getPickupAddress()?->exportCustomerAddress()): ?>
         <div class="section-title border-b border-slate-300 pb-1 mb-6">
             <h2 class="text-slate-800 text-xl font-medium">
                 <?= $escaper->escapeHtml((__('Pickup'))) ?>
