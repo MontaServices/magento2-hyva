@@ -34,7 +34,10 @@ class Options extends Component
     /** @var ShippingOption|array|null $standardShipper */
     public ShippingOption|array|null $standardShipper = null;
 
-    /** @var bool - Whether the block should be visible */
+    /**
+     * @var bool - Whether the block should be visible
+     * @deprecated - Can be handled entirely by Hyva's "as" logic: https://docs.hyva.io/hyva-checkout/devdocs/shipping/shipping-integration-api.html#registering-a-shipping-method
+     */
     public bool $show = false;
 
     /** @var string|null - State property for remembering selected date */

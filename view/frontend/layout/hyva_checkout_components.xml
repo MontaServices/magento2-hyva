@@ -8,6 +8,7 @@
     <body>
         <!-- Inject our small Magewire component after the shipping methods list -->
         <referenceBlock name="checkout.shipping.methods.after">
+            <!-- TODO use 'checkout.shipping.methods' to replace Options::$show functionality -->
             <block name="monta.hyva.shipping.method.options"
                    template="Monta_Hyva::checkout/shipping/options.phtml">
                 <arguments>
@@ -40,10 +41,21 @@
                     </arguments>
                 </block>
             </block>
-            <!-- Add custom JS-->
+            <!-- Add custom JS TODO move JS code to head -->
             <block name="monta.hyva.shipping.scripts" template="Monta_Hyva::page/js/scripts.phtml"/>
             <!-- Copy the same block from Hyva/Pagebuilder/Maps which loads everything -->
             <block name="monta.hyva.checkout.google.maps" template="Monta_Hyva::page/js/maps.phtml"/>
         </referenceBlock>
+        <referenceContainer name="checkout.quote-summary.section">
+            <block name="monta.hyva.checkout.totals"
+                   template="Monta_Hyva::checkout/totals.phtml"
+                   after="checkout.shipping-summary">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Monta\Hyva\Magewire\Checkout\Shipping\Totals
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>
