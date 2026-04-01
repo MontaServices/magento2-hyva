@@ -119,9 +119,9 @@ class Delivery extends Component
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
-    public function updatedSelectedShipperOptions(array $shipperOptions, string $property = ''): array
+    public function updatingSelectedShipperOptions(array $shipperOptions, string $property = ''): array
     {
-        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption is at the end of the updated array
+        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption is at the end of the new array
         $this->selectedOptionCode = array_key_last($shipperOptions);
 
         // Pluck this option's ShipperOptions from the updated array (keyed on DeliveryOptionCode)
@@ -139,13 +139,14 @@ class Delivery extends Component
         );
 
         // Save the DeliveryOption (with ShipperOptions) to quote, since only updating property does not run listeners
+        // This also reconstrucst the SelectedShipperOptions array truth map, but only on the selected ShippingOption
         $this->updatedSelectedOptionCode(
             deliveryOptionCode: $this->selectedOptionCode, // value is passed but ignored
             shipperOptions: $flatSelectedShipperOptions,
         );
 
-        // Return new array to update value
-        return $shipperOptions;
+        // Return the newly reconstructed array to update value
+        return $this->selectedShipperOptions;
     }
 
     /** Reconstruct ShipperOption from originally loaded ShippingOption that is currently selected
