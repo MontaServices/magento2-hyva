@@ -273,9 +273,9 @@ class Options extends Component
     /** Pass data to child component
      * Caution: If child component does not yet exist, it fails quietly
      *
-     * @param string $event - function name on child component
-     * @param ?string $childName - Child name as declared in XML (optional: otherwise just emit globally)
-     * @param mixed $data
+     * @param string $event - Function name on child component.
+     * @param string|null $childName - Child name as declared in XML (optional: otherwise emit globally).
+     * @param mixed $data - Event payload
      * @return void
      */
     protected function emitChildComponent(string $event, ?string $childName = null, mixed $data = []): void

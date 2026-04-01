@@ -109,15 +109,15 @@ class Delivery extends Component
      *
      * @param array $shipperOptions - Boolean truth map, keyed on ShipperOptionCode grouped on DeliveryOption code
      * e.g. ['PostNL_20260101' => ["NoNeighbor"=>true]]
-     * @param string $property - Magewire passes name of property as well
+     * @param string $property - Magewire always passes name of property for some reason
      * @return array - the updated array
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
-    public function updatedSelectedShipperOptions(array $shipperOptions): array
+    public function updatedSelectedShipperOptions(array $shipperOptions, string $property = ''): array
     {
-        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption should select that DeliveryOption
-        $this->selectedOptionCode = array_key_first($shipperOptions);
+        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption is at the end of the updated array
+        $this->selectedOptionCode = array_key_last($shipperOptions);
 
         // Pluck this option's ShipperOptions from the updated array (keyed on DeliveryOptionCode)
         $selectedShipperOptions = $shipperOptions[$this->selectedOptionCode];
@@ -135,7 +135,7 @@ class Delivery extends Component
 
         // Save the DeliveryOption (with ShipperOptions) to quote, since only updating property does not run listeners
         $this->updatedSelectedOptionCode(
-            deliveryOptionCode: $this->selectedOptionCode,
+            deliveryOptionCode: $this->selectedOptionCode, // value is passed but ignored
             shipperOptions: $flatSelectedShipperOptions,
         );
 
