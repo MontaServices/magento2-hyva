@@ -86,7 +86,12 @@ class Delivery extends Component
         $this->emit('shipping_address_activated');
 
         // Shipper options are overwritten in Quote, match visually
-        $this->selectedShipperOptions = $shipperOptions;
+        $this->selectedShipperOptions = $shipperOptions ? [
+            // Reconstruct the truth map, keyed on ShippingOption
+            $this->selectedOptionCode =>
+                array_fill_keys(
+                    array_column($shipperOptions, 'code'), true),
+        ] : [];
 
         return $deliveryOptionCode;
     }
