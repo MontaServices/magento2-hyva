@@ -121,7 +121,7 @@ class Delivery extends Component
      */
     public function updatingSelectedShipperOptions(array $shipperOptions, string $property = ''): array
     {
-        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption is at the end of the new array
+        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption puts it at the end of the new array
         $this->selectedOptionCode = array_key_last($shipperOptions);
 
         // Pluck this option's ShipperOptions from the updated array (keyed on DeliveryOptionCode)
@@ -139,7 +139,7 @@ class Delivery extends Component
         );
 
         // Save the DeliveryOption (with ShipperOptions) to quote, since only updating property does not run listeners
-        // This also reconstrucst the SelectedShipperOptions array truth map, but only on the selected ShippingOption
+        // This also reconstructs the SelectedShipperOptions array truth map, but only on the selected ShippingOption
         $this->updatedSelectedOptionCode(
             deliveryOptionCode: $this->selectedOptionCode, // value is passed but ignored
             shipperOptions: $flatSelectedShipperOptions,
