@@ -125,6 +125,7 @@ class Pickup extends Delivery
      *
      * @param bool $dry
      * @return bool
+     * @throws NoSuchEntityException
      */
     public function nextPickup(bool $dry = false): bool
     {
@@ -135,6 +136,7 @@ class Pickup extends Delivery
      *
      * @param bool $dry
      * @return bool
+     * @throws NoSuchEntityException
      */
     public function prevPickup(bool $dry = false): bool
     {
@@ -177,7 +179,7 @@ class Pickup extends Delivery
     /** Get the HTML classes for one Pickup Point tile
      *
      * @param string $code - Pickup Point code
-     * @return array
+     * @return string[]
      */
     public function getClasses(string $code): array
     {

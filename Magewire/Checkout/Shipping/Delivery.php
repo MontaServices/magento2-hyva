@@ -86,7 +86,12 @@ class Delivery extends Component
         $this->emit('shipping_address_activated');
 
         // Shipper options are overwritten in Quote, match visually
-        $this->selectedShipperOptions = $shipperOptions;
+        $this->selectedShipperOptions = $shipperOptions ? [
+            // Reconstruct the truth map, keyed on ShippingOption
+            $this->selectedOptionCode =>
+                array_fill_keys(
+                    array_column($shipperOptions, 'code'), true),
+        ] : [];
 
         return $deliveryOptionCode;
     }
@@ -104,20 +109,20 @@ class Delivery extends Component
         }
     }
 
-    /** Magic method runs after property is updated
+    /** Magic method runs before property is updated, intercepting the incoming value
      * Basically 'clickShipperOption'
      *
      * @param array $shipperOptions - Boolean truth map, keyed on ShipperOptionCode grouped on DeliveryOption code
      * e.g. ['PostNL_20260101' => ["NoNeighbor"=>true]]
-     * @param string $property - Magewire passes name of property as well
+     * @param string $property - Name of the property being updated, passed automatically by Magewire
      * @return array - the updated array
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
-    public function updatedSelectedShipperOptions(array $shipperOptions): array
+    public function updatingSelectedShipperOptions(array $shipperOptions, string $property = ''): array
     {
-        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption should select that DeliveryOption
-        $this->selectedOptionCode = array_key_first($shipperOptions);
+        // Shipperoptions is keyed on DeliveryOption, clicking a ShipperOption puts it at the end of the new array
+        $this->selectedOptionCode = array_key_last($shipperOptions);
 
         // Pluck this option's ShipperOptions from the updated array (keyed on DeliveryOptionCode)
         $selectedShipperOptions = $shipperOptions[$this->selectedOptionCode];
@@ -134,13 +139,14 @@ class Delivery extends Component
         );
 
         // Save the DeliveryOption (with ShipperOptions) to quote, since only updating property does not run listeners
+        // This also reconstructs the SelectedShipperOptions array truth map, but only on the selected ShippingOption
         $this->updatedSelectedOptionCode(
-            deliveryOptionCode: $this->selectedOptionCode,
+            deliveryOptionCode: $this->selectedOptionCode, // value is passed but ignored
             shipperOptions: $flatSelectedShipperOptions,
         );
 
-        // Return new array to update value
-        return $shipperOptions;
+        // Return the newly reconstructed array to update value
+        return $this->selectedShipperOptions;
     }
 
     /** Reconstruct ShipperOption from originally loaded ShippingOption that is currently selected
