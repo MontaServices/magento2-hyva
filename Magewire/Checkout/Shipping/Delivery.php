@@ -109,12 +109,12 @@ class Delivery extends Component
         }
     }
 
-    /** Magic method runs after property is updated
+    /** Magic method runs before property is updated, intercepting the incoming value
      * Basically 'clickShipperOption'
      *
      * @param array $shipperOptions - Boolean truth map, keyed on ShipperOptionCode grouped on DeliveryOption code
      * e.g. ['PostNL_20260101' => ["NoNeighbor"=>true]]
-     * @param string $property - Magewire always passes name of property for some reason
+     * @param string $property - Name of the property being updated, passed automatically by Magewire
      * @return array - the updated array
      * @throws NoSuchEntityException
      * @throws LocalizedException
