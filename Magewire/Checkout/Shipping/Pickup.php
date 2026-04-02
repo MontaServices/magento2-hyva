@@ -125,6 +125,7 @@ class Pickup extends Delivery
      *
      * @param bool $dry
      * @return bool
+     * @throws NoSuchEntityException
      */
     public function nextPickup(bool $dry = false): bool
     {
@@ -135,6 +136,7 @@ class Pickup extends Delivery
      *
      * @param bool $dry
      * @return bool
+     * @throws NoSuchEntityException
      */
     public function prevPickup(bool $dry = false): bool
     {
@@ -146,7 +148,6 @@ class Pickup extends Delivery
      * @param int $incrementer - change Pickup by index in array (plus or minus)
      * @param bool $dryRun - Only check if that step is possible
      * @return bool
-     * @throws NoSuchEntityException
      */
     protected function getPickup(int $incrementer, bool $dryRun = false): bool
     {
