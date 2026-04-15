@@ -1,6 +1,5 @@
 <?php
 /**
- * @author Jacco.Amersfoort <jacco.amersfoort@monta.nl>
  * @created 3/10/2026 16:55
  */
 namespace Monta\Hyva\Magewire\Checkout\Shipping;
