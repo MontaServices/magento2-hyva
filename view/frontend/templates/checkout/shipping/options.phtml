@@ -28,7 +28,7 @@ $deliveryDebug = array_map(static function ($option): array {
 $hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickupOptions() || $magewire->hasStoreLocations();
 ?>
 
-<?php $debugVersion = 'ui-pass-v18'; ?>
+<?php $debugVersion = 'ui-pass-v23'; ?>
 
 <div id="block-shipping-options" class="w-full <?= $onlyOneTab ? '' : 'mt-3' ?>"
      data-monta-options-debug="<?= $escaper->escapeHtmlAttr(json_encode([
@@ -75,7 +75,7 @@ $hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickup
                 <div class="tabcontent <?= $magewire->mode == Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ? '' : 'hidden'
                  ?> tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="click-first flex gap-2 mb-5 overflow-x-auto <?=
+                    <div class="flex gap-2 mb-5 overflow-x-auto <?=
                        // Hide Day buttons if there is only one
                        $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php

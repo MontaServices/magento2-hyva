@@ -9,11 +9,71 @@
  */
 ?>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Bind clickFirst to those elements
-            document.querySelectorAll('.click-first').forEach(element => {
-                window.sharedUtils.clickFirst(element);
-            });
-        });
+        (() => {
+            const montaCheckoutDebugVersion = 'ui-pass-v23';
+
+            const parseJsonAttr = (element, attr) => {
+                try {
+                    return JSON.parse(element.getAttribute(attr) || '{}');
+                } catch (error) {
+                    console.warn('[Monta checkout debug] Failed to parse', attr, error);
+                    return {};
+                }
+            };
+
+            const bindClickFirst = () => {
+                document.querySelectorAll('.click-first').forEach(element => {
+                    if (element.dataset.montaClickFirstBound === 'true') {
+                        return;
+                    }
+
+                    window.sharedUtils.clickFirst(element);
+                    element.dataset.montaClickFirstBound = 'true';
+                });
+            };
+
+            const syncShippingState = () => {
+                bindClickFirst();
+
+                const optionsRoot = document.querySelector('[data-monta-options-debug]');
+                if (!optionsRoot) {
+                    return;
+                }
+
+                const optionsDebug = parseJsonAttr(optionsRoot, 'data-monta-options-debug');
+                const deliveryRoot = document.querySelector('[data-monta-delivery-debug]');
+                const deliveryDebug = deliveryRoot
+                    ? parseJsonAttr(deliveryRoot, 'data-monta-delivery-debug')
+                    : {};
+
+                console.groupCollapsed(`[Monta checkout debug ${montaCheckoutDebugVersion}] Shipping render`);
+                console.log('Debug version', montaCheckoutDebugVersion);
+                console.log('Options state', optionsDebug);
+                console.log('Visible delivery state', deliveryDebug);
+                console.log('Options state JSON', JSON.stringify(optionsDebug, null, 2));
+                console.log('Visible delivery state JSON', JSON.stringify(deliveryDebug, null, 2));
+                console.groupEnd();
+            };
+
+            const initializeMontaShippingScripts = () => {
+                if (window.montaShippingScriptsInitialized) {
+                    syncShippingState();
+                    return;
+                }
+
+                window.montaShippingScriptsInitialized = true;
+
+                syncShippingState();
+                document.addEventListener('magewire:load', syncShippingState);
+                document.addEventListener('magewire:update', syncShippingState);
+                window.addEventListener('pageshow', syncShippingState);
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeMontaShippingScripts, { once: true });
+            } else {
+                initializeMontaShippingScripts();
+            }
+        })();
     </script><?php
 $hyvaCsp->registerInlineScript() ?>

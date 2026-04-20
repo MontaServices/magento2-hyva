@@ -15,6 +15,11 @@ class Delivery extends Component
 {
     public const string IDENTIFIER = "DeliveryOptions";
 
+    protected $loader = [
+        'updatedSelectedOptionCode' => true,
+        'updatingSelectedShipperOptions' => true,
+    ];
+
     protected $listeners = ['updateOptions', 'activateTab'];
 
     /** @var bool - Whether this component tab is active */

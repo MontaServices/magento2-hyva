@@ -45,6 +45,14 @@ $deliveryDebug = array_map(static function ($deliveryOption): array {
     'selected_shipper_options' => $magewire->selectedShipperOptions,
     'visible_delivery_options' => $deliveryDebug,
 ])) ?>">
+    <?php /*
+    <div class="hidden items-center justify-center gap-2 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-700"
+         wire:loading.flex
+         wire:target="selectedOptionCode,selectedShipperOptions">
+        <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-sky-200 border-t-sky-600"></span>
+        <span><?= $escaper->escapeHtml(__('Updating shipping option...')) ?></span>
+    </div>
+    */ ?>
     <?php
     // TODO class 'click-first' but not yet loaded then
     foreach ($selectedDateOptions as $deliveryOption): ?>
@@ -63,6 +71,8 @@ $deliveryDebug = array_map(static function ($deliveryOption): array {
             // conditionally add focus class to the selected option (similar to `focusSelection()`)
             $isSelected ? 'monta-option-card-selected' : 'hover:border-slate-400'; ?>">
                 <input type="radio" class="hidden" wire:model="selectedOptionCode"
+                       wire:loading.attr="disabled"
+                       wire:target="selectedOptionCode,selectedShipperOptions"
                        value="<?= $escaper->escapeHtmlAttr($deliveryOption->getCode()) ?>"/>
                 <div class="space-y-3">
                     <div class="flex items-start justify-between gap-3">
@@ -109,6 +119,8 @@ $deliveryDebug = array_map(static function ($deliveryOption): array {
                                         <div class="flex min-w-0 items-center gap-3">
                                             <input type="checkbox"
                                                    class="h-5 w-5 rounded-full border-2 border-sky-400 text-sky-500 focus:ring-sky-500"
+                                                   wire:loading.attr="disabled"
+                                                   wire:target="selectedOptionCode,selectedShipperOptions"
                                                    wire:model.debounce.500ms="selectedShipperOptions.<?= $escaper->escapeHtmlAttr($deliveryOption->getCode() . "." . $shipperOption->getCode()) ?>"/>
                                             <span class="text-base text-slate-800"><?= $escaper->escapeHtml($shipperOption->description) ?></span>
                                         </div>
