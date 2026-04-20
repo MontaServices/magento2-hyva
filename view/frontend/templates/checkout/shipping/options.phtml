@@ -28,7 +28,7 @@ $deliveryDebug = array_map(static function ($option): array {
 $hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickupOptions() || $magewire->hasStoreLocations();
 ?>
 
-<?php $debugVersion = 'ui-pass-v16'; ?>
+<?php $debugVersion = 'ui-pass-v18'; ?>
 
 <div id="block-shipping-options" class="w-full <?= $onlyOneTab ? '' : 'mt-3' ?>"
      data-monta-options-debug="<?= $escaper->escapeHtmlAttr(json_encode([
@@ -75,30 +75,28 @@ $hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickup
                 <div class="tabcontent <?= $magewire->mode == Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ? '' : 'hidden'
                  ?> tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="click-first monta-hide-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-2 <?=
+                    <div class="click-first flex gap-2 mb-5 overflow-x-auto <?=
                        // Hide Day buttons if there is only one
                        $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
                             <?php $isSelectedDate = $magewire->selectedTimeFrameDate === $option->getDate(); ?>
-                            <label class="selectDayButton monta-day-card <?=
-                            $isSelectedDate
-                                ? 'monta-day-card-selected'
-                                : 'hover:border-slate-300 hover:bg-slate-50' ?>">
+                            <label class="selectDayButton shadow-lg flex h-[4.75rem] w-[7.5rem] shrink-0 flex-col items-center justify-center text-center rounded-tile monta-gray-tile transition <?=
+                            $isSelectedDate ? 'monta-blue-focus' : 'hover:monta-blue-focus' ?>">
                                 <input type="radio" wire:model="selectedTimeFrameDate" class="hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
                                 <?php
                                 if ($option->getDay()): ?>
-                                    <span class="text-sm font-semibold text-slate-900">
+                                    <span class="font-semibold text-slate-900">
                                         <?= $escaper->escapeHtml(ucfirst($option->getDay())) ?>
                                     </span>
-                                    <span class="mt-1 block text-[1.2rem] leading-none text-slate-500">
+                                    <span class="text-sm text-gray-500">
                                         <?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?>
                                     </span>
                                 <?php
                                 else: // Timeframes without date, just use method title
                                     ?>
-                                    <span class="text-base font-semibold text-slate-900"><?= $escaper->escapeHtml($magewire->getCarrierTitle()) ?></span>
+                                    <span class="font-semibold text-center text-slate-900"><?= $escaper->escapeHtml($magewire->getCarrierTitle()) ?></span>
                                 <?php
                                 endif; ?>
                             </label>

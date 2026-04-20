@@ -42,23 +42,23 @@ $formatPrice = static function (?float $price, ?string $priceFormatted) use ($es
                     <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
                            value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
                     <div class="space-y-4">
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                            <div class="flex min-w-0 gap-3 sm:gap-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex min-w-0 items-start gap-3 sm:gap-4">
                                 <?php
                                 if ($imageUrl = $pickup->getImageUrl()): ?>
                                     <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
                                           alt="<?= $escaper->escapeHtmlAttr($pickup->getDisplayName()); ?>"
-                                          class="pickup-logo h-12 w-12 shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-1.5 sm:h-14 sm:w-14">
+                                          class="pickup-logo h-11 w-11 shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-1.5 sm:h-12 sm:w-12">
                                 <?php
                                 endif; ?>
-                                <div class="pickup-container min-w-0 space-y-1.5">
-                                    <strong class="block text-[1.05rem] font-semibold text-slate-900"><?= $pickup->getCompany() ?></strong>
-                                    <p class="text-base text-slate-700"><?= $escaper->escapeHtml($pickup->getDisplayName()) ?></p>
-                                    <p class="text-sm text-slate-500"><?= $escaper->escapeHtml($pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber) ?></p>
+                                <div class="pickup-container flex min-h-[3rem] min-w-0 flex-col justify-center space-y-1">
+                                    <strong class="block text-[1.05rem] font-semibold leading-6 text-slate-900"><?= $pickup->getCompany() ?></strong>
+                                    <p class="text-sm leading-5 text-slate-700 sm:text-base"><?= $escaper->escapeHtml($pickup->getDisplayName()) ?></p>
+                                    <p class="text-sm leading-5 text-slate-500"><?= $escaper->escapeHtml($pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber) ?></p>
                                 </div>
                             </div>
-                            <div class="shrink-0 text-right sm:min-w-[5.5rem]">
-                                <p class="text-[1.15rem] leading-none font-semibold text-slate-900 sm:text-[1.35rem]"><?php
+                            <div class="shrink-0 pt-1 text-right sm:min-w-[5rem]">
+                                <p class="text-base font-semibold text-slate-900"><?php
                                     echo $formatPrice($pickup->getPrice(), $pickup->priceFormatted);
                                 ?></p>
                             </div>
