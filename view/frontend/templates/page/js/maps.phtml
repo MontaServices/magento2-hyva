@@ -23,7 +23,13 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
         'use strict';
 
         (() => {
+            const mapSelector = '#<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::MAP_IDENTIFIER ?>';
+            const googleMapsScriptId = 'monta-google-maps-script';
+
             const initMaps = async (elements) => {
+                if (!elements.length || typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                    return;
+                }
 
                 const {Map, MapTypeControlStyle, InfoWindow} = await google.maps.importLibrary("maps");
 
@@ -156,17 +162,11 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                     return markerContent;
                 };
 
-                const hideAllMaps = () => {
-                    document.querySelectorAll('[data-content-type="map"]').forEach(element => {
-                        element.classList.add('hidden');
-                    });
-                };
-
                 window.gm_authFailure = () => {
                     hideAllMaps();
                 };
 
-                if (typeof google.maps === 'undefined') {
+                if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
                     hideAllMaps();
                     return;
                 }
@@ -178,26 +178,82 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                 });
             };
 
-            window.addEventListener('DOMContentLoaded', () => {
-                // Load google Maps widget script
-                const mapElements = document.querySelectorAll('#<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::MAP_IDENTIFIER ?>');
+            const getMapElements = () => Array.from(document.querySelectorAll(mapSelector));
 
-                if (mapElements.length > 0) {
-                    const script = document.createElement('script');
-                    script.type = 'text/javascript';
+            const hideAllMaps = () => {
+                document.querySelectorAll('[data-content-type="map"]').forEach(element => {
+                    element.classList.add('hidden');
+                });
+            };
 
-                    script.src = '<?= $escaper->escapeJs($googleMapsApi->getLibraryUrl()) ?>&loading=async&callback=startGoogleMapsLibrary';
-
-                    window.startGoogleMapsLibrary = () => initMaps(mapElements);
-                    document.head.appendChild(script);
+            const ensureGoogleMapsScript = () => {
+                if (window.montaGoogleMapsLoadingPromise) {
+                    return window.montaGoogleMapsLoadingPromise;
                 }
 
-                // Component throws this event when Pickups tab is opened
-                window.addEventListener('<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::INIT_MAP_EVENT?>', () => {
-                    // Run Maps initializer again now that data is present
-                    window.startGoogleMapsLibrary();
+                if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+                    window.montaGoogleMapsLoadingPromise = Promise.resolve();
+                    return window.montaGoogleMapsLoadingPromise;
+                }
+
+                window.montaGoogleMapsLoadingPromise = new Promise((resolve, reject) => {
+                    const previousStartGoogleMapsLibrary = window.startGoogleMapsLibrary;
+
+                    window.startGoogleMapsLibrary = () => {
+                        if (typeof previousStartGoogleMapsLibrary === 'function') {
+                            previousStartGoogleMapsLibrary();
+                        }
+
+                        resolve();
+                    };
+
+                    const existingScript = document.getElementById(googleMapsScriptId);
+                    if (existingScript) {
+                        existingScript.addEventListener('error', reject, { once: true });
+                        return;
+                    }
+
+                    const script = document.createElement('script');
+                    script.id = googleMapsScriptId;
+                    script.type = 'text/javascript';
+                    script.src = '<?= $escaper->escapeJs($googleMapsApi->getLibraryUrl()) ?>&loading=async&callback=startGoogleMapsLibrary';
+                    script.addEventListener('error', reject, { once: true });
+                    document.head.appendChild(script);
                 });
-            });
+
+                return window.montaGoogleMapsLoadingPromise;
+            };
+
+            const startGoogleMapsLibrary = async () => {
+                const mapElements = getMapElements();
+                if (!mapElements.length) {
+                    return;
+                }
+
+                try {
+                    await ensureGoogleMapsScript();
+                    await initMaps(mapElements);
+                } catch (error) {
+                    console.warn('[Monta checkout debug] Failed to initialize Google Maps', error);
+                    hideAllMaps();
+                }
+            };
+
+            window.startGoogleMapsLibrary = startGoogleMapsLibrary;
+
+            const initializeGoogleMaps = () => {
+                void startGoogleMapsLibrary();
+
+                window.addEventListener('<?= \Monta\Hyva\Magewire\Checkout\Shipping\Pickup::INIT_MAP_EVENT?>', () => {
+                    void startGoogleMapsLibrary();
+                });
+            };
+
+            if (document.readyState === 'loading') {
+                window.addEventListener('DOMContentLoaded', initializeGoogleMaps, { once: true });
+            } else {
+                initializeGoogleMaps();
+            }
         })();
     </script>
 <?php
