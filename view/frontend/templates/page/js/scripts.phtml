@@ -10,7 +10,7 @@
 ?>
     <script>
         (() => {
-            const montaCheckoutDebugVersion = 'ui-pass-v24';
+            const montaCheckoutDebugVersion = 'ui-pass-v25';
 
             const parseJsonAttr = (element, attr) => {
                 try {
@@ -32,8 +32,33 @@
                 });
             };
 
+            const normalizeDayButtonWidths = () => {
+                window.requestAnimationFrame(() => {
+                    const buttons = Array.from(document.querySelectorAll('.tab-DeliveryOptions .selectDayButton'));
+                    if (!buttons.length) {
+                        return;
+                    }
+
+                    buttons.forEach(button => {
+                        button.style.width = 'auto';
+                        button.style.minWidth = '0';
+                    });
+
+                    const widestButton = Math.max(...buttons.map(button => Math.ceil(button.getBoundingClientRect().width)));
+                    if (!widestButton) {
+                        return;
+                    }
+
+                    buttons.forEach(button => {
+                        button.style.width = `${widestButton}px`;
+                        button.style.minWidth = `${widestButton}px`;
+                    });
+                });
+            };
+
             const syncShippingState = () => {
                 bindClickFirst();
+                normalizeDayButtonWidths();
 
                 const optionsRoot = document.querySelector('[data-monta-options-debug]');
                 if (!optionsRoot) {

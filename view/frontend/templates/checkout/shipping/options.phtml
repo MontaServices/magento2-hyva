@@ -28,7 +28,7 @@ $deliveryDebug = array_map(static function ($option): array {
 $hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickupOptions() || $magewire->hasStoreLocations();
 ?>
 
-<?php $debugVersion = 'ui-pass-v24'; ?>
+<?php $debugVersion = 'ui-pass-v25'; ?>
 
 <div id="block-shipping-options" class="w-full <?= $onlyOneTab ? '' : 'mt-3' ?>"
      data-monta-options-debug="<?= $escaper->escapeHtmlAttr(json_encode([
@@ -81,7 +81,7 @@ $hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickup
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
                             <?php $isSelectedDate = $magewire->selectedTimeFrameDate === $option->getDate(); ?>
-                            <label class="selectDayButton shadow-lg flex h-[4.75rem] w-[7.5rem] shrink-0 flex-col items-center justify-center text-center rounded-tile monta-gray-tile transition <?=
+                            <label class="selectDayButton shadow-lg flex h-[4.75rem] shrink-0 flex-col items-center justify-center text-center rounded-tile monta-gray-tile transition <?=
                             $isSelectedDate ? 'monta-blue-focus' : 'hover:monta-blue-focus' ?>">
                                 <input type="radio" wire:model="selectedTimeFrameDate" class="hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
