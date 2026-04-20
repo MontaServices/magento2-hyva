@@ -84,12 +84,12 @@ $formatPrice = static function (?float $price, ?string $priceFormatted) use ($es
                                     <p class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
                                         <?= $escaper->escapeHtml(__('Opening hours')) ?>
                                     </p>
-                                    <div class="grid gap-1.5 sm:grid-cols-2">
+                                    <div class="grid gap-2 sm:grid-cols-2 sm:gap-x-6">
                                         <?php
                                         foreach ($openingTimes as $slot): ?>
-                                            <p class="flex justify-between gap-4 text-sm text-slate-600 sm:block">
+                                            <p class="grid grid-cols-[auto_1fr] items-baseline gap-x-3 rounded-lg px-2 py-1 text-sm text-slate-600 sm:border-l sm:border-slate-200 sm:first:border-l-0 sm:pl-0 sm:odd:border-l-0 sm:odd:pr-3 sm:even:pl-5 sm:even:pr-0">
                                                 <span class="font-medium text-slate-700"><?= $escaper->escapeHtml($slot->getDay()) ?>:</span>
-                                                <span class="sm:ml-2"><?= $escaper->escapeHtml($slot->getFrom() . " - " . $slot->getTo()) ?></span>
+                                                <span class="font-mono tabular-nums text-right"><?= $escaper->escapeHtml($slot->getFrom() . " - " . $slot->getTo()) ?></span>
                                             </p>
                                         <?php
                                         endforeach; ?>
