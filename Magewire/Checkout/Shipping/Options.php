@@ -18,6 +18,13 @@ use Monta\CheckoutApiWrapper\Objects\TimeFrame;
 
 class Options extends Component
 {
+    protected $loader = [
+        'onShippingMethodSelected' => true,
+        'loadShippingOptions' => true,
+        'updatedMode' => true,
+        'updatingSelectedTimeFrameDate' => true,
+    ];
+
 
     /**
      * @var TimeFrame[] $deliveryOptions - These are actually the Timeframes
@@ -102,8 +109,12 @@ class Options extends Component
                 }
             }
 
+            if (!$this->selectedTimeFrameDate && ($firstTimeFrame = array_first($this->getDeliveryOptions()))) {
+                $this->selectedTimeFrameDate = $firstTimeFrame->getDate();
+            }
+
             // "click" the selected Timeframe because the magic method only runs on updates
-            $this->updatingSelectedTimeFrameDate($this->selectedTimeFrameDate);
+            $this->selectedTimeFrameDate = $this->updatingSelectedTimeFrameDate($this->selectedTimeFrameDate);
         } catch (GuzzleException|LocalizedException $exception) {
             // Catch and ignore
         }
@@ -243,7 +254,7 @@ class Options extends Component
         }
 
         // Magic method returns the new value to continue updating property
-        return $date;
+        return $timeframe?->getDate() ?? $date;
     }
 
     /**

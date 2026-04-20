@@ -102,10 +102,26 @@ class Delivery extends Component
      */
     public function updateOptions(?array $options = null): void
     {
-        // updated array is received as array
+        // Keep internal state as arrays, because later methods expect array access.
         if ($options) {
-            $this->options = $options;
+            $this->options = array_map(
+                static fn($option) => self::normalizeValue($option),
+                $options,
+            );
         }
+    }
+
+    protected static function normalizeValue(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map(static fn($item) => self::normalizeValue($item), $value);
+        }
+
+        if (is_object($value)) {
+            return array_map(static fn($item) => self::normalizeValue($item), get_object_vars($value));
+        }
+
+        return $value;
     }
 
     /** Magic method runs before property is updated, intercepting the incoming value
