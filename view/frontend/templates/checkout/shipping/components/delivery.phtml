@@ -4,52 +4,127 @@
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Delivery $magewire
  */
+$formatTime = static function (?string $time): ?string {
+    if (!$time) {
+        return null;
+    }
+
+    if (preg_match('/^\d{2}:\d{2}(?::\d{2})?$/', $time)) {
+        return substr($time, 0, 5);
+    }
+
+    if (preg_match('/^\d{4}$/', $time)) {
+        return substr($time, 0, 2) . ':' . substr($time, 2, 2);
+    }
+
+    return $time;
+};
+$formatPrice = static function (?float $price, ?string $priceFormatted) use ($escaper): string {
+    if ($price !== null && abs($price) < 0.00001) {
+        return $escaper->escapeHtml(__('Free'));
+    }
+
+    return $escaper->escapeHtml($priceFormatted ?? '');
+};
+$selectedDateOptions = $magewire->getSelectedDateOptions();
+$deliveryDebug = array_map(static function ($deliveryOption): array {
+    return [
+        'code' => $deliveryOption->getCode(),
+        'shipper' => $deliveryOption->shipper,
+        'display_name_short' => $deliveryOption->displayNameShort,
+        'date' => $deliveryOption->getDesiredDeliveryDate(),
+        'shipper_option_codes' => array_map(
+            static fn($shipperOption) => $shipperOption->getCode(),
+            $deliveryOption->getShipperOptions(),
+        ),
+    ];
+}, $selectedDateOptions);
 ?>
-<div>
+<div class="space-y-3" data-monta-delivery-debug="<?= $escaper->escapeHtmlAttr(json_encode([
+    'selected_option_code' => $magewire->selectedOptionCode,
+    'selected_shipper_options' => $magewire->selectedShipperOptions,
+    'visible_delivery_options' => $deliveryDebug,
+])) ?>">
+    <?php /*
+    <div class="hidden items-center justify-center gap-2 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-700"
+         wire:loading.flex
+         wire:target="selectedOptionCode,selectedShipperOptions">
+        <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-sky-200 border-t-sky-600"></span>
+        <span><?= $escaper->escapeHtml(__('Updating shipping option...')) ?></span>
+    </div>
+    */ ?>
     <?php
     // TODO class 'click-first' but not yet loaded then
-    foreach ($magewire->getSelectedDateOptions() as $deliveryOption): ?>
-        <label>
-            <div class="selectShippingOption rounded-tile monta-gray-tile mb-2 <?=
+    foreach ($selectedDateOptions as $deliveryOption): ?>
+        <?php
+        $isSelected = $magewire->isSelected($deliveryOption->getCode());
+        $from = $formatTime($deliveryOption->getFrom());
+        $to = $formatTime($deliveryOption->getTo());
+        $hasTimeRange = $from && $to && !($from === '00:00' && $to === '00:00');
+        $deliveryLine = $hasTimeRange
+            ? __('Delivered between %1 and %2', $from, $to)
+            : $deliveryOption->displayNameShort;
+        $title = $deliveryOption->displayNameShort ?: $deliveryOption->getDisplayName();
+        ?>
+        <label class="block cursor-pointer">
+            <div class="selectShippingOption monta-option-card <?=
             // conditionally add focus class to the selected option (similar to `focusSelection()`)
-            $magewire->isSelected($deliveryOption->getCode()) ? 'monta-blue-focus' : ''; ?>">
+            $isSelected ? 'monta-option-card-selected' : 'hover:border-slate-400'; ?>">
                 <input type="radio" class="hidden" wire:model="selectedOptionCode"
+                       wire:loading.attr="disabled"
+                       wire:target="selectedOptionCode,selectedShipperOptions"
                        value="<?= $escaper->escapeHtmlAttr($deliveryOption->getCode()) ?>"/>
-                <div class="flex-col">
-                    <div class="flex justify-between">
-                        <div class="flex">
+                <div class="space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex min-w-0 items-start gap-3 sm:gap-4">
                             <?php
                             if ($imageUrl = $deliveryOption->getImageUrl()): ?>
                                 <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
-                                     alt="<?= $escaper->escapeHtmlAttr($deliveryOption->getDisplayName()) ?>"
-                                     class="w-16 h-16 mr-2"/>
+                                      alt="<?= $escaper->escapeHtmlAttr($deliveryOption->getDisplayName()) ?>"
+                                      class="h-11 w-11 shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-1.5 sm:h-12 sm:w-12"/>
                             <?php
                             endif; ?>
-                            <div>
-                                <p class="font-semibold"><?= $escaper->escapeHtml($deliveryOption->shipper) ?></p>
-                                <p class="text-sm text-gray-600"><?= $escaper->escapeHtml($deliveryOption->displayNameShort) ?></p>
+                            <div class="flex min-h-[3rem] min-w-0 flex-col justify-center space-y-1">
+                                <p class="text-[1.05rem] font-semibold leading-6 text-slate-900">
+                                    <?= $escaper->escapeHtml($title) ?>
+                                </p>
+                                <p class="text-sm leading-5 text-slate-700 sm:text-base">
+                                    <?= $escaper->escapeHtml($deliveryLine) ?>
+                                </p>
                             </div>
                         </div>
-                        <p class="text-md font-medium"><?= $escaper->escapeHtml($deliveryOption->priceFormatted) ?></p>
+                        <div class="shrink-0 pt-1 text-right sm:min-w-[5rem]">
+                            <p class="text-base font-semibold text-slate-900"><?php
+                                echo $formatPrice($deliveryOption->getPrice(), $deliveryOption->priceFormatted);
+                            ?></p>
+                        </div>
                     </div>
                     <!-- ShipperOptions -->
                     <?php
                     if ($deliveryOption->getShipperOptions()): ?>
-                        <div class="shipperoptions">
-                            <p class="font-semibold mb-2"><?= $escaper->escapeHtml(__("Extra shipperoptions:")) ?></p>
-                            <div class="space-y-2">
+                        <div class="shipperoptions space-y-3 border-t border-slate-200 pt-3">
+                            <div class="mb-1 flex items-center justify-between gap-3">
+                                <p class="text-base font-semibold text-slate-900">
+                                    <?= $escaper->escapeHtml(__("Extra shipperoptions")) ?>
+                                </p>
+                                <span class="text-sm text-slate-400"><?= $escaper->escapeHtml(__('Optional')) ?></span>
+                            </div>
+                            <div class="space-y-2.5">
                                 <?php
                                 foreach ($deliveryOption->getShipperOptions() as $shipperOption): ?>
                                     <!-- TODO nested <label> elements is not valid HTML. Works in browser but might cause problems in JS -->
-                                    <label class="flex justify-between rounded-tile p-2 hover:monta-blue-focus <?=
-                                    // if shipperoption is selected, show focus. `checked:monta-blue-focus` does not work on label
-                                    (!empty($magewire->selectedShipperOptions[$deliveryOption->getCode()][$shipperOption->getCode()]) ? 'monta-blue-focus' : '') ?>">
-                                        <div class="items-center space-x-2">
+                                    <label class="monta-suboption-row <?=
+                                     // if shipperoption is selected, show focus. `checked:monta-blue-focus` does not work on label
+                                     (!empty($magewire->selectedShipperOptions[$deliveryOption->getCode()][$shipperOption->getCode()]) ? 'monta-suboption-row-selected' : 'hover:border-slate-300') ?>">
+                                        <div class="flex min-w-0 items-center gap-3">
                                             <input type="checkbox"
+                                                   class="h-5 w-5 rounded-full border-2 border-sky-400 text-sky-500 focus:ring-sky-500"
+                                                   wire:loading.attr="disabled"
+                                                   wire:target="selectedOptionCode,selectedShipperOptions"
                                                    wire:model.debounce.500ms="selectedShipperOptions.<?= $escaper->escapeHtmlAttr($deliveryOption->getCode() . "." . $shipperOption->getCode()) ?>"/>
-                                            <span><?= $escaper->escapeHtml($shipperOption->description) ?></span>
+                                            <span class="text-base text-slate-800"><?= $escaper->escapeHtml($shipperOption->description) ?></span>
                                         </div>
-                                        <span class="text-md">+ <?= $escaper->escapeHtml($shipperOption->priceFormatted) ?></span>
+                                        <span class="shrink-0 text-base font-semibold text-slate-900">+ <?= $escaper->escapeHtml($shipperOption->priceFormatted) ?></span>
                                     </label>
                                 <?php
                                 endforeach; ?>

@@ -4,56 +4,99 @@
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Options $magewire
  * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ * @var \Hyva\Theme\Model\ViewModelRegistry $viewModels
  */
+
+use Hyva\Theme\ViewModel\SvgIcons;
+
+$hyvaicons = $viewModels->require(SvgIcons::class);
 $onlyOneTab = count($magewire->getTabButtons()) == 1;
+$deliveryDebug = array_map(static function ($option): array {
+    $deliveryOptions = $option->options ?? [];
+
+    return [
+        'date' => $option->getDate(),
+        'day' => $option->getDay(),
+        'formatted' => $option->getDateFormatted(),
+        'delivery_count' => count($deliveryOptions),
+        'delivery_shippers' => array_values(array_unique(array_map(
+            static fn($deliveryOption) => $deliveryOption->shipper ?? null,
+            $deliveryOptions,
+        ))),
+    ];
+}, $magewire->getDeliveryOptions());
+$hasAnyShippingOptions = $magewire->hasDeliveryOptions() || $magewire->hasPickupOptions() || $magewire->hasStoreLocations();
 ?>
 
+<?php $debugVersion = 'ui-pass-v27'; ?>
+
 <div id="block-shipping-options" class="w-full <?= $onlyOneTab ? '' : 'mt-3' ?>"
+     data-monta-options-debug="<?= $escaper->escapeHtmlAttr(json_encode([
+          'debug_version' => $debugVersion,
+           'mode' => $magewire->mode,
+           'selected_timeframe_date' => $magewire->selectedTimeFrameDate,
+          'delivery_timeframes' => $deliveryDebug,
+         'pickup_count' => count($magewire->pickupOptions),
+          'store_collect_count' => count($magewire->storeLocations),
+      ])) ?>"
      style="contain: inline-size;">
     <?php
     if ($magewire->show): ?>
-        <!-- Buttons-->
-        <div class="flex gap-2 mb-5">
+        <div class="space-y-4 w-full max-w-[42rem]">
+        <?php
+        if (!$onlyOneTab): ?>
+            <div class="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-sm">
+                <div class="grid grid-cols-3">
             <?php
             foreach ($magewire->getTabButtons() as $tabId => $label): ?>
                 <?php
                 $isActive = ($magewire->mode == $tabId); ?>
                 <label for="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                       class="flex flex-1 items-center justify-center text-center rounded-tile transition font-semibold <?=
-                       $onlyOneTab ? 'hidden' : ''; ?> <?=
-                       $isActive ? 'bg-blue-500 text-white' : 'monta-gray-tile hover:monta-blue-focus' ?>">
-                    <input type="radio" class="hidden" name="shipping-mode"
-                           id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                           wire:model="mode" value="<?= $escaper->escapeHtmlAttr($tabId) ?>"
-                    /><?= $escaper->escapeHtml($label) ?></label>
+                       class="monta-segment-button border-r border-slate-300 last:border-r-0 <?=
+                         $isActive ? 'monta-segment-button-active' : 'bg-white hover:bg-slate-50' ?>">
+                     <input type="radio" class="hidden" name="shipping-mode"
+                            id="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                            wire:model="mode" value="<?= $escaper->escapeHtmlAttr($tabId) ?>"
+                     /><?= $escaper->escapeHtml($label) ?></label>
             <?php
             endforeach; ?>
+                </div>
+            </div>
+        <?php
+        endif; ?>
+        <div id="monta-shipping-loader" class="<?= $hasAnyShippingOptions ? 'hidden' : 'flex' ?> justify-center py-5" aria-live="polite" aria-busy="true">
+            <?= $hyvaicons->renderHtml('loader', '', 24, 24, ['aria-hidden' => 'true']); ?>
         </div>
-        <div class="tabs">
+        <div id="monta-shipping-tabs" class="tabs space-y-5<?= $hasAnyShippingOptions ? '' : ' hidden' ?>">
             <!-- Delivery Options -->
             <?php
             // TODO move "tabcontent" inside Delivery like other child components
             if ($magewire->hasDeliveryOptions()): ?>
                 <div class="tabcontent <?= $magewire->mode == Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ? '' : 'hidden'
-                ?> tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ?>">
+                 ?> tab-<?= \Monta\Hyva\Magewire\Checkout\Shipping\Delivery::IDENTIFIER ?>">
                     <!-- Day buttons -->
-                    <div class="flex overflow-x-auto gap-2 mb-5 click-first <?=
-                    // Hide Day buttons if there is only one
-                    $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
+                    <div class="flex gap-2 mb-5 overflow-x-auto <?=
+                       // Hide Day buttons if there is only one
+                       $magewire->isFallbackShippper() ? 'hidden' : '' ?>">
                         <?php
                         foreach ($magewire->getDeliveryOptions() as $option): ?>
-                            <label class="selectDayButton shadow-lg shrink-0 basis-1/4 flex flex-col justify-center items-center text-center rounded-tile monta-gray-tile hover:monta-blue-focus transition <?=
-                            $magewire->selectedTimeFrameDate === $option->getDate() ? 'monta-blue-focus' : '' ?>">
+                            <?php $isSelectedDate = $magewire->selectedTimeFrameDate === $option->getDate(); ?>
+                            <label class="selectDayButton shadow-lg flex h-[4.75rem] shrink-0 flex-col items-center justify-center text-center rounded-tile monta-gray-tile transition <?=
+                            $isSelectedDate ? 'monta-blue-focus' : 'hover:monta-blue-focus' ?>">
                                 <input type="radio" wire:model="selectedTimeFrameDate" class="hidden"
                                        value="<?= $escaper->escapeHtmlAttr($option->getDate()) ?>"/>
                                 <?php
                                 if ($option->getDay()): ?>
-                                    <p class="font-semibold"><?= $escaper->escapeHtml(ucfirst($option->getDay())) ?></p>
-                                    <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?></p>
+                                    <span class="font-semibold text-slate-900">
+                                        <?= $escaper->escapeHtml(ucfirst($option->getDay())) ?>
+                                    </span>
+                                    <span class="text-sm text-gray-500">
+                                        <?= $escaper->escapeHtml($option->getDateFormatted(strip: true)) ?>
+                                    </span>
                                 <?php
                                 else: // Timeframes without date, just use method title
                                     ?>
-                                    <p class="font-semibold text-center"><?= $escaper->escapeHtml($magewire->getCarrierTitle()) ?></p>
+                                    <span class="font-semibold text-center text-slate-900"><?= $escaper->escapeHtml($magewire->getCarrierTitle()) ?></span>
                                 <?php
                                 endif; ?>
                             </label>
@@ -61,7 +104,20 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                         endforeach; ?>
                     </div>
                     <!-- Selected day options -->
-                    <?= $block->getChildBlock($magewire->childComponent('delivery'))->toHtml(); ?>
+                    <?php
+                    $childBlock = $block->getChildBlock($magewire->childComponent('delivery'));
+                    $selectedTimeframe = array_find(
+                        array: $magewire->getDeliveryOptions(),
+                        callback: fn($option) => $option->getDate() === $magewire->selectedTimeFrameDate,
+                    ) ?? array_first($magewire->getDeliveryOptions());
+                    $childBlock->getMagewire()->updateOptions($selectedTimeframe?->options ?? []);
+                    $childBlock->getMagewire()->activateTab($magewire->mode);
+                    ?>
+                    <div class="mt-5">
+                        <?= $childBlock->toHtml(); ?>
+                    </div>
+                    <?php
+                    ?>
                 </div>
             <?php
             endif; ?>
@@ -83,6 +139,7 @@ $onlyOneTab = count($magewire->getTabButtons()) == 1;
                 echo $childBlock->toHtml();
             endif;
             ?>
+        </div>
         </div>
     <?php
     endif; ?>

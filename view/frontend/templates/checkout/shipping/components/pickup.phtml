@@ -5,69 +5,95 @@
  * @var \Magento\Framework\View\Element\Template $block
  * @var \Monta\Hyva\Magewire\Checkout\Shipping\Pickup|\Monta\Hyva\Magewire\Checkout\Shipping\Collect $magewire - Both components use this template
  */
+$formatPrice = static function (?float $price, ?string $priceFormatted) use ($escaper): string {
+    if ($price !== null && abs($price) < 0.00001) {
+        return $escaper->escapeHtml(__('Free'));
+    }
+
+    return $escaper->escapeHtml($priceFormatted ?? '');
+};
 ?>
-<div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden' ?> space-y-3 tab-<?= $magewire::IDENTIFIER ?>">
+<div class="tabcontent <?= $magewire->tabActive ? '' : 'hidden invisible h-0 overflow-hidden pointer-events-none' ?> space-y-4 tab-<?= $magewire::IDENTIFIER ?>">
     <?php
     if ($magewire->showingMap): ?>
         <!-- Attach map to this element-->
-        <div class="relative w-full bg-gray-200 overflow-hidden rounded-b-md">
+        <div class="relative overflow-hidden rounded-2xl border border-slate-300 bg-slate-100 shadow-sm">
             <!-- TODO this little 'data-content-type' attribute causes Hyva to load map.phtml with CSP warnings but something runs🤔-->
             <div id="<?= $escaper->escapeHtmlAttr($magewire::MAP_IDENTIFIER) ?>"
                  data-content-type="map"
-                 data-locations='<?= $escaper->escapeHtmlAttr(json_encode($magewire->getPickupOptions())) ?>'
-                 data-selected='<?= $escaper->escapeHtmlAttr($magewire->selectedOptionCode) ?>'
-                 data-show-controls="true"
-                 class="w-full h-[250px] bg-gray-100"></div>
+                  data-locations='<?= $escaper->escapeHtmlAttr(json_encode($magewire->getPickupOptions())) ?>'
+                  data-selected='<?= $escaper->escapeHtmlAttr($magewire->selectedOptionCode) ?>'
+                  data-show-controls="true"
+                  class="h-[260px] w-full bg-slate-100"></div>
         </div>
     <?php
     endif; ?>
-    <div class="<?= $magewire->showingMap ? '' : 'space-y-2' ?>">
+    <?php if ($magewire->showingMap && count($magewire->options) > 1): ?>
+        <div class="rounded-2xl border border-sky-100 bg-sky-50/60 px-4 py-3 text-sm text-slate-700">
+            <?= $escaper->escapeHtml(__('Use the map pins or the arrows below to browse pickup points. Switch to list view if you want to compare locations faster.')) ?>
+        </div>
+    <?php endif; ?>
+    <div class="space-y-3">
         <?php
         foreach ($magewire->getPickupOptions() as $pickup): ?>
-            <label class="flex">
-                <div class="rounded-tile monta-gray-tile w-full <?=
-                $escaper->escapeHtmlAttr(implode(separator: " ", array: $magewire->getClasses($pickup->getCode()))) ?>">
+            <label class="block cursor-pointer">
+                <div class="monta-option-card w-full <?=
+                 $escaper->escapeHtmlAttr(implode(separator: " ", array: $magewire->getClasses($pickup->getCode()))) ?>">
                     <input type="radio" class="form-radio hidden" wire:model="selectedOptionCode"
                            value="<?= $escaper->escapeHtmlAttr($pickup->getCode()) ?>"/>
-                    <div class="flex-col">
-                        <div class="flex justify-between space-x-2">
-                            <div class="flex">
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex min-w-0 items-start gap-3 sm:gap-4">
                                 <?php
                                 if ($imageUrl = $pickup->getImageUrl()): ?>
                                     <img src="<?= $escaper->escapeHtmlAttr($imageUrl) ?>"
-                                         alt="<?= $escaper->escapeHtmlAttr($pickup->getDisplayName()); ?>"
-                                         class="pickup-logo w-16 h-16 mr-2">
+                                          alt="<?= $escaper->escapeHtmlAttr($pickup->getDisplayName()); ?>"
+                                          class="pickup-logo h-11 w-11 shrink-0 rounded-xl border border-slate-200 bg-white object-contain p-1.5 sm:h-12 sm:w-12">
                                 <?php
                                 endif; ?>
-                                <div class="pickup-container">
-                                    <strong><?= $pickup->getCompany() ?></strong>
-                                    <p class="text-sm text-gray-500"><?= $escaper->escapeHtml($pickup->getDisplayName()) ?></p>
-                                    <p class="text-sm text-gray-600"><?= $escaper->escapeHtml($pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber) ?></p>
+                                <div class="pickup-container flex min-h-[3rem] min-w-0 flex-col justify-center space-y-1">
+                                    <strong class="block text-[1.05rem] font-semibold leading-6 text-slate-900"><?= $pickup->getCompany() ?></strong>
+                                    <p class="text-sm leading-5 text-slate-700 sm:text-base"><?= $escaper->escapeHtml($pickup->getDisplayName()) ?></p>
+                                    <p class="text-sm leading-5 text-slate-500"><?= $escaper->escapeHtml($pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber) ?></p>
                                 </div>
                             </div>
-                            <p class="text-green font-medium"><?= $escaper->escapeHtml($pickup->priceFormatted) ?></p>
+                            <div class="shrink-0 pt-1 text-right sm:min-w-[5rem]">
+                                <p class="text-base font-semibold text-slate-900"><?php
+                                    echo $formatPrice($pickup->getPrice(), $pickup->priceFormatted);
+                                ?></p>
+                            </div>
                         </div>
                         <?php
                         if ($magewire->isSelected($pickup->getCode())): ?>
                             <?php
                             if ($pickup->isPackstation()): ?>
-                                <div>
-                                    <span class="normal"><?= $escaper->escapeHtml(__("Post number")) ?></span>
-                                    <input type="text" wire:model.debounce.500ms="packstationPostnumber">
+                                <div class="monta-panel-soft p-4">
+                                    <label class="block text-sm font-semibold text-slate-700" for="packstation-postnumber">
+                                        <?= $escaper->escapeHtml(__("Post number")) ?>
+                                    </label>
+                                    <input id="packstation-postnumber"
+                                           type="text"
+                                           wire:model.debounce.500ms="packstationPostnumber"
+                                           class="mt-3 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100">
                                 </div>
                             <?php
                             endif; ?>
                             <?php
                             if ($openingTimes = $pickup->getOpeningTimes()): ?>
-                                <div class="business-hours text-sm text-gray-500 mt-2">
-                                    <?php
-                                    foreach ($openingTimes as $slot): ?>
-                                        <p class="text-sm flex">
-                                            <span class="w-32 shrink-0"><?= $escaper->escapeHtml($slot->getDay()) ?>:</span>
-                                            <span><?= $escaper->escapeHtml($slot->getFrom() . " - " . $slot->getTo()) ?></span>
-                                        </p>
-                                    <?php
-                                    endforeach; ?>
+                                <div class="business-hours monta-panel-soft p-4">
+                                    <p class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+                                        <?= $escaper->escapeHtml(__('Opening hours')) ?>
+                                    </p>
+                                    <div class="grid gap-2 sm:grid-cols-2 sm:gap-x-6">
+                                        <?php
+                                        foreach ($openingTimes as $slot): ?>
+                                            <p class="grid grid-cols-[auto_1fr] items-baseline gap-x-3 rounded-lg px-2 py-1 text-sm text-slate-600 sm:border-l sm:border-slate-200 sm:first:border-l-0 sm:pl-0 sm:odd:border-l-0 sm:odd:pr-3 sm:even:pl-5 sm:even:pr-0">
+                                                <span class="font-medium text-slate-700"><?= $escaper->escapeHtml($slot->getDay()) ?>:</span>
+                                                <span class="font-mono tabular-nums text-right"><?= $escaper->escapeHtml($slot->getFrom() . " - " . $slot->getTo()) ?></span>
+                                            </p>
+                                        <?php
+                                        endforeach; ?>
+                                    </div>
                                 </div>
                             <?php
                             endif; ?>
@@ -83,31 +109,44 @@
     <!-- Button to switch map or list -->
     <?php
     if (sizeof($magewire->options) > 1): ?>
-        <div class="text-center text-blue-500">
+        <div class="flex items-center justify-center">
             <!-- When in List mode-->
             <?php
             if ($magewire->showingMap): ?>
                 <!-- When in Maps mode -->
-                <div class="flex items-center justify-between mb-4">
-                    <p wire:click="prevPickup" class="<?= $magewire->prevPickup(dry: true) ? '' : 'invisible' ?>">
-                        &larr;</p>
-                    <div>
-                        <p class="text-gray-500"><?= $escaper->escapeHtml(
-                                __('%1 of %2 pickup points',
-                                    $magewire->selectedPickupKey + 1, // index plus one is the readable nth counter
-                                    count($magewire->options),
-                                )) ?></p>
-                        <span>&equiv; </span>
-                        <span wire:click="toggleMap"><?= $escaper->escapeHtml(__('List')); ?></span>
+                <div class="flex w-full max-w-2xl items-center justify-between gap-3 rounded-2xl border border-slate-300 bg-white px-4 py-3 shadow-sm">
+                    <button type="button"
+                            wire:click="prevPickup"
+                            class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 <?= $magewire->prevPickup(dry: true) ? '' : 'opacity-0 pointer-events-none' ?>">
+                        &larr;</button>
+                    <div class="text-center">
+                        <p class="text-sm text-slate-500"><?= $escaper->escapeHtml(
+                                  __('%1 of %2 pickup points',
+                                      $magewire->selectedPickupKey + 1, // index plus one is the readable nth counter
+                                      count($magewire->options),
+                                  )) ?></p>
+                        <button type="button"
+                                wire:click="toggleMap"
+                                class="mt-1 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">
+                            <span>&equiv;</span>
+                            <span><?= $escaper->escapeHtml(__('Show list')); ?></span>
+                        </button>
                     </div>
-                    <p wire:click="nextPickup" class="<?= $magewire->nextPickup(dry: true) ? '' : 'invisible' ?>">
-                        &rarr;</p>
+                    <button type="button"
+                            wire:click="nextPickup"
+                            class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 <?= $magewire->nextPickup(dry: true) ? '' : 'opacity-0 pointer-events-none' ?>">
+                        &rarr;</button>
                 </div>
 
             <?php
             else: ?>
-                <div wire:click="toggleMap">
-                    <span>&#128205; </span><span><?= $escaper->escapeHtml(__('Map')); ?></span>
+                <div class="flex flex-col items-center gap-2 sm:flex-row">
+                    <p class="text-sm text-slate-500"><?= $escaper->escapeHtml(__('List view is best for comparing addresses and opening hours.')) ?></p>
+                    <button type="button"
+                            wire:click="toggleMap"
+                            class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50">
+                        <span>&#128205;</span><span><?= $escaper->escapeHtml(__('Show map')); ?></span>
+                    </button>
                 </div>
             <?php
             endif; ?>

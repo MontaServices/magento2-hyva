@@ -41,11 +41,11 @@
                     </arguments>
                 </block>
             </block>
-            <!-- Add custom JS TODO move JS code to head -->
-            <block name="monta.hyva.shipping.scripts" template="Monta_Hyva::page/js/scripts.phtml"/>
-            <!-- Copy the same block from Hyva/Pagebuilder/Maps which loads everything -->
-            <block name="monta.hyva.checkout.google.maps" template="Monta_Hyva::page/js/maps.phtml"/>
         </referenceBlock>
+        <referenceContainer name="before.body.end">
+            <block name="monta.hyva.shipping.scripts" template="Monta_Hyva::page/js/scripts.phtml"/>
+            <block name="monta.hyva.checkout.google.maps" template="Monta_Hyva::page/js/maps.phtml"/>
+        </referenceContainer>
         <referenceContainer name="checkout.quote-summary.section">
             <block name="monta.hyva.checkout.totals"
                    template="Monta_Hyva::checkout/totals.phtml"
