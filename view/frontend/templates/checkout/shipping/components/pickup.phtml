@@ -52,7 +52,7 @@ $formatPrice = static function (?float $price, ?string $priceFormatted) use ($es
                                 <?php
                                 endif; ?>
                                 <div class="pickup-container flex min-h-[3rem] min-w-0 flex-col justify-center space-y-1">
-                                    <strong class="block text-[1.05rem] font-semibold leading-6 text-slate-900"><?= $pickup->getCompany() ?></strong>
+                                    <strong class="block text-[1.05rem] font-semibold leading-6 text-slate-900"><?= $escaper->escapeHtml($pickup->getCompany()) ?></strong>
                                     <p class="text-sm leading-5 text-slate-700 sm:text-base"><?= $escaper->escapeHtml($pickup->getDisplayName()) ?></p>
                                     <p class="text-sm leading-5 text-slate-500"><?= $escaper->escapeHtml($pickup->formattedAddress ?? $pickup->street . " " . $pickup->houseNumber) ?></p>
                                 </div>
