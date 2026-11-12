@@ -123,27 +123,64 @@ $googleMapsApi = $viewModels->require(GoogleMapsApi::class);
                     };
                 };
 
-                /** HTML for Marker info window
+                const createTextElement = (tagName, className, text) => {
+                    const element = document.createElement(tagName);
+                    element.className = className;
+                    element.textContent = text;
+                    return element;
+                };
+
+                /** Element for Marker info window
                  *
                  * @param location
-                 * @returns string
+                 * @returns {HTMLElement}
                  */
                 const getInfoWindowContent = (location) => {
-                    return `
-                        <div class="max-w-xs p-4 bg-white rounded-lg shadow-md">
-                          ${location.company ? `<h3 class="text-l font-semibold text-gray-900 mb-2">${location.company}</h3>` : ''}
-                          ${location.displayName ? `<p class="text-gray-700 mb-2">${location.displayName}</p>` : ''}
-                          ${location.addressRemark ? `<p class="text-gray-700 mb-2">${location.addressRemark}</p>` : ''}
-                          ${location.phone ? `<p class="text-gray-600 mb-2"><strong>Phone:</strong> ${location.phone}</p>` : ''}
-                          <address class="not-italic text-gray-600 text-sm">
-                            ${location.street ? `${location.street} ${location.houseNumber}<br>` : ''}
-                            ${location.city ? `${location.city}, ` : ''}
-                            ${location.state ? `${location.state} ` : ''}
-                            ${location.postalCode ? `${location.postalCode}<br>` : ''}
-                            ${location.country ? location.country : ''}
-                          </address>
-                        </div>
-                      `;
+                    const container = document.createElement('div');
+                    container.className = 'max-w-xs p-4 bg-white rounded-lg shadow-md';
+
+                    if (location.company) {
+                        container.appendChild(createTextElement('h3', 'text-l font-semibold text-gray-900 mb-2', location.company));
+                    }
+                    if (location.displayName) {
+                        container.appendChild(createTextElement('p', 'text-gray-700 mb-2', location.displayName));
+                    }
+                    if (location.addressRemark) {
+                        container.appendChild(createTextElement('p', 'text-gray-700 mb-2', location.addressRemark));
+                    }
+                    if (location.phone) {
+                        const phone = document.createElement('p');
+                        phone.className = 'text-gray-600 mb-2';
+                        phone.appendChild(createTextElement('strong', '', 'Phone:'));
+                        phone.appendChild(document.createTextNode(` ${location.phone}`));
+                        container.appendChild(phone);
+                    }
+
+                    const address = document.createElement('address');
+                    address.className = 'not-italic text-gray-600 text-sm';
+                    const appendText = (text) => address.appendChild(document.createTextNode(text));
+                    const appendLineBreak = () => address.appendChild(document.createElement('br'));
+
+                    if (location.street) {
+                        appendText(`${location.street} ${location.houseNumber ?? ''}`);
+                        appendLineBreak();
+                    }
+                    if (location.city) {
+                        appendText(`${location.city}, `);
+                    }
+                    if (location.state) {
+                        appendText(`${location.state} `);
+                    }
+                    if (location.postalCode) {
+                        appendText(location.postalCode);
+                        appendLineBreak();
+                    }
+                    if (location.country) {
+                        appendText(location.country);
+                    }
+                    container.appendChild(address);
+
+                    return container;
                 };
 
                 /** Map icon for Pickup location
